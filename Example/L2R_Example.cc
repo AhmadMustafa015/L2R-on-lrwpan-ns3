@@ -1,30 +1,3 @@
-/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
-/*
- * Copyright (c) 2011 The Boeing Company
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Author:  Tom Henderson <thomas.r.henderson@boeing.com>
- */
-
-/*
- * Try to send data end-to-end through a LrWpanMac <-> LrWpanPhy <->
- * SpectrumChannel <-> LrWpanPhy <-> LrWpanMac chain
- *
- * Trace Phy state changes, and Mac DataIndication and DataConfirm events
- * to stdout
- */
 #include <ns3/log.h>
 #include <ns3/core-module.h>
 #include <ns3/lr-wpan-module.h>
@@ -149,10 +122,10 @@ int main (int argc, char *argv[])
   }
 
   // Tracing
-  lrWpanHelper.EnablePcapAll (std::string ("lr-wpan-data"), true);
-  AsciiTraceHelper ascii;
-  Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream ("lr-wpan-data.tr");
-  lrWpanHelper.EnableAsciiAll (stream);
+  //lrWpanHelper.EnablePcapAll (std::string ("lr-wpan-data"), true);
+  //AsciiTraceHelper ascii;
+  //Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream ("lr-wpan-data.tr");
+  //lrWpanHelper.EnableAsciiAll (stream);
 
   // The below should trigger two callbacks when end-to-end data is working
   // 1) DataConfirm callback is called
@@ -160,10 +133,7 @@ int main (int argc, char *argv[])
   Packet::EnablePrinting ();
 
   // instantiate a header.
-  L2R_Header sourceHeader;
-  sourceHeader.SetDepth (0);
-  Ptr<Packet> p0 = Create<Packet> (50);  // 50 bytes of dummy data
-  p0->AddHeader (sourceHeader);
+  Ptr<Packet> p0 = Create<Packet> (50);
   //sending process
   McpsDataRequestParams params;
   params.m_dstPanId = 10;
@@ -181,7 +151,7 @@ int main (int argc, char *argv[])
                                   devContainer.Get(0)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
 
   Ptr<Packet> p2 = Create<Packet> (60);  // 60 bytes of dummy data
-  p2->AddHeader (sourceHeader);
+  //p2->AddHeader (sourceHeader);
   if (!extended)
   {
     params.m_dstAddr = Mac16Address ("ff:ff");

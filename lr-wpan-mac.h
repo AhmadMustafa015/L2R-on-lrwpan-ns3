@@ -229,10 +229,15 @@ typedef Callback<void, McpsDataIndicationParams, Ptr<Packet> > McpsDataIndicatio
 
 //AM: modified at 7/11
 
+enum L2R_MsgType
+{
+  TC_IE = 0,
+  L2R_D_IE = 1,
+  DataHeader = 2
+};
 class L2R_Header : public Header 
 {
 public:
-
   L2R_Header ();
   virtual ~L2R_Header ();
 
@@ -245,19 +250,23 @@ public:
    * \param TCIEInterval.
    */
   void SetDepth (uint16_t depth);
-  void SetMeshRootAddress(uint16_t meshRootAddress);
+  void SetMeshRootAddress(Mac16Address meshRootAddress);
   void SetPQM (uint16_t pqm);
   void SetMSN (uint16_t msn);
-  void SetTCIEInterval(uint16_t tcieinterval);
+  void SetTCIEInterval(uint8_t tcieinterval);
+  void SetMsgType (enum L2R_MsgType msgType);
+  void SetLQT(uint8_t lqt);
   /**
    * Get the header data.
    * \return The data.
    */
   uint16_t GetDepth (void) const;
-  uint16_t GetMeshRootAddress (void) const;
+  Mac16Address GetMeshRootAddress (void) const;
   uint16_t GetPQM (void) const;
   uint16_t GetMSN (void) const;
-  uint16_t GetTCIEInterval(void) const;
+  uint8_t GetTCIEInterval(void) const;
+  uint8_t GetMsgType(void) const;
+  uint8_t GetLQT(void) const;
 
   /**
    * \brief Get the type ID.
@@ -271,10 +280,12 @@ public:
   virtual uint32_t GetSerializedSize (void) const;
 private:
   uint16_t m_depth;  //!< Header data
-  uint16_t m_meshRootAddress;
+  Mac16Address m_meshRootAddress;
   uint16_t m_PQM;
-  uint16_t m_TCIEInterval;
+  uint8_t m_TCIEInterval;
   uint16_t m_MSN;
+  uint8_t m_LQT;
+  uint8_t m_msgType;
   
 };
 
@@ -618,7 +629,12 @@ public:
     (LrWpanMacState oldState, LrWpanMacState newState);
     //AM: modified at 7/11
     //void AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol);
+    //L2R Protocol
+    void L2R_AssignL2RProtocolForSink(Ptr<NetDevice> netDevice, bool isSink, uint8_t lqt, uint8_t tcieInterval);
+    void L2R_AssignL2RProtocol(Ptr<NetDevice> netDevice);
     void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
+    void L2R_SendTopologyConstruction();
+    void L2R_SendTopologyDiscovery();
   
 protected:
   // Inherited from Object.
@@ -626,6 +642,16 @@ protected:
   virtual void DoDispose (void);
 
 private:
+  //AM: modified at 15/11
+  void L2R_Start (); 
+  Ptr<NetDevice> m_netDevice;
+  bool m_isSink;
+  uint8_t m_lqt;
+  uint16_t m_msn;
+  uint8_t m_tcieInterval;
+  Mac16Address m_rootAddress;
+  /// Timer to trigger periodic updates from a node
+  Timer m_periodicUpdateTimer;
   /**
    * Helper structure for managing transmission queue elements.
    */
@@ -898,15 +924,7 @@ public:
   /**
    * c-tor
    *
-   * \param dev the net device
-   * \param dst the destination IP address
-   * \param seqNo the sequence number
-   * \param iface the interface
-   * \param hops the number of hops
-   * \param nextHop the IP address of the next hop
-   * \param lifetime the lifetime 
-   * \param SettlingTime the settling time
-   * \param changedEntries flag for changed entries
+   * 
    */
   RoutingTableEntry (Ptr<NetDevice> dev = 0, Mac16Address dst = Mac16Address (), uint16_t depth = 0,
                      uint16_t PQM = 0,Time lifetime = Simulator::Now (), Time tcieInterval = Simulator::Now (),

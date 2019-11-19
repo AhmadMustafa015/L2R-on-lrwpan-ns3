@@ -34,7 +34,8 @@
 #include <ns3/random-variable-stream.h>
 #include <ns3/double.h>
 #include <iomanip>
-
+#include "ns3/address-utils.h"
+#include "lr-wpan-net-device.h"
 #undef NS_LOG_APPEND_CONTEXT
 #define NS_LOG_APPEND_CONTEXT                                   \
   std::clog << "[address " << m_shortAddress << "] ";
@@ -1110,6 +1111,8 @@ L2R_Header::L2R_Header ()
   m_PQM = 0;
   m_meshRootAddress = 0;
   m_TCIEInterval = 0;
+  m_msgType = DataHeader;
+  m_LQT = 0;
 }
 L2R_Header::~L2R_Header ()
 {
@@ -1136,6 +1139,7 @@ L2R_Header::Print (std::ostream &os) const
   // This method is invoked by the packet printing
   // routines to print the content of my header.
   //os << "data=" << m_data << std::endl;
+  //ToDo print header debends on the msg type
   os << "DestinationRootMacAddress: " << m_meshRootAddress
      << " depth: " << m_depth
      << " PQM: " << m_PQM
@@ -1145,19 +1149,51 @@ L2R_Header::Print (std::ostream &os) const
 uint32_t
 L2R_Header::GetSerializedSize (void) const
 {
-  // we reserve 10 bytes for our header.
-  return 10;
+  /*
+    * Each L2R header will have
+    * Root 16 MAC Address      : 2 octet
+    * LQT                      : 0/1 Octet
+    * TC IE Interval           : 0/1 Octet
+    * MSN                      : 0/2 octet
+    * Depth                    : 0/2 octet
+    * PQM                      : 0/2 octet
+    * MSG Type                 : 0/1 octet
+  */
+  uint32_t size = 2;
+  switch (m_msgType)
+  {
+  case TC_IE:
+    size += 5;
+    break;
+  case L2R_D_IE:
+    break;
+  case DataHeader:
+    size += 4;
+    break;
+  }
+  return size;
 }
 void
 L2R_Header::Serialize (Buffer::Iterator start) const
 {
   // we can serialize two bytes at the start of the buffer.
   // we write them in network byte order.
-  start.WriteHtonU16 (m_meshRootAddress);
-  start.WriteHtonU16 (m_depth);
-  start.WriteHtonU16 (m_PQM);
-  start.WriteHtonU16 (m_TCIEInterval);
-  start.WriteHtonU16 (m_MSN);
+  WriteTo(start,m_meshRootAddress);
+  switch (m_msgType)
+  {
+  case TC_IE:
+    start.WriteU8(m_LQT);
+    start.WriteU8 (m_TCIEInterval);
+    start.WriteHtonU16 (m_MSN);
+    start.WriteU8(m_msgType);
+    break;
+  case L2R_D_IE:
+    break;
+  case DataHeader:
+    start.WriteHtonU16 (m_depth);
+    start.WriteHtonU16 (m_PQM);
+    break;
+  }
 }
 uint32_t
 L2R_Header::Deserialize (Buffer::Iterator start)
@@ -1166,11 +1202,25 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   // we read them in network byte order and store them
   // in host byte order.
   Buffer::Iterator i = start;
-  m_meshRootAddress = i.ReadNtohU16 ();
-  m_depth = i.ReadNtohU16 ();
-  m_PQM = i.ReadNtohU16 ();
-  m_TCIEInterval = i.ReadNtohU16 ();
-  m_MSN = i.ReadNtohU16 ();
+  ReadFrom (i, m_meshRootAddress);
+  switch (m_msgType)
+  {
+  case 0:
+    m_LQT = i.ReadU8();
+    m_TCIEInterval = i.ReadU8 ();
+    m_MSN = i.ReadNtohU16 ();
+    m_msgType = i.ReadU8();
+    break;
+  case 1:
+    break;
+  case 2:
+    m_depth = i.ReadNtohU16 ();
+    m_PQM = i.ReadNtohU16 ();
+    break;
+  }
+
+  
+  
   uint32_t dist = i.GetDistanceFrom (start);
   // we return the number of bytes effectively read.
   return dist;
@@ -1181,19 +1231,22 @@ L2R_Header::GetDepth (void) const
 {
   return m_depth;
 }
-uint16_t L2R_Header::GetMeshRootAddress (void) const
+Mac16Address 
+L2R_Header::GetMeshRootAddress (void) const
 {
   return m_meshRootAddress;
 }
-uint16_t L2R_Header::GetPQM(void) const
+uint16_t 
+L2R_Header::GetPQM(void) const
 {
   return m_PQM;
 }
-uint16_t L2R_Header::GetMSN (void) const
+uint16_t 
+L2R_Header::GetMSN (void) const
 {
   return m_MSN;
 }
-uint16_t L2R_Header::GetTCIEInterval (void) const
+uint8_t L2R_Header::GetTCIEInterval (void) const
 {
   return m_TCIEInterval;
 }
@@ -1201,7 +1254,7 @@ void L2R_Header::SetDepth (uint16_t depth)
 {
   m_depth = depth;
 }
-void L2R_Header::SetMeshRootAddress(uint16_t meshRootAddress)
+void L2R_Header::SetMeshRootAddress(Mac16Address meshRootAddress)
 {
   m_meshRootAddress = meshRootAddress;
 }
@@ -1213,9 +1266,26 @@ void L2R_Header::SetMSN (uint16_t msn)
 {
   m_MSN = msn;
 }
-void L2R_Header::SetTCIEInterval (uint16_t tcieinterval)
+void L2R_Header::SetTCIEInterval (uint8_t tcieinterval)
 {
   m_TCIEInterval = tcieinterval;
+}
+void L2R_Header::SetMsgType (enum L2R_MsgType msgType)
+{
+  m_msgType = msgType;
+}
+void L2R_Header::SetLQT(uint8_t lqt)
+{
+  m_LQT = lqt;
+}
+uint8_t
+L2R_Header::GetMsgType (void) const
+{
+  return m_msgType;
+}
+uint8_t L2R_Header::GetLQT(void) const
+{
+  return m_LQT;
 }
 //AM: modified at 6/11 6:03
 //Routing Protocol
@@ -1223,11 +1293,11 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
 {
   std::cout << "Received packet of size " << p->GetSize () << std::endl;
   //write what to do after recieving the packet
-  L2R_Header RXHeader;
+  //L2R_Header RXHeader;
 
-  uint32_t hData = p->PeekHeader(RXHeader);
+  /*uint32_t hData = p->PeekHeader(RXHeader);
   std::cout << "Successfully read " << hData << " Bytes Header " << " Node Depth = " << RXHeader.GetDepth() << std::endl; 
-  std::cout << "Source PAN ID = " << params.m_srcPanId << std::endl;
+  std::cout << "Source PAN ID = " << params.m_srcPanId << std::endl;*/
 }
 //AM: modified at 8/11
 RoutingTableEntry::RoutingTableEntry (Ptr<NetDevice> dev,
@@ -1498,5 +1568,84 @@ RoutingTable::GetEventId (Mac16Address address)
     {
       return i->second;
     }
+}
+void
+LrWpanMac::L2R_AssignL2RProtocolForSink(Ptr<NetDevice> netDevice , bool isSink, uint8_t lqt, uint8_t tcieInterval)
+{
+  m_netDevice = netDevice;
+  m_isSink = isSink;
+  m_msn = 0xf0;
+  m_lqt = lqt;
+  m_tcieInterval = tcieInterval;
+}
+void
+LrWpanMac::L2R_AssignL2RProtocol(Ptr<NetDevice> netDevice)
+{
+  m_netDevice = netDevice;
+}
+void
+LrWpanMac::L2R_SendTopologyConstruction()
+{
+  if (m_isSink)
+  {
+    if(m_msn > 0xef && m_msn <= 0xff)
+    {
+    L2R_Header TC_IE_H;
+    m_rootAddress = m_netDevice->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress();
+    TC_IE_H.SetMeshRootAddress(m_rootAddress);
+    TC_IE_H.SetMsgType(TC_IE);
+    TC_IE_H.SetPQM(0);
+    TC_IE_H.SetMSN(m_msn);
+    TC_IE_H.SetLQT(m_lqt);
+    TC_IE_H.SetTCIEInterval(m_tcieInterval);
+    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+    p0->AddHeader (TC_IE_H);
+    McpsDataRequestParams params;
+    params.m_dstPanId = this->GetPanId();
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    params.m_txOptions = TX_OPTION_NONE;
+    Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
+                             params, p0);
+    m_msn = 0x00; 
+    //m_periodicUpdateTimer.Schedule (m_periodicUpdateInterval + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
+    }
+    else
+    {
+      
+      
+    }
+    
+  }
+}
+void
+LrWpanMac::L2R_SendTopologyDiscovery()
+{
+  if(!m_isSink)
+  {
+    NS_ABORT_MSG ("only Sink can start the topology");
+    return;
+  }
+  else
+  {
+    L2R_Header L2R_DIE;
+    m_rootAddress = m_netDevice->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress(); //change root name
+    L2R_DIE.SetMeshRootAddress(m_rootAddress);
+    L2R_DIE.SetMsgType(L2R_D_IE);
+    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+    p0->AddHeader (L2R_DIE); //serialize is called here
+    McpsDataRequestParams params;
+    params.m_dstPanId = this->GetPanId();
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    params.m_txOptions = TX_OPTION_NONE;
+    Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
+                             params, p0);
+  }
+  
 }
 } // namespace ns3
