@@ -47,6 +47,7 @@ namespace ns3 {
 class Packet;
 class LrWpanCsmaCa;
 class NetDevice;
+
 /**
  * \defgroup lr-wpan LR-WPAN models
  *
@@ -265,7 +266,7 @@ public:
   uint16_t GetPQM (void) const;
   uint16_t GetMSN (void) const;
   uint8_t GetTCIEInterval(void) const;
-  uint8_t GetMsgType(void) const;
+  enum L2R_MsgType GetMsgType(void) const;
   uint8_t GetLQT(void) const;
 
   /**
@@ -288,6 +289,396 @@ private:
   uint8_t m_msgType;
   
 };
+
+
+
+enum RouteFlags
+{
+  VALID = 0,     // !< VALID
+  INVALID = 1,     // !< INVALID
+};
+class L2R_RoutingTableEntry
+{
+public:
+  /**
+   * c-tor
+   *
+   * 
+   */
+  L2R_RoutingTableEntry (Ptr<NetDevice> dev = 0, uint16_t depth = 0,
+                     uint16_t PQM = 0,Time lifetime = Simulator::Now (), Time tcieInterval = Simulator::Now (),
+                     Mac16Address nextHop = Mac16Address (), bool changedEntries = false);
+
+  ~L2R_RoutingTableEntry ();
+  /**
+   * Get destination MAC address
+   * \returns the destination MAC address (usually Sink node)
+   */
+  Mac16Address
+  GetDestination () const
+  {
+    return m_dst;
+  }
+  /**
+   * Get route
+   * \returns the IPv4 route
+   */
+  /*Ptr<Ipv4Route> //ToDo
+  GetRoute () const
+  {
+    return 
+  }*/
+  /**
+   * Set route
+   * \param route the IPv4 route
+   */
+  /*void
+  SetRoute (Ptr<Ipv4Route> route) //ToDo
+  {
+     = route;
+  }*/
+  /**
+   * Set next hop
+   * \param nextHop the Mac address of the next hop
+   */
+  void
+  SetNextHop (Mac16Address nextHop)
+  {
+    m_nextHop = nextHop;
+  }
+  /**
+   * Get next hop
+   * \returns the Mac address of the next hop
+   */
+  Mac16Address
+  GetNextHop () const
+  {
+    return m_nextHop;
+  }
+  /**
+   * Set output device
+   * \param device the output device
+   */
+  void
+  SetOutputDevice (Ptr<NetDevice> device)
+  {
+    m_outputDevice = device;
+  }
+  /**
+   * Get output device
+   * \returns the output device
+   */
+  Ptr<NetDevice>
+  GetOutputDevice () const
+  {
+    return m_outputDevice;
+  }
+  
+  /**
+   * Set depth
+   * \param depth the depth
+   */
+  void
+  SetDepth (uint16_t depth)
+  {
+    m_depth = depth;
+  }
+  /**
+   * Get depth
+   * \returns the depth
+   */
+  uint32_t
+  GetDepth () const
+  {
+    return m_depth;
+  }
+  /**
+   * Set PQM
+   * \param PQM the PQM
+   */
+  void
+  SetPQM (uint16_t pqm)
+  {
+    m_pqm = pqm;
+  }
+  /**
+   * Get PQM
+   * \returns the PQM count
+   */
+  uint32_t
+  GetPQM () const
+  {
+    return m_pqm;
+  }
+  /**
+   * Set lifetime
+   * \param lifeTime the lifetime value
+   */
+  void
+  SetLifeTime (Time lifeTime)
+  {
+    m_lifeTime = lifeTime;
+  }
+  /**
+   * Get lifetime
+   * \returns the lifetime value
+   */
+  Time
+  GetLifeTime () const
+  {
+    return (Simulator::Now () - m_lifeTime);
+  }
+  /**
+   * Set TC IE Interval time
+   * \param TC IE Interval the TC IE Interval
+   */
+  void
+  SetTCIEInterval (Time tcieinterval)
+  {
+    m_tcieInterval = tcieinterval;
+  }
+  /**
+   * Get TC IE Interval
+   * \returns the TC IE Interval
+   */
+  Time
+  GetTCIEInterval () const
+  {
+    return (m_tcieInterval);
+  }
+  /**
+   * Set route flags
+   * \param flag the route flags
+   */
+  void
+  SetFlag (RouteFlags flag)
+  {
+    m_flag = flag;
+  }
+  /**
+   * Get route flags
+   * \returns the route flags
+   */
+  RouteFlags
+  GetFlag () const
+  {
+    return m_flag;
+  }
+  /**
+   * Set entries changed indicator
+   * \param entriesChanged
+   */
+  void
+  SetEntriesChanged (bool entriesChanged) //ToDo
+  {
+    m_entriesChanged = entriesChanged;
+  }
+  /**
+   * Get entries changed
+   * \returns the entries changed flag
+   */
+  bool
+  GetEntriesChanged () const
+  {
+    return m_entriesChanged;
+  }
+  /**
+   * \brief Compare destination address
+   * \param destination destination node Mac address
+   * \return true if equal
+   */
+  bool
+  operator== (Mac16Address const destination) const
+  {
+    return m_dst == destination;
+  }
+  /**
+   * Print routing table entry
+   * \param stream the output stream
+   */
+  void
+  Print (Ptr<OutputStreamWrapper> stream) const;
+
+private:
+  // Fields
+  /// Destination Sequence Number
+  uint16_t m_depth;
+  /// Hop Count (number of hops needed to reach destination)
+  uint16_t m_pqm;
+  /**
+   * \brief Expiration or deletion time of the route
+   *	Lifetime field in the routing table plays dual role --
+   *	for an active route it is the expiration time, and for an invalid route
+   *	it is the deletion time.
+   */
+  Ptr<NetDevice> m_outputDevice;
+  Time m_lifeTime;
+  
+  /// Routing flags: valid, invalid or in search
+  RouteFlags m_flag; //ToDo
+  /// Time for which the node retains an update with changed metric before broadcasting it.
+  /// A node does that in hope of receiving a better update.
+  Time m_tcieInterval;
+  /// Flag to show if any of the routing table entries were changed with the routing update.
+  uint32_t m_entriesChanged;
+  Mac16Address m_dst;
+  Mac16Address m_nextHop;
+
+
+};
+
+/**
+ * \ingroup l2r
+ * \brief The Routing table used by L2R protocol
+ */
+class L2R_RoutingTable
+{
+public:
+  /// c-tor
+  L2R_RoutingTable ();
+  /**
+   * Add routing table entry if it doesn't yet exist in routing table
+   * \param r routing table entry
+   * \return true in success
+   */
+  bool
+  AddRoute (L2R_RoutingTableEntry & r);
+  /**
+   * Delete routing table entry with destination address dst, if it exists.
+   * \param dst destination address
+   * \return true on success
+   */
+  bool
+  DeleteRoute (Mac16Address dst);
+  /**
+   * Lookup routing table entry with destination address dst
+   * \param dst destination address
+   * \param rt entry with destination address dst, if exists
+   * \return true on success
+   */
+  bool
+  LookupRoute (Mac16Address dst, L2R_RoutingTableEntry & rt);
+  /**
+   * Lookup routing table entry with destination address dst
+   * \param id destination address
+   * \param rt entry with destination address dst, if exists
+   * \param forRouteInput for routing input
+   * \return true on success
+   */
+  bool
+  LookupRoute (Mac16Address id, L2R_RoutingTableEntry & rt, bool forRouteInput);
+  /**
+   * Updating the routing Table with routing table entry rt
+   * \param rt routing table entry
+   * \return true on success
+   */
+  bool
+  Update (L2R_RoutingTableEntry & rt);
+  /**
+   * Lookup list of addresses for which nxtHp is the next Hop address
+   * \param nxtHp nexthop's address for which we want the list of destinations
+   * \param dstList is the list that will hold all these destination addresses
+   */
+  void
+  GetListOfDestinationWithNextHop (Mac16Address nxtHp, std::map<Mac16Address, L2R_RoutingTableEntry> & dstList);
+  /**
+   * Lookup list of all addresses in the routing table
+   * \param allRoutes is the list that will hold all these addresses present in the nodes routing table
+   */
+  void
+  GetListOfAllRoutes (std::map<Mac16Address, L2R_RoutingTableEntry> & allRoutes);
+  /// Delete all entries from routing table
+  void
+  Clear ()
+  {
+    m_mac16AddressEntry.clear ();
+  }
+  /**
+   * Delete all outdated entries if Lifetime is expired
+   * \param removedAddresses is the list of addresses to purge
+   */
+  void
+  Purge (std::map<Mac16Address, L2R_RoutingTableEntry> & removedAddresses);
+  /**
+   * Print routing table
+   * \param stream the output stream
+   */
+  void
+  Print (Ptr<OutputStreamWrapper> stream) const;
+  /**
+   * Provides the number of routes present in that nodes routing table.
+   * \returns the number of routes
+   */
+  uint32_t
+  RoutingTableSize ();
+  /**
+  * Add an event for a destination address so that the update to for that destination is sent
+  * after the event is completed.
+  * \param address destination address for which this event is running.
+  * \param id unique eventid that was generated.
+  * \return true on success
+  */
+  bool
+  AddMacEvent (Mac16Address address, EventId id);
+  /**
+  * Clear up the entry from the map after the event is completed
+  * \param address destination address for which this event is running.
+  * \return true on success
+  */
+  bool
+  DeleteMacEvent (Mac16Address address);
+  /**
+  * Force delete an update waiting for settling time to complete as a better update to
+  * same destination was received.
+  * \param address destination address for which this event is running.
+  * \return true on success
+  */
+  bool
+  AnyRunningEvent (Mac16Address address);
+  /**
+  * Force delete an update waiting for settling time to complete as a better update to
+  * same destination was received.
+  * \param address destination address for which this event is running.
+  * \return true on finding out that an event is already running for that destination address.
+  */
+  bool
+  ForceDeleteIpv4Event (Mac16Address address);
+  /**
+    * Get the EcentId associated with that address.
+    * \param address destination address for which this event is running.
+    * \return EventId on finding out an event is associated else return NULL.
+    */
+  EventId
+  GetEventId (Mac16Address address);
+
+  /**
+   * Get hold down time (time until an invalid route may be deleted)
+   * \returns the hold down time
+   */
+  Time Getholddowntime () const
+  {
+    return m_holddownTime;
+  }
+  /**
+   * Set hold down time (time until an invalid route may be deleted)
+   * \param t the hold down time
+   */
+  void Setholddowntime (Time t)
+  {
+    m_holddownTime = t;
+  }
+
+private:
+  // Fields
+  /// an entry in the routing table.
+  std::map<Mac16Address, L2R_RoutingTableEntry> m_mac16AddressEntry;
+  /// an entry in the event table.
+  std::map<Mac16Address, EventId> m_macEvents;
+  /// hold down time of an expired route
+  Time m_holddownTime;
+
+};
+
 
 class LrWpanMac : public Object
 {
@@ -633,7 +1024,7 @@ public:
     void L2R_AssignL2RProtocolForSink(Ptr<NetDevice> netDevice, bool isSink, uint8_t lqt, uint8_t tcieInterval);
     void L2R_AssignL2RProtocol(Ptr<NetDevice> netDevice);
     void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
-    void L2R_SendTopologyConstruction();
+    void L2R_SendPeriodicUpdate();
     void L2R_SendTopologyDiscovery();
   
 protected:
@@ -648,10 +1039,12 @@ private:
   bool m_isSink;
   uint8_t m_lqt;
   uint16_t m_msn;
-  uint8_t m_tcieInterval;
+  uint16_t m_depth;
+  Time m_tcieInterval;
   Mac16Address m_rootAddress;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;
+  L2R_RoutingTable m_routingTable;
   /**
    * Helper structure for managing transmission queue elements.
    */
@@ -913,392 +1306,7 @@ private:
 
 //AM: modified at 8/11
 
-enum RouteFlags
-{
-  VALID = 0,     // !< VALID
-  INVALID = 1,     // !< INVALID
-};
-class RoutingTableEntry
-{
-public:
-  /**
-   * c-tor
-   *
-   * 
-   */
-  RoutingTableEntry (Ptr<NetDevice> dev = 0, Mac16Address dst = Mac16Address (), uint16_t depth = 0,
-                     uint16_t PQM = 0,Time lifetime = Simulator::Now (), Time tcieInterval = Simulator::Now (),
-                     Mac16Address nextHop = Mac16Address (), bool changedEntries = false);
 
-  ~RoutingTableEntry ();
-  /**
-   * Get destination MAC address
-   * \returns the destination MAC address (usually Sink node)
-   */
-  Mac16Address
-  GetDestination () const
-  {
-    return m_dst;
-  }
-  /**
-   * Get route
-   * \returns the IPv4 route
-   */
-  /*Ptr<Ipv4Route> //ToDo
-  GetRoute () const
-  {
-    return 
-  }*/
-  /**
-   * Set route
-   * \param route the IPv4 route
-   */
-  /*void
-  SetRoute (Ptr<Ipv4Route> route) //ToDo
-  {
-     = route;
-  }*/
-  /**
-   * Set next hop
-   * \param nextHop the Mac address of the next hop
-   */
-  void
-  SetNextHop (Mac16Address nextHop)
-  {
-    m_nextHop = nextHop;
-  }
-  /**
-   * Get next hop
-   * \returns the Mac address of the next hop
-   */
-  Mac16Address
-  GetNextHop () const
-  {
-    return m_nextHop;
-  }
-  /**
-   * Set output device
-   * \param device the output device
-   */
-  void
-  SetOutputDevice (Ptr<NetDevice> device)
-  {
-    m_outputDevice = device;
-  }
-  /**
-   * Get output device
-   * \returns the output device
-   */
-  Ptr<NetDevice>
-  GetOutputDevice () const
-  {
-    return m_outputDevice;
-  }
-  
-  /**
-   * Set depth
-   * \param depth the depth
-   */
-  void
-  SetDepth (uint16_t depth)
-  {
-    m_depth = depth;
-  }
-  /**
-   * Get depth
-   * \returns the depth
-   */
-  uint32_t
-  GetDepth () const
-  {
-    return m_depth;
-  }
-  /**
-   * Set PQM
-   * \param PQM the PQM
-   */
-  void
-  SetPQM (uint16_t pqm)
-  {
-    m_pqm = pqm;
-  }
-  /**
-   * Get PQM
-   * \returns the PQM count
-   */
-  uint32_t
-  GetPQM () const
-  {
-    return m_pqm;
-  }
-  /**
-   * Set lifetime
-   * \param lifeTime the lifetime value
-   */
-  void
-  SetLifeTime (Time lifeTime)
-  {
-    m_lifeTime = lifeTime;
-  }
-  /**
-   * Get lifetime
-   * \returns the lifetime value
-   */
-  Time
-  GetLifeTime () const
-  {
-    return (Simulator::Now () - m_lifeTime);
-  }
-  /**
-   * Set TC IE Interval time
-   * \param TC IE Interval the TC IE Interval
-   */
-  void
-  SetTCIEInterval (Time tcieinterval)
-  {
-    m_tcieInterval = tcieinterval;
-  }
-  /**
-   * Get TC IE Interval
-   * \returns the TC IE Interval
-   */
-  Time
-  GetTCIEInterval () const
-  {
-    return (m_tcieInterval);
-  }
-  /**
-   * Set route flags
-   * \param flag the route flags
-   */
-  void
-  SetFlag (RouteFlags flag)
-  {
-    m_flag = flag;
-  }
-  /**
-   * Get route flags
-   * \returns the route flags
-   */
-  RouteFlags
-  GetFlag () const
-  {
-    return m_flag;
-  }
-  /**
-   * Set entries changed indicator
-   * \param entriesChanged
-   */
-  void
-  SetEntriesChanged (bool entriesChanged) //ToDo
-  {
-    m_entriesChanged = entriesChanged;
-  }
-  /**
-   * Get entries changed
-   * \returns the entries changed flag
-   */
-  bool
-  GetEntriesChanged () const
-  {
-    return m_entriesChanged;
-  }
-  /**
-   * \brief Compare destination address
-   * \param destination destination node Mac address
-   * \return true if equal
-   */
-  bool
-  operator== (Mac16Address const destination) const
-  {
-    return m_dst == destination;
-  }
-  /**
-   * Print routing table entry
-   * \param stream the output stream
-   */
-  void
-  Print (Ptr<OutputStreamWrapper> stream) const;
-
-private:
-  // Fields
-  /// Destination Sequence Number
-  uint16_t m_depth;
-  /// Hop Count (number of hops needed to reach destination)
-  uint16_t m_pqm;
-  /**
-   * \brief Expiration or deletion time of the route
-   *	Lifetime field in the routing table plays dual role --
-   *	for an active route it is the expiration time, and for an invalid route
-   *	it is the deletion time.
-   */
-  Ptr<NetDevice> m_outputDevice;
-  Time m_lifeTime;
-  
-  /// Routing flags: valid, invalid or in search
-  RouteFlags m_flag; //ToDo
-  /// Time for which the node retains an update with changed metric before broadcasting it.
-  /// A node does that in hope of receiving a better update.
-  Time m_tcieInterval;
-  /// Flag to show if any of the routing table entries were changed with the routing update.
-  uint32_t m_entriesChanged;
-  Mac16Address m_dst;
-  Mac16Address m_nextHop;
-
-
-};
-
-/**
- * \ingroup l2r
- * \brief The Routing table used by L2R protocol
- */
-class RoutingTable
-{
-public:
-  /// c-tor
-  RoutingTable ();
-  /**
-   * Add routing table entry if it doesn't yet exist in routing table
-   * \param r routing table entry
-   * \return true in success
-   */
-  bool
-  AddRoute (RoutingTableEntry & r);
-  /**
-   * Delete routing table entry with destination address dst, if it exists.
-   * \param dst destination address
-   * \return true on success
-   */
-  bool
-  DeleteRoute (Mac16Address dst);
-  /**
-   * Lookup routing table entry with destination address dst
-   * \param dst destination address
-   * \param rt entry with destination address dst, if exists
-   * \return true on success
-   */
-  bool
-  LookupRoute (Mac16Address dst, RoutingTableEntry & rt);
-  /**
-   * Lookup routing table entry with destination address dst
-   * \param id destination address
-   * \param rt entry with destination address dst, if exists
-   * \param forRouteInput for routing input
-   * \return true on success
-   */
-  bool
-  LookupRoute (Mac16Address id, RoutingTableEntry & rt, bool forRouteInput);
-  /**
-   * Updating the routing Table with routing table entry rt
-   * \param rt routing table entry
-   * \return true on success
-   */
-  bool
-  Update (RoutingTableEntry & rt);
-  /**
-   * Lookup list of addresses for which nxtHp is the next Hop address
-   * \param nxtHp nexthop's address for which we want the list of destinations
-   * \param dstList is the list that will hold all these destination addresses
-   */
-  void
-  GetListOfDestinationWithNextHop (Mac16Address nxtHp, std::map<Mac16Address, RoutingTableEntry> & dstList);
-  /**
-   * Lookup list of all addresses in the routing table
-   * \param allRoutes is the list that will hold all these addresses present in the nodes routing table
-   */
-  void
-  GetListOfAllRoutes (std::map<Mac16Address, RoutingTableEntry> & allRoutes);
-  /// Delete all entries from routing table
-  void
-  Clear ()
-  {
-    m_mac16AddressEntry.clear ();
-  }
-  /**
-   * Delete all outdated entries if Lifetime is expired
-   * \param removedAddresses is the list of addresses to purge
-   */
-  void
-  Purge (std::map<Mac16Address, RoutingTableEntry> & removedAddresses);
-  /**
-   * Print routing table
-   * \param stream the output stream
-   */
-  void
-  Print (Ptr<OutputStreamWrapper> stream) const;
-  /**
-   * Provides the number of routes present in that nodes routing table.
-   * \returns the number of routes
-   */
-  uint32_t
-  RoutingTableSize ();
-  /**
-  * Add an event for a destination address so that the update to for that destination is sent
-  * after the event is completed.
-  * \param address destination address for which this event is running.
-  * \param id unique eventid that was generated.
-  * \return true on success
-  */
-  bool
-  AddMacEvent (Mac16Address address, EventId id);
-  /**
-  * Clear up the entry from the map after the event is completed
-  * \param address destination address for which this event is running.
-  * \return true on success
-  */
-  bool
-  DeleteMacEvent (Mac16Address address);
-  /**
-  * Force delete an update waiting for settling time to complete as a better update to
-  * same destination was received.
-  * \param address destination address for which this event is running.
-  * \return true on success
-  */
-  bool
-  AnyRunningEvent (Mac16Address address);
-  /**
-  * Force delete an update waiting for settling time to complete as a better update to
-  * same destination was received.
-  * \param address destination address for which this event is running.
-  * \return true on finding out that an event is already running for that destination address.
-  */
-  bool
-  ForceDeleteIpv4Event (Mac16Address address);
-  /**
-    * Get the EcentId associated with that address.
-    * \param address destination address for which this event is running.
-    * \return EventId on finding out an event is associated else return NULL.
-    */
-  EventId
-  GetEventId (Mac16Address address);
-
-  /**
-   * Get hold down time (time until an invalid route may be deleted)
-   * \returns the hold down time
-   */
-  Time Getholddowntime () const
-  {
-    return m_holddownTime;
-  }
-  /**
-   * Set hold down time (time until an invalid route may be deleted)
-   * \param t the hold down time
-   */
-  void Setholddowntime (Time t)
-  {
-    m_holddownTime = t;
-  }
-
-private:
-  // Fields
-  /// an entry in the routing table.
-  std::map<Mac16Address, RoutingTableEntry> m_mac16AddressEntry;
-  /// an entry in the event table.
-  std::map<Mac16Address, EventId> m_macEvents;
-  /// hold down time of an expired route
-  Time m_holddownTime;
-
-};
 
 } // namespace ns3
 

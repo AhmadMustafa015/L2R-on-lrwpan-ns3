@@ -131,6 +131,7 @@ LrWpanMac::GetTypeId (void)
 }
 
 LrWpanMac::LrWpanMac ()
+:m_periodicUpdateTimer (Timer::CANCEL_ON_DESTROY)
 {
 
   // First set the state to a known value, call ChangeMacState to fire trace source.
@@ -1278,7 +1279,7 @@ void L2R_Header::SetLQT(uint8_t lqt)
 {
   m_LQT = lqt;
 }
-uint8_t
+enum L2R_MsgType
 L2R_Header::GetMsgType (void) const
 {
   return m_msgType;
@@ -1289,18 +1290,8 @@ uint8_t L2R_Header::GetLQT(void) const
 }
 //AM: modified at 6/11 6:03
 //Routing Protocol
-void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
-{
-  std::cout << "Received packet of size " << p->GetSize () << std::endl;
-  //write what to do after recieving the packet
-  //L2R_Header RXHeader;
-
-  /*uint32_t hData = p->PeekHeader(RXHeader);
-  std::cout << "Successfully read " << hData << " Bytes Header " << " Node Depth = " << RXHeader.GetDepth() << std::endl; 
-  std::cout << "Source PAN ID = " << params.m_srcPanId << std::endl;*/
-}
 //AM: modified at 8/11
-RoutingTableEntry::RoutingTableEntry (Ptr<NetDevice> dev,
+L2R_RoutingTableEntry::L2R_RoutingTableEntry (Ptr<NetDevice> dev,
                                       Mac16Address dst,
                                       uint16_t depth,
                                       uint16_t PQM,
@@ -1319,14 +1310,14 @@ RoutingTableEntry::RoutingTableEntry (Ptr<NetDevice> dev,
   m_nextHop = nextHop;
   m_outputDevice = dev;
 }
-RoutingTableEntry::~RoutingTableEntry ()
+L2R_RoutingTableEntry::~L2R_RoutingTableEntry ()
 {
 }
-RoutingTable::RoutingTable ()
+L2R_RoutingTable::L2R_RoutingTable ()
 {
 }
 void
-RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
+L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
 {
   //ToDo
   /**stream->GetStream () << std::setiosflags (std::ios::fixed) << m_ipv4Route->GetDestination () << "\t\t" << m_ipv4Route->GetGateway () << "\t\t"
@@ -1336,15 +1327,15 @@ RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
                         << "s\t\t" << m_settlingTime.GetSeconds () << "s\n";*/
 }
 bool
-RoutingTable::AddRoute (RoutingTableEntry & rt)
+L2R_RoutingTable::AddRoute (L2R_RoutingTableEntry & rt)
 {
   //std::pair is a struct template that provides a way to store two heterogeneous objects as a single unit
-  std::pair<std::map<Mac16Address, RoutingTableEntry>::iterator, bool> result = m_mac16AddressEntry.insert (std::make_pair (
+  std::pair<std::map<Mac16Address, L2R_RoutingTableEntry>::iterator, bool> result = m_mac16AddressEntry.insert (std::make_pair (
                                                                                                             rt.GetDestination (),rt));
   return result.second;
 }
 bool
-RoutingTable::DeleteRoute (Mac16Address dst)
+L2R_RoutingTable::DeleteRoute (Mac16Address dst)
 {
   if (m_mac16AddressEntry.erase (dst) != 0)
     {
@@ -1354,14 +1345,14 @@ RoutingTable::DeleteRoute (Mac16Address dst)
   return false;
 }
 bool
-RoutingTable::LookupRoute (Mac16Address id,
-                           RoutingTableEntry & rt)
+L2R_RoutingTable::LookupRoute (Mac16Address id,
+                           L2R_RoutingTableEntry & rt)
 {
   if (m_mac16AddressEntry.empty ())
     {
       return false;
     }
-  std::map<Mac16Address, RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.find (id);
+  std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.find (id);
   if (i == m_mac16AddressEntry.end ())
     {
       return false;
@@ -1370,15 +1361,15 @@ RoutingTable::LookupRoute (Mac16Address id,
   return true;
 }
 bool
-RoutingTable::LookupRoute (Mac16Address id,
-                           RoutingTableEntry & rt,
+L2R_RoutingTable::LookupRoute (Mac16Address id,
+                           L2R_RoutingTableEntry & rt,
                            bool forRouteInput)
 {
   if (m_mac16AddressEntry.empty ())
     {
       return false;
     }
-  std::map<Mac16Address, RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.find (id);
+  std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.find (id);
   if (i == m_mac16AddressEntry.end ())
     {
       return false;
@@ -1391,9 +1382,9 @@ RoutingTable::LookupRoute (Mac16Address id,
   return true;
 }
 bool
-RoutingTable::Update (RoutingTableEntry & rt)
+L2R_RoutingTable::Update (L2R_RoutingTableEntry & rt)
 {
-  std::map<Mac16Address, RoutingTableEntry>::iterator i = m_mac16AddressEntry.find (rt.GetDestination ());
+  std::map<Mac16Address, L2R_RoutingTableEntry>::iterator i = m_mac16AddressEntry.find (rt.GetDestination ());
   if (i == m_mac16AddressEntry.end ())
     {
       return false;
@@ -1402,11 +1393,11 @@ RoutingTable::Update (RoutingTableEntry & rt)
   return true;
 }
 void
-RoutingTable::GetListOfDestinationWithNextHop (Mac16Address nextHop,
-                                               std::map<Mac16Address, RoutingTableEntry> & unreachable)
+L2R_RoutingTable::GetListOfDestinationWithNextHop (Mac16Address nextHop,
+                                               std::map<Mac16Address, L2R_RoutingTableEntry> & unreachable)
 {
   unreachable.clear ();
-  for (std::map<Mac16Address, RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
+  for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
       if (i->second.GetNextHop () == nextHop)
@@ -1416,9 +1407,9 @@ RoutingTable::GetListOfDestinationWithNextHop (Mac16Address nextHop,
     }
 }
 void
-RoutingTable::GetListOfAllRoutes (std::map<Mac16Address, RoutingTableEntry> & allRoutes)
+L2R_RoutingTable::GetListOfAllRoutes (std::map<Mac16Address, L2R_RoutingTableEntry> & allRoutes)
 {
-  for (std::map<Mac16Address, RoutingTableEntry>::iterator i = m_mac16AddressEntry.begin (); i != m_mac16AddressEntry.end (); ++i)
+  for (std::map<Mac16Address, L2R_RoutingTableEntry>::iterator i = m_mac16AddressEntry.begin (); i != m_mac16AddressEntry.end (); ++i)
     {
       if (i->second.GetFlag () == VALID)
         {
@@ -1428,22 +1419,22 @@ RoutingTable::GetListOfAllRoutes (std::map<Mac16Address, RoutingTableEntry> & al
     }
 }
 void
-RoutingTable::Purge (std::map<Mac16Address, RoutingTableEntry> & removedAddresses)
+L2R_RoutingTable::Purge (std::map<Mac16Address, L2R_RoutingTableEntry> & removedAddresses)
 {
   if (m_mac16AddressEntry.empty ())
     {
       return;
     }
-  for (std::map<Mac16Address, RoutingTableEntry>::iterator i = m_mac16AddressEntry.begin (); i != m_mac16AddressEntry.end (); ) //ToDo
+  for (std::map<Mac16Address, L2R_RoutingTableEntry>::iterator i = m_mac16AddressEntry.begin (); i != m_mac16AddressEntry.end (); ) //ToDo
     {
-      std::map<Mac16Address, RoutingTableEntry>::iterator itmp = i;
+      std::map<Mac16Address, L2R_RoutingTableEntry>::iterator itmp = i;
       if (i->second.GetLifeTime () > m_holddownTime && (i->second.GetDepth () > 0))
         {
-          for (std::map<Mac16Address, RoutingTableEntry>::iterator j = m_mac16AddressEntry.begin (); j != m_mac16AddressEntry.end (); )
+          for (std::map<Mac16Address, L2R_RoutingTableEntry>::iterator j = m_mac16AddressEntry.begin (); j != m_mac16AddressEntry.end (); )
             {
               if ((j->second.GetNextHop () == i->second.GetDestination ()) && (i->second.GetDepth () != j->second.GetDepth ()))
                 {
-                  std::map<Mac16Address, RoutingTableEntry>::iterator jtmp = j;
+                  std::map<Mac16Address, L2R_RoutingTableEntry>::iterator jtmp = j;
                   removedAddresses.insert (std::make_pair (j->first,j->second));
                   ++j;
                   m_mac16AddressEntry.erase (jtmp);
@@ -1471,10 +1462,10 @@ RoutingTable::Purge (std::map<Mac16Address, RoutingTableEntry> & removedAddresse
   return;
 }
 void
-RoutingTable::Print (Ptr<OutputStreamWrapper> stream) const
+L2R_RoutingTable::Print (Ptr<OutputStreamWrapper> stream) const
 {
   *stream->GetStream () << "\nL2R Routing table\n" << "Destination\t\tGateway\t\tInterface\t\tdepth\t\tSeqNum\t\tLifeTime\t\tSettlingTime\n"; //ToDo
-  for (std::map<Mac16Address, RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
+  for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
       i->second.Print (stream);
@@ -1482,19 +1473,19 @@ RoutingTable::Print (Ptr<OutputStreamWrapper> stream) const
   *stream->GetStream () << "\n";
 }
 uint32_t
-RoutingTable::RoutingTableSize ()
+L2R_RoutingTable::RoutingTableSize ()
 {
   return m_mac16AddressEntry.size ();
 }
 bool
-RoutingTable::AddMacEvent (Mac16Address address,
+L2R_RoutingTable::AddMacEvent (Mac16Address address,
                             EventId id)
 {
   std::pair<std::map<Mac16Address, EventId>::iterator, bool> result = m_macEvents.insert (std::make_pair (address,id));
   return result.second;
 }
 bool
-RoutingTable::DeleteMacEvent (Mac16Address address)
+L2R_RoutingTable::DeleteMacEvent (Mac16Address address)
 {
   EventId event;
   std::map<Mac16Address, EventId>::const_iterator i = m_macEvents.find (address);
@@ -1520,7 +1511,7 @@ RoutingTable::DeleteMacEvent (Mac16Address address)
     }
 }
 bool
-RoutingTable::AnyRunningEvent (Mac16Address address)
+L2R_RoutingTable::AnyRunningEvent (Mac16Address address)
 {
   EventId event;
   std::map<Mac16Address, EventId>::const_iterator i = m_macEvents.find (address);
@@ -1543,7 +1534,7 @@ RoutingTable::AnyRunningEvent (Mac16Address address)
     }
 }
 bool
-RoutingTable::ForceDeleteIpv4Event (Mac16Address address)
+L2R_RoutingTable::ForceDeleteIpv4Event (Mac16Address address)
 {
   EventId event;
   std::map<Mac16Address, EventId>::const_iterator i = m_macEvents.find (address);
@@ -1557,7 +1548,7 @@ RoutingTable::ForceDeleteIpv4Event (Mac16Address address)
   return true;
 }
 EventId
-RoutingTable::GetEventId (Mac16Address address)
+L2R_RoutingTable::GetEventId (Mac16Address address)
 {
   std::map <Mac16Address, EventId>::const_iterator i = m_macEvents.find (address);
   if (m_macEvents.empty () || i == m_macEvents.end ())
@@ -1584,14 +1575,11 @@ LrWpanMac::L2R_AssignL2RProtocol(Ptr<NetDevice> netDevice)
   m_netDevice = netDevice;
 }
 void
-LrWpanMac::L2R_SendTopologyConstruction()
+LrWpanMac::L2R_SendPeriodicUpdate()
 {
   if (m_isSink)
   {
-    if(m_msn > 0xef && m_msn <= 0xff)
-    {
     L2R_Header TC_IE_H;
-    m_rootAddress = m_netDevice->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress();
     TC_IE_H.SetMeshRootAddress(m_rootAddress);
     TC_IE_H.SetMsgType(TC_IE);
     TC_IE_H.SetPQM(0);
@@ -1609,16 +1597,32 @@ LrWpanMac::L2R_SendTopologyConstruction()
     params.m_txOptions = TX_OPTION_NONE;
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
-    m_msn = 0x00; 
-    //m_periodicUpdateTimer.Schedule (m_periodicUpdateInterval + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
-    }
+    if(m_msn > 0xef && m_msn <= 0xff)
+      m_msn = 0x00;
     else
-    {
-      
-      
-    }
-    
+      ++m_msn;
+  else
+  {
+    L2R_Header TC_IE_H;
+    TC_IE_H.SetMeshRootAddress(this->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress());
+    TC_IE_H.SetMsgType(TC_IE);
+    TC_IE_H.SetPQM(0);
+    TC_IE_H.SetMSN(m_msn);
+    TC_IE_H.SetLQT(m_lqt);
+    TC_IE_H.SetTCIEInterval(m_tcieInterval);
+    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+    p0->AddHeader (TC_IE_H);
+    McpsDataRequestParams params;
+    params.m_dstPanId = this->GetPanId();
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    params.m_txOptions = TX_OPTION_NONE;
+    Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
+                             params, p0);
   }
+  m_periodicUpdateTimer.Schedule (m_tcieInterval + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
 }
 void
 LrWpanMac::L2R_SendTopologyDiscovery()
@@ -1646,6 +1650,118 @@ LrWpanMac::L2R_SendTopologyDiscovery()
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
   }
+}
+  void 
+  LrWpanMac::Start()
+  {
+    m_periodicUpdateTimer.SetFunction (&RoutingProtocol::L2R_SendPeriodicUpdate,this);
+    if(is_sink)
+    {
+      m_periodicUpdateTimer.Schedule (MicroSeconds (m_uniformRandomVariable->GetInteger (0,1000)));
+    }
+  }
+void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
+{
+  std::cout << "Received packet of size " << p->GetSize () << std::endl;
+  L2R_Header L2rRxMsg;
+  p->RemoveHeader(L2rRxMsg);
+  McpsDataIndicationParams rxParams;
+  Mac16Address sender = rxParams.m_scrAddr;
+  Mac16Address reciever = rxParams.m_scrAddr;
+  uint16_t tempPqm = L2rRxMsg.GetPQM();
+  uint16_t tempDepth = L2rRxMsg.GetDepth();
+  uint16_t tempMsn  = L2rRxMsg.GetMSN();
+  m_tcieInterval = Time(L2rRxMsg.GetTCIEInterval());
+  NS_LOG_FUNCTION ("Received a l2r packet from "
+                  << sender << " to " << receiver << ". Details are: Destination: " << L2rRxMsg.GetMeshRootAddress () << ", PQM: "
+                  << L2rRxMsg.GetPQM () << ", depth: " << L2rRxMsg.Getdepth ());
+  L2R_RoutingTableEntry tableEntry;
+  EventId event;
+  NetDevice dev; //ToDo Delete
+
+      
+  switch (L2rRxMsg.GetMsgType())
+  {
+  case TC_IE:
+    uint16_t rx_depth = L2rRxMsg.GetDepth ();
+    if(tempMsn > 0xf0)
+    {       
+      if(!is_sink && depth == 0)
+      {
+        uint16_t tempLqm = 0; //calculate LQM
+        tempPqm += temLqm;
+        m_depth = tempDepth + 1;  
+          RoutingTableEntry newEntry (
+                dev, //ToDo added Device
+                tempDepth,
+                tempPqm,
+                Time Life Time, //ToDo Life Time
+                Time(tempTcieInterval),//ToDo convert TcIE to time
+                source,
+                false);
+              newEntry.SetFlag (VALID);
+              m_routingTable.addedRoute (newEntry);
+              NS_LOG_FUNCTION ("New Route added to routing tables");
+              //ToDo my depth
+      }
+      else
+      {
+        if (tempDepth > m_Depth)
+        {
+          //if Rx msg from upstream node discard
+          return;
+        }
+        else
+        {
+          bool tableVerifier = m_routingTable.LookupRoute (sender,tableEntry);
+          if(tableVerifier == false) //already have this route in the entry
+          {
+            return;
+          }
+          else
+          {
+            uint16_t tempLqm = 0; //calculate LQM
+            tempPqm += temLqm;
+            NetDevice dev;
+            RoutingTableEntry newEntry (
+            dev, //ToDo added Device
+            tempDepth,
+            tempPqm,
+            Simulator::Now (), //ToDo Life Time
+            m_tcieInterval,//ToDo convert TcIE to time
+            source,
+            false);
+            newEntry.SetFlag (VALID);
+            m_routingTable.addedRoute (newEntry);
+            NS_LOG_FUNCTION ("New Route added to routing tables");
+          }
+          uint16_t minPqm = 0;
+          for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_routingTable.begin (); i
+            != m_routingTable.end (); ++i) 
+          {
+            if(i->second.GetPqm () < min Pqm)
+            {
+              minPqm = i->second.GetPqm ();
+              m_depth = i->second.GetDepth + 1;
+            }
+          }     
+          //look if the mac in the routing table Done
+          //do the pqm condition Done
+          //ToDo my depth Done
+        } 
+      }
+    }
+      //msn < 0xf0
+    break;
+  case L2R_D_IE:
+
+  break;
+  case DataHeader:
+
+  break;
+  }
+
   
 }
+
 } // namespace ns3
