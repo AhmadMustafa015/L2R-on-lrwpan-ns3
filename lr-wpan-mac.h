@@ -1041,7 +1041,7 @@ private:
   uint8_t m_lqt;
   uint16_t m_msn;
   uint16_t m_depth;
-  uint16_t m_tcieInterval;
+  uint8_t m_tcieInterval;
   Mac16Address m_rootAddress;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;

@@ -1634,7 +1634,7 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
   }
-  m_periodicUpdateTimer.Schedule (Time(m_tcieInterval) + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
+  m_periodicUpdateTimer.Schedule (Seconds(m_tcieInterval) + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
 }
 void
 LrWpanMac::L2R_SendTopologyDiscovery()
@@ -1691,7 +1691,8 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
   EventId event;
   Ptr<NetDevice> dev = 0; //ToDo Delete
 
-      
+  bool tableVerifier = m_routingTable.LookupRoute (sender,tableEntry);
+    
   switch (L2rRxMsg.GetMsgType())
   {
   case TC_IE:
@@ -1724,7 +1725,6 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
         }
         else
         {
-          bool tableVerifier = m_routingTable.LookupRoute (sender,tableEntry);
           if(tableVerifier == false) //already have this route in the entry
           {
             return;
@@ -1763,7 +1763,68 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
         } 
       }
     }
-      //msn < 0xf0
+    else //msn < 0xf0
+    {
+      if(tableVerifier == false) //new Entry
+      {
+        uint16_t tempLqm = 0; //calculate LQM
+        tempPqm += tempLqm;
+        L2R_RoutingTableEntry newEntry (
+        dev, //ToDo added Device
+        tempDepth,
+        tempPqm,
+        Simulator::Now (), //ToDo Life Time
+        Time(m_tcieInterval),//ToDo convert TcIE to time
+        sender,
+        false);
+        newEntry.SetFlag (VALID);
+        m_routingTable.AddRoute (newEntry);
+        NS_LOG_FUNCTION ("New Route added to routing tables");
+        uint16_t minPqm = 0;
+        std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
+        m_routingTable.GetListOfAllRoutes(allRoutes);
+        for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
+          != allRoutes.end (); ++i) 
+        {
+        if(i->second.GetPQM () < minPqm)
+          {
+            minPqm = i->second.GetPQM ();
+            m_depth = i->second.GetDepth() + 1;
+          }
+        }
+     }
+     else
+     {
+       uint16_t tempLqm = 0; //calculate LQM
+       tempPqm += tempLqm;
+       tableEntry.SetDepth(tempDepth);
+       tableEntry.SetEntriesChanged(true);
+       tableEntry.SetFlag(VALID);
+       tableEntry.SetNextHop(sender);
+       tableEntry.SetLifeTime(Simulator::Now ());
+       tableEntry.SetPQM(tempPqm);
+       NS_LOG_FUNCTION ("Received update");
+       uint16_t minPqm = 0;
+        std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
+        m_routingTable.GetListOfAllRoutes(allRoutes);
+        for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
+          != allRoutes.end (); ++i) 
+        {
+        if(i->second.GetPQM () < minPqm)
+          {
+            minPqm = i->second.GetPQM ();
+            m_depth = i->second.GetDepth() + 1;
+          }
+        }
+       event = Simulator::Schedule (Simulator::Now() + Seconds(m_tcieInterval),&LrWpanMac::L2R_SendPeriodicUpdate,this);
+       m_routingTable.AddMacEvent(sender, event);
+       NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
+       m_routingTable.Update(tableEntry);
+     }
+
+     
+    }
+    
     break;
   case L2R_D_IE:
 
