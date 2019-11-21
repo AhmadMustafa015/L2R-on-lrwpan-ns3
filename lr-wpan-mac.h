@@ -41,6 +41,7 @@
 #include "ns3/output-stream-wrapper.h"
 #include "ns3/net-device.h"
 #include "ns3/timer.h"
+#include "ns3/random-variable-stream.h"
 namespace ns3 {
   //AM: modified at 4/11
 
@@ -1040,11 +1041,12 @@ private:
   uint8_t m_lqt;
   uint16_t m_msn;
   uint16_t m_depth;
-  Time m_tcieInterval;
+  uint16_t m_tcieInterval;
   Mac16Address m_rootAddress;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;
   L2R_RoutingTable m_routingTable;
+  Ptr<UniformRandomVariable> m_uniformRandomVariable;
   /**
    * Helper structure for managing transmission queue elements.
    */
