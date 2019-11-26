@@ -1110,7 +1110,7 @@ L2R_Header::L2R_Header ()
   m_depth = 0;
   m_MSN = 0;
   m_PQM = 0;
-  m_meshRootAddress = 0;
+  m_meshRootAddress = Mac16Address("00:00");
   m_TCIEInterval = 0;
   m_msgType = DataHeader;
   m_LQT = 0;
@@ -1330,12 +1330,12 @@ L2R_RoutingTable::L2R_RoutingTable ()
 void
 L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
 {
-  //ToDo
-  /**stream->GetStream () << std::setiosflags (std::ios::fixed) << m_ipv4Route->GetDestination () << "\t\t" << m_ipv4Route->GetGateway () << "\t\t"
-                        << m_iface.GetLocal () << "\t\t" << std::setiosflags (std::ios::left)
-                        << std::setw (10) << m_hops << "\t" << std::setw (10) << m_seqNo << "\t"
+  
+ /* stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t" <<
+                        << std::setiosflags (std::ios::left)
+                        << std::setw (10) << m_depth << "\t" << std::setw (10) << m_pqm << "\t"
                         << std::setprecision (3) << (Simulator::Now () - m_lifeTime).GetSeconds ()
-                        << "s\t\t" << m_settlingTime.GetSeconds () << "s\n";*/
+                        << "s\t\t" << m_tcieInterval.GetSeconds () << "s\n";*/
 }
 bool
 L2R_RoutingTable::AddRoute (L2R_RoutingTableEntry & rt)
@@ -1403,10 +1403,11 @@ L2R_RoutingTable::Update (L2R_RoutingTableEntry & rt)
   i->second = rt;
   return true;
 }
-void
+bool
 L2R_RoutingTable::GetListOfDestinationWithNextHop (std::map<Mac16Address, L2R_RoutingTableEntry> & possibleRoutes,
                              const uint16_t myDepth)
 {
+  possibleRoutes.clear();
   for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
@@ -1416,6 +1417,10 @@ L2R_RoutingTable::GetListOfDestinationWithNextHop (std::map<Mac16Address, L2R_Ro
             std::make_pair (i->first,i->second));
         }
     }
+    if(possibleRoutes.empty() == true)
+      return false;
+    else
+      return true;
 }
 void
 L2R_RoutingTable::GetListOfAllRoutes (std::map<Mac16Address, L2R_RoutingTableEntry> & allRoutes)
@@ -1463,7 +1468,7 @@ L2R_RoutingTable::Purge (std::map<Mac16Address, L2R_RoutingTableEntry> & removed
 void
 L2R_RoutingTable::Print (Ptr<OutputStreamWrapper> stream) const
 {
-  *stream->GetStream () << "\nL2R Routing table\n" << "Destination\t\tGateway\t\tInterface\t\tdepth\t\tSeqNum\t\tLifeTime\t\tSettlingTime\n"; //ToDo
+  *stream->GetStream () << "\nL2R Routing table\n" << "Destination\t\tdepth\t\tPQM\t\tLifeTime\t\tTCIEInterval\n";
   for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
@@ -1639,15 +1644,15 @@ LrWpanMac::L2R_SendTopologyDiscovery()
                              params, p0);
   }
 }
-  void 
-  LrWpanMac::L2R_Start()
+void 
+LrWpanMac::L2R_Start()
+{
+  m_periodicUpdateTimer.SetFunction (&LrWpanMac::L2R_SendPeriodicUpdate,this);
+  if(m_isSink)
   {
-    m_periodicUpdateTimer.SetFunction (&LrWpanMac::L2R_SendPeriodicUpdate,this);
-    if(m_isSink)
-    {
-      m_periodicUpdateTimer.Schedule (MicroSeconds (m_uniformRandomVariable->GetInteger (0,1000)));
-    }
+    m_periodicUpdateTimer.Schedule (MicroSeconds (m_uniformRandomVariable->GetInteger (0,1000)));
   }
+}
 void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
 {
   NS_LOG_FUNCTION ("Received packet of size " << p->GetSize ());
@@ -1753,7 +1758,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
         newEntry.SetFlag (VALID);
         m_routingTable.AddRoute (newEntry);
         NS_LOG_FUNCTION ("New Route added to routing tables");
-        uint16_t minPqm = 0;
+        uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
         for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
@@ -1779,7 +1784,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
        tableEntry.SetLifeTime(Simulator::Now ());
        tableEntry.SetPQM(tempPqm);
        NS_LOG_FUNCTION ("Received update");
-       uint16_t minPqm = 0;
+       uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
         for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
@@ -1818,32 +1823,55 @@ LrWpanMac::OutputRoute()
 {
   std::map<uint16_t, L2R_RoutingTableEntry> PQMValues;
   std::map<Mac16Address, L2R_RoutingTableEntry> possibleRoutes;
-  m_routingTable.GetListOfDestinationWithNextHop(possibleRoutes, m_depth);  // neighbours with depth < my_depth
-  std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = possibleRoutes.begin();
-  for(;i != possibleRoutes.end(); ++i)
+  bool anyAvailabeAncestor;
+  anyAvailabeAncestor = m_routingTable.GetListOfDestinationWithNextHop(possibleRoutes, m_depth);  // neighbours with depth < my_depth
+  Mac16Address nextHopAddress = 0;
+  if(anyAvailabeAncestor == true)
   {
-    PQMValues.insert(std::make_pair(i->second.GetPQM(), i->second));    // sorted map according to PQM, but not Depth: add later to generalize
-
-  }
-
-  std::map<uint16_t, L2R_RoutingTableEntry>::const_iterator j = PQMValues.begin();
-  Mac16Address nextHopAddress = "00:00";
-  for(;j != PQMValues.end(); ++j)
-    if(j->second.GetLQM() <= m_lqt)  // no GetLQM function in L2R_RoutingTableEntry? Add it?
+    std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = possibleRoutes.begin();
+    for(;i != possibleRoutes.end(); ++i)
     {
-      nextHopAddress = j->second.GetNextHop();
-      return nextHopAddress;
+      PQMValues.insert(std::make_pair(i->second.GetPQM(), i->second));    // sorted map according to PQM, but not Depth: add later to generalize
+
     }
-  j = PQMValues.begin();
-  uint16_t minLQM = j->second.GetLQM();
-  for(;j != PQMValues.end(); ++j)   // send to lowest LQM
+
+    std::map<uint16_t, L2R_RoutingTableEntry>::const_iterator j = PQMValues.begin();
+    for(;j != PQMValues.end(); ++j)
+    {
+      if(j->second.GetLQM() <= m_lqt)  // no GetLQM function in L2R_RoutingTableEntry? Add it?
+        {
+          nextHopAddress = j->second.GetNextHop();
+          return nextHopAddress;
+        }
+    }
+    j = PQMValues.begin();
+    uint16_t minLQM = j->second.GetLQM();
+    for(;j != PQMValues.end(); ++j)   // send to lowest LQM
+    {
+      if(j->second.GetLQM() < minLQM)
+      {
+        minLQM = j->second.GetLQM();
+        nextHopAddress = j->second.GetNextHop();
+      }
+    }
+    return nextHopAddress;
+  }
+  else
   {
-    if(j->second.GetLQM() < minLQM)
-    {
-      minLQM = j->second.GetLQM();
-      nextHopAddress = j->second.GetNextHop();
-    }
+		std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
+    m_routingTable.GetListOfAllRoutes(allRoutes);
+		std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin ();
+		uint16_t minDepth = i->second.GetDepth();
+    for (; i != allRoutes.end (); ++i) 
+  	{
+    	if(i->second.GetDepth () < minDepth)
+          {
+            m_depth = i->second.GetDepth() + 1;
+            nextHopAddress = i->first;
+          }
+    } // continou cout mac in lower depth
+    return nextHopAddress;
   }
-  return nextHopAddress;
+  
 }
 } // namespace ns3

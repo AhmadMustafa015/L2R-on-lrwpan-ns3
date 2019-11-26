@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
   Packet::EnablePrinting ();
 
   // instantiate a header.
-  Ptr<Packet> p0 = Create<Packet> (50);
+  /*Ptr<Packet> p0 = Create<Packet> (50);
   //sending process
   McpsDataRequestParams params;
   params.m_dstPanId = 10;
@@ -158,8 +158,10 @@ int main (int argc, char *argv[])
   }
   Simulator::ScheduleWithContext (1, Seconds (1.0),
                                   &LrWpanMac::McpsDataRequest,
-                                  devContainer.Get(0)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p2);
+                                  devContainer.Get(0)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p2);*/
 
+  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, 10);
+  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_SendTopologyDiscovery();
   Simulator::Run ();
   AnimationInterface anim ("lrwpan-data.xml");
 

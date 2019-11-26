@@ -578,7 +578,7 @@ public:
    * \param nxtHp nexthop's address for which we want the list of destinations
    * \param dstList is the list that will hold all these destination addresses
    */
-  void
+  bool
   GetListOfDestinationWithNextHop (std::map<Mac16Address, L2R_RoutingTableEntry> & possibleRoutes,
                              const uint16_t myDepth);
   /**
