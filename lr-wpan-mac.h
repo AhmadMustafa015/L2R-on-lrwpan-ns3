@@ -20,6 +20,8 @@
  *  kwong yin <kwong-sang.yin@boeing.com>
  *  Tom Henderson <thomas.r.henderson@boeing.com>
  *  Sascha Alexander Jopen <jopen@cs.uni-bonn.de>
+ *  For IEEE 802.15.10:
+ *  Ahmad Mustafa Abdel-Qader <ahmad.m.abdelqader@gmail.com>
  */
 #ifndef LR_WPAN_MAC_H
 #define LR_WPAN_MAC_H
@@ -39,7 +41,6 @@
 #include <map>
 #include <sys/types.h>
 #include "ns3/output-stream-wrapper.h"
-#include "ns3/net-device.h"
 #include "ns3/timer.h"
 #include "ns3/random-variable-stream.h"
 namespace ns3 {
@@ -47,7 +48,6 @@ namespace ns3 {
 
 class Packet;
 class LrWpanCsmaCa;
-class NetDevice;
 
 /**
  * \defgroup lr-wpan LR-WPAN models
@@ -306,9 +306,8 @@ public:
    *
    * 
    */
-  L2R_RoutingTableEntry (Ptr<NetDevice> dev = 0, uint16_t depth = 0,
-                     uint16_t PQM = 0,Time lifetime = Simulator::Now (), Time tcieInterval = Simulator::Now (),
-                     Mac16Address nextHop = Mac16Address (), bool changedEntries = false);
+  L2R_RoutingTableEntry (uint16_t depth = 0, uint16_t PQM = 0,Time lifetime = Simulator::Now (), Time tcieInterval = Simulator::Now (),
+                     Mac16Address nextHop = Mac16Address (), bool changedEntries = false); //added MSN
 
   ~L2R_RoutingTableEntry ();
   /**
@@ -356,25 +355,6 @@ public:
   {
     return m_nextHop;
   }
-  /**
-   * Set output device
-   * \param device the output device
-   */
-  void
-  SetOutputDevice (Ptr<NetDevice> device)
-  {
-    m_outputDevice = device;
-  }
-  /**
-   * Get output device
-   * \returns the output device
-   */
-  Ptr<NetDevice>
-  GetOutputDevice () const
-  {
-    return m_outputDevice;
-  }
-  
   /**
    * Set depth
    * \param depth the depth
@@ -499,7 +479,16 @@ public:
    */
   void
   Print (Ptr<OutputStreamWrapper> stream) const;
-
+  void
+  GetL2rMissedTcIe () 
+  {
+    return m_l2rMissedTcIe; 
+  }
+  void
+  IncL2rMissedTcIe () 
+  {
+    ++m_l2rMissedTcIe; 
+  }
 private:
   // Fields
   /// Destination Sequence Number
@@ -512,7 +501,6 @@ private:
    *	for an active route it is the expiration time, and for an invalid route
    *	it is the deletion time.
    */
-  Ptr<NetDevice> m_outputDevice;
   Time m_lifeTime;
   
   /// Routing flags: valid, invalid or in search
@@ -522,10 +510,9 @@ private:
   Time m_tcieInterval;
   /// Flag to show if any of the routing table entries were changed with the routing update.
   uint32_t m_entriesChanged;
+  uint8_t m_l2rMissedTcIe;
   Mac16Address m_dst;
   Mac16Address m_nextHop;
-
-
 };
 
 /**
@@ -668,7 +655,14 @@ public:
   {
     m_holddownTime = t;
   }
-
+  void SetL2rMaxMissedTcIe(uint8_t l2rMaxMissedTcIe)
+  {
+    m_l2rMaxMissedTcIe = l2rMaxMissedTcIe;
+  }
+  void GetL2rMaxMissedTcIe()
+  {
+    return m_l2rMaxMissedTcIe;
+  }
 private:
   // Fields
   /// an entry in the routing table.
@@ -677,6 +671,8 @@ private:
   std::map<Mac16Address, EventId> m_macEvents;
   /// hold down time of an expired route
   Time m_holddownTime;
+  uint8_t m_l2rMaxMissedTcIe;
+  
 
 };
 
@@ -1022,21 +1018,21 @@ public:
     //AM: modified at 7/11
     //void AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol);
     //L2R Protocol
-    void L2R_AssignL2RProtocolForSink(Ptr<NetDevice> netDevice, bool isSink, uint8_t lqt, uint8_t tcieInterval);
-    void L2R_AssignL2RProtocol(Ptr<NetDevice> netDevice);
+    void L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieInterval);
     void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
     void L2R_SendPeriodicUpdate();
     void L2R_SendTopologyDiscovery();
-  
+    void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
+    //AB: modified on 19/11
+    Mac16Address OutputRoute();
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
   virtual void DoDispose (void);
+  void L2R_Start (); 
 
 private:
   //AM: modified at 15/11
-  void L2R_Start (); 
-  Ptr<NetDevice> m_netDevice;
   bool m_isSink;
   uint8_t m_lqt;
   uint16_t m_msn;
