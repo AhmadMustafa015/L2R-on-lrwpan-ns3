@@ -346,6 +346,16 @@ public:
   {
     m_nextHop = nextHop;
   }
+  void
+  SetLQM(uint16_t lqm)
+  {
+    m_lqm = lqm;
+  }
+  uint16_t 
+  GetLQM() const
+  {
+    return m_lqm;
+  }
   /**
    * Get next hop
    * \returns the Mac address of the next hop
@@ -386,7 +396,7 @@ public:
    * Get PQM
    * \returns the PQM count
    */
-  uint32_t
+  uint16_t
   GetPQM () const
   {
     return m_pqm;
@@ -479,7 +489,7 @@ public:
    */
   void
   Print (Ptr<OutputStreamWrapper> stream) const;
-  void
+  uint8_t
   GetL2rMissedTcIe () 
   {
     return m_l2rMissedTcIe; 
@@ -513,6 +523,7 @@ private:
   uint8_t m_l2rMissedTcIe;
   Mac16Address m_dst;
   Mac16Address m_nextHop;
+  uint16_t m_lqm;
 };
 
 /**
@@ -568,7 +579,8 @@ public:
    * \param dstList is the list that will hold all these destination addresses
    */
   void
-  GetListOfDestinationWithNextHop (Mac16Address nxtHp, std::map<Mac16Address, L2R_RoutingTableEntry> & dstList);
+  GetListOfDestinationWithNextHop (std::map<Mac16Address, L2R_RoutingTableEntry> & possibleRoutes,
+                             const uint16_t myDepth);
   /**
    * Lookup list of all addresses in the routing table
    * \param allRoutes is the list that will hold all these addresses present in the nodes routing table
@@ -623,14 +635,7 @@ public:
   */
   bool
   AnyRunningEvent (Mac16Address address);
-  /**
-  * Force delete an update waiting for settling time to complete as a better update to
-  * same destination was received.
-  * \param address destination address for which this event is running.
-  * \return true on finding out that an event is already running for that destination address.
-  */
-  bool
-  ForceDeleteIpv4Event (Mac16Address address);
+
   /**
     * Get the EcentId associated with that address.
     * \param address destination address for which this event is running.
@@ -659,7 +664,7 @@ public:
   {
     m_l2rMaxMissedTcIe = l2rMaxMissedTcIe;
   }
-  void GetL2rMaxMissedTcIe()
+  uint8_t GetL2rMaxMissedTcIe()
   {
     return m_l2rMaxMissedTcIe;
   }

@@ -1404,16 +1404,16 @@ L2R_RoutingTable::Update (L2R_RoutingTableEntry & rt)
   return true;
 }
 void
-L2R_RoutingTable::GetListOfDestinationWithNextHop (Mac16Address nextHop,
-                                               std::map<Mac16Address, L2R_RoutingTableEntry> & unreachable)
+L2R_RoutingTable::GetListOfDestinationWithNextHop (std::map<Mac16Address, L2R_RoutingTableEntry> & possibleRoutes,
+                             const uint16_t myDepth)
 {
-  unreachable.clear ();
   for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
-      if (i->second.GetNextHop () == nextHop)
+      if (i->second.GetDepth () < myDepth)
         {
-          unreachable.insert (std::make_pair (i->first,i->second));
+          possibleRoutes.insert (
+            std::make_pair (i->first,i->second));
         }
     }
 }
@@ -1441,7 +1441,7 @@ L2R_RoutingTable::Purge (std::map<Mac16Address, L2R_RoutingTableEntry> & removed
       std::map<Mac16Address, L2R_RoutingTableEntry>::iterator itmp = i;
       if (i->second.GetLifeTime () > m_holddownTime && (i->second.GetDepth () > 0)) //holding time is TCIE interval and not sink
       {
-        if(i->second.GetL2rMissedTcIe >= m_l2rMaxMissedTcIe)
+        if(i->second.GetL2rMissedTcIe() >= m_l2rMaxMissedTcIe)
         {
           removedAddresses.insert (std::make_pair (i->first,i->second));
           ++i;
@@ -1532,20 +1532,6 @@ L2R_RoutingTable::AnyRunningEvent (Mac16Address address)
       return false;
     }
 }
-bool
-L2R_RoutingTable::ForceDeleteIpv4Event (Mac16Address address)
-{
-  EventId event;
-  std::map<Mac16Address, EventId>::const_iterator i = m_macEvents.find (address);
-  if (m_macEvents.empty () || i == m_macEvents.end ())
-    {
-      return false;
-    }
-  event = i->second;
-  Simulator::Cancel (event);
-  m_macEvents.erase (address);
-  return true;
-}
 EventId
 L2R_RoutingTable::GetEventId (Mac16Address address)
 {
@@ -1570,7 +1556,7 @@ LrWpanMac::L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieIn
 void
 LrWpanMac::L2R_SendPeriodicUpdate()
 {
-  std::map<Ipv4Address, RoutingTableEntry> removedAddresses;
+  std::map <Mac16Address, L2R_RoutingTableEntry> removedAddresses;
   m_routingTable.Purge (removedAddresses);
   if (m_isSink)
   {
@@ -1587,7 +1573,7 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     params.m_dstPanId = this->GetPanId();
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_dstAddr = "ff:ff";
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_NONE;
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
@@ -1600,7 +1586,7 @@ LrWpanMac::L2R_SendPeriodicUpdate()
   else
   {
     L2R_Header TC_IE_H;
-    TC_IE_H.SetMeshRootAddress(this->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress());
+    TC_IE_H.SetMeshRootAddress(m_rootAddress);
     TC_IE_H.SetMsgType(TC_IE);
     TC_IE_H.SetPQM(0);
     TC_IE_H.SetMSN(m_msn);
@@ -1612,17 +1598,17 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     params.m_dstPanId = this->GetPanId();
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_dstAddr = "ff:ff";
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_NONE;
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
   }
-  for (std::map<Ipv4Address, L2R_RoutingTableEntry>::const_iterator rmItr = removedAddresses.begin (); rmItr
+  for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator rmItr = removedAddresses.begin (); rmItr
            != removedAddresses.end (); ++rmItr)
   {
-    NS_LOG_DEBUG ("Update for removed record is: Destination: " << rmItr->first()
-                                                                << " depth:" << rmItr->second.GetDepth();
+    NS_LOG_FUNCTION ("Update for removed record is: Destination: " << rmItr->second.GetDestination()
+                                                                << " depth:" << rmItr->second.GetDepth());
   }
   m_periodicUpdateTimer.Schedule (Seconds(m_tcieInterval) + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
 }
@@ -1637,7 +1623,7 @@ LrWpanMac::L2R_SendTopologyDiscovery()
   else
   {
     L2R_Header L2R_DIE;
-    m_rootAddress = m_netDevice->GetObject<LrWpanNetDevice> ()->GetMac ()->GetShortAddress(); //change root name
+    m_rootAddress = m_shortAddress; //change root name
     L2R_DIE.SetMeshRootAddress(m_rootAddress);
     L2R_DIE.SetMsgType(L2R_D_IE);
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
@@ -1646,7 +1632,7 @@ LrWpanMac::L2R_SendTopologyDiscovery()
     params.m_dstPanId = this->GetPanId();
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = Mac16Address::ConvertFrom(m_netDevice->GetObject<LrWpanNetDevice> ()->GetBroadcast());
+    params.m_dstAddr = "ff:ff";
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_NONE;
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
@@ -1782,7 +1768,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
      }
      else
      {
-       if(m_msn == 0xef && tempMsn < 0xef || m_msn < tempMsn)
+       if((m_msn == 0xef && tempMsn < 0xef) || m_msn < tempMsn)
        {
         uint16_t tempLqm = 0; //calculate LQM
        tempPqm += tempLqm;
@@ -1830,16 +1816,17 @@ LrWpanMac::L2R_MaxMissedTcIeMsg (uint8_t maxMissed)
 Mac16Address
 LrWpanMac::OutputRoute()
 {
-  std::map<uint32_t, L2R_RoutingTableEntry> PQMValues;
+  std::map<uint16_t, L2R_RoutingTableEntry> PQMValues;
   std::map<Mac16Address, L2R_RoutingTableEntry> possibleRoutes;
-  m_routingTable.GetListOfDestinationWithNextHop(possibleRoutes);  // neighbours with depth < my_depth
+  m_routingTable.GetListOfDestinationWithNextHop(possibleRoutes, m_depth);  // neighbours with depth < my_depth
   std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = possibleRoutes.begin();
   for(;i != possibleRoutes.end(); ++i)
   {
-    PQMValues.insert(std::pair(i->second.GetPQM(), i->second));    // sorted map according to PQM, but not Depth: add later to generalize
+    PQMValues.insert(std::make_pair(i->second.GetPQM(), i->second));    // sorted map according to PQM, but not Depth: add later to generalize
+
   }
 
-  std::map<uint32_t, L2R_RoutingTableEntry>::const_iterator j = PQMValues.begin();
+  std::map<uint16_t, L2R_RoutingTableEntry>::const_iterator j = PQMValues.begin();
   Mac16Address nextHopAddress = "00:00";
   for(;j != PQMValues.end(); ++j)
     if(j->second.GetLQM() <= m_lqt)  // no GetLQM function in L2R_RoutingTableEntry? Add it?
@@ -1848,7 +1835,7 @@ LrWpanMac::OutputRoute()
       return nextHopAddress;
     }
   j = PQMValues.begin();
-  uint32_t minLQM = j->second.GetLQM();
+  uint16_t minLQM = j->second.GetLQM();
   for(;j != PQMValues.end(); ++j)   // send to lowest LQM
   {
     if(j->second.GetLQM() < minLQM)
