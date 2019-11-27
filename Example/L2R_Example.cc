@@ -44,10 +44,21 @@ int main (int argc, char *argv[])
 {
   bool verbose = false;
   bool extended = false;
-  //int nNodes = 3;
+  bool printRoutingTable = true;
+  int nNodes = 4;
+  double sTotalTime = 10;
+  uint16_t tcieInterval = 5;
   //int nSinks = 1;
   //LogComponentEnable ("LrWpanPhy",LOG_LEVEL_ALL);
+  LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
+  std::stringstream ss;
+  ss << nNodes;
+  std::string t_nodes = ss.str ();
 
+  std::stringstream ss3;
+  ss3 << sTotalTime;
+  std::string m_TotalTime = ss3.str ();
+  std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   CommandLine cmd;
 
   cmd.AddValue ("verbose", "turn on all log components", verbose);
@@ -62,7 +73,7 @@ int main (int argc, char *argv[])
   }
   //NS_LOG_INFO ("Create nodes.");
   NodeContainer ch;
-  ch.Create (3);
+  ch.Create (nNodes);
 
   // Set seed for random numbers
   SeedManager::SetSeed (167);
@@ -75,7 +86,7 @@ int main (int argc, char *argv[])
   int nodeCount, xPos, yPos;
   xPos = 0;
   yPos = 0;
-  for (nodeCount=1; nodeCount<=3; nodeCount++)
+  for (nodeCount=1; nodeCount<=nNodes; nodeCount++)
   {
     //xPos=((int)(x->GetValue()*1000))%30+1; yPos=((int)(x->GetValue()*1000))%20+1;
     
@@ -162,6 +173,14 @@ int main (int argc, char *argv[])
 
   devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, 10);
   devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_SendTopologyDiscovery();
+  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_Start();
+  L2rHelper l2rHelper;
+  if (printRoutingTable)
+  {
+    Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ((tr_name + ".routes"), std::ios::out);
+    l2rHelper.PrintRoutingTableAllAt (Seconds (tcieInterval), routingStream,Time::S);
+  }
+  Simulator::Stop (Seconds (sTotalTime));
   Simulator::Run ();
   AnimationInterface anim ("lrwpan-data.xml");
 
