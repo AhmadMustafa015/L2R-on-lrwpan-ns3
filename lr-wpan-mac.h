@@ -1030,11 +1030,13 @@ public:
     void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
     //AB: modified on 19/11
     Mac16Address OutputRoute();
+    void L2R_Start (); 
+    //AM: modified on 25/11
+    void PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
   virtual void DoDispose (void);
-  void L2R_Start (); 
 
 private:
   //AM: modified at 15/11
@@ -1308,9 +1310,27 @@ private:
 };
 
 //AM: modified at 8/11
+class Node;
+class L2rHelper
+{
+public:
+  L2rHelper();
+  virtual ~L2rHelper ();
+/**
+   * \brief prints the routing tables of all nodes at a particular time.
+   * \param printTime the time at which the routing table is supposed to be printed.
+   * \param stream The output stream object to use 
+   * \param unit The time unit to be used in the report
+   *
+  */
+  static void PrintRoutingTableAllAt(Time printTime,Ptr<OutputStreamWrapper> stream, Time::Unit unit);
+ // void PrintRoutingTableEvery (Time printInterval, Ptr<OutputStreamWrapper> stream, Time::Unit unit);
+private:
+  static void Print(Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit);
 
 
 
+};
 } // namespace ns3
 
 #endif /* LR_WPAN_MAC_H */

@@ -36,6 +36,8 @@
 #include <iomanip>
 #include "ns3/address-utils.h"
 #include "lr-wpan-net-device.h"
+#include "ns3/node.h"
+#include "ns3/node-list.h"
 #undef NS_LOG_APPEND_CONTEXT
 #define NS_LOG_APPEND_CONTEXT                                   \
   std::clog << "[address " << m_shortAddress << "] ";
@@ -674,7 +676,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                   // If it is a data frame, push it up the stack.
                   NS_LOG_DEBUG ("PdDataIndication():  Packet is for me; forwarding up");
                   //AM: modified on 4/11 5:50 AM
-                  //RecieveL2RPacket(params,p);
+                  RecieveL2RPacket(params,p);
                   
                   /*
                   std::cout << "location 2 recieved packet*******************" << std::endl;
@@ -1164,12 +1166,13 @@ L2R_Header::GetSerializedSize (void) const
   switch (m_msgType)
   {
   case TC_IE:
-    size += 5;
+    size += 7;
     break;
   case L2R_D_IE:
+    ++size;
     break;
   case DataHeader:
-    size += 4;
+    size += 5;
     break;
   }
   return size;
@@ -1179,6 +1182,7 @@ L2R_Header::Serialize (Buffer::Iterator start) const
 {
   // we can serialize two bytes at the start of the buffer.
   // we write them in network byte order.
+  start.WriteU8(m_msgType);
   WriteTo(start,m_meshRootAddress);
   switch (m_msgType)
   {
@@ -1186,7 +1190,7 @@ L2R_Header::Serialize (Buffer::Iterator start) const
     start.WriteU8(m_LQT);
     start.WriteU8 (m_TCIEInterval);
     start.WriteHtonU16 (m_MSN);
-    start.WriteU8(m_msgType);
+    start.WriteHtonU16 (m_depth);
     break;
   case L2R_D_IE:
     break;
@@ -1203,6 +1207,7 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   // we read them in network byte order and store them
   // in host byte order.
   Buffer::Iterator i = start;
+  m_msgType = i.ReadU8();
   ReadFrom (i, m_meshRootAddress);
   switch (m_msgType)
   {
@@ -1210,7 +1215,7 @@ L2R_Header::Deserialize (Buffer::Iterator start)
     m_LQT = i.ReadU8();
     m_TCIEInterval = i.ReadU8 ();
     m_MSN = i.ReadNtohU16 ();
-    m_msgType = i.ReadU8();
+    m_depth = i.ReadNtohU16 ();
     break;
   case 1:
     break;
@@ -1331,11 +1336,11 @@ void
 L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
 {
   
- /* stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t" <<
+  *stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t"
                         << std::setiosflags (std::ios::left)
                         << std::setw (10) << m_depth << "\t" << std::setw (10) << m_pqm << "\t"
                         << std::setprecision (3) << (Simulator::Now () - m_lifeTime).GetSeconds ()
-                        << "s\t\t" << m_tcieInterval.GetSeconds () << "s\n";*/
+                        << "s\t\t" << m_tcieInterval.GetSeconds () << "s\n";
 }
 bool
 L2R_RoutingTable::AddRoute (L2R_RoutingTableEntry & rt)
@@ -1647,36 +1652,37 @@ LrWpanMac::L2R_SendTopologyDiscovery()
 void 
 LrWpanMac::L2R_Start()
 {
+  m_uniformRandomVariable = CreateObject<UniformRandomVariable> ();
   m_periodicUpdateTimer.SetFunction (&LrWpanMac::L2R_SendPeriodicUpdate,this);
   if(m_isSink)
   {
     m_periodicUpdateTimer.Schedule (MicroSeconds (m_uniformRandomVariable->GetInteger (0,1000)));
   }
 }
-void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
+void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> p)
 {
   NS_LOG_FUNCTION ("Received packet of size " << p->GetSize ());
   L2R_Header L2rRxMsg;
   p->RemoveHeader(L2rRxMsg);
-  McpsDataIndicationParams rxParams;
+  //McpsDataIndicationParams rxParams;
   Mac16Address sender = rxParams.m_srcAddr;
   Mac16Address receiver = rxParams.m_dstAddr;
-  uint16_t tempPqm = L2rRxMsg.GetPQM();
-  uint16_t tempDepth = L2rRxMsg.GetDepth();
-  uint16_t tempMsn  = L2rRxMsg.GetMSN();
-  m_tcieInterval = L2rRxMsg.GetTCIEInterval();
-  NS_LOG_FUNCTION ("Received a l2r packet from "
-                  << sender << " to " << receiver << ". Details are: Destination: " << L2rRxMsg.GetMeshRootAddress () << ", PQM: "
-                  << L2rRxMsg.GetPQM () << ", depth: " << L2rRxMsg.GetDepth ());
+  
   L2R_RoutingTableEntry tableEntry; //did I use it
   EventId event;
-  Ptr<NetDevice> dev = 0; //ToDo Delete
-
   bool tableVerifier = m_routingTable.LookupRoute (sender,tableEntry);
   
   switch (L2rRxMsg.GetMsgType())
   {
   case TC_IE:
+  {
+  uint16_t tempPqm = L2rRxMsg.GetPQM();
+  uint16_t tempDepth = L2rRxMsg.GetDepth();
+  uint16_t tempMsn  = L2rRxMsg.GetMSN();
+  m_tcieInterval = L2rRxMsg.GetTCIEInterval();
+  NS_LOG_FUNCTION ("Received a TC-IE packet from "
+                  << sender << " to " << receiver << ". Details are: Destination: " << L2rRxMsg.GetMeshRootAddress () << ", PQM: "
+                  << L2rRxMsg.GetPQM () << ", depth: " << L2rRxMsg.GetDepth ());
     if(tempMsn > 0xf0)
     {       
       if(!m_isSink && m_depth == 0)
@@ -1804,9 +1810,32 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams params, Ptr<Packet> p)
      }
     }
     break;
+  }
   case L2R_D_IE:
-
+  {
+    if(!m_isSink &&  m_rootAddress == Mac16Address("00:00"))
+    {
+      NS_LOG_FUNCTION ("Received a TC-D-IE packet from "
+                  << sender << " to " << receiver << "Mesh Root Address: " << L2rRxMsg.GetMeshRootAddress ());
+      m_rootAddress = L2rRxMsg.GetMeshRootAddress();
+      L2R_Header L2R_DIE;
+      m_rootAddress = m_shortAddress; //change root name
+      L2R_DIE.SetMeshRootAddress(m_rootAddress);
+      L2R_DIE.SetMsgType(L2R_D_IE);
+      Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+      p0->AddHeader (L2R_DIE); //serialize is called here
+      McpsDataRequestParams params;
+      params.m_dstPanId = this->GetPanId();
+      params.m_srcAddrMode = SHORT_ADDR;
+      params.m_dstAddrMode = SHORT_ADDR;
+      params.m_dstAddr = Mac16Address("ff:ff");
+      params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+      params.m_txOptions = TX_OPTION_NONE;
+      Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
+                             params, p0);
+    }
   break;
+  }
   case DataHeader:
 
   break;
@@ -1873,5 +1902,44 @@ LrWpanMac::OutputRoute()
     return nextHopAddress;
   }
   
+}
+//AM: modified on 25/11
+void L2rHelper::PrintRoutingTableAllAt(Time printTime,Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+{
+  for (uint32_t i = 0; i < NodeList::GetNNodes (); i++)
+  {
+    Ptr<Node> node = NodeList::GetNode (i);
+    Simulator::Schedule (printTime, &L2rHelper::Print,node, stream, unit);
+  }
+}
+/*void L2rHelper::PrintRoutingTableEvery (Time printInterval, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+{
+  for (uint32_t i = 0; i < NodeList::GetNNodes (); i++)
+  {
+    Ptr<Node> node = NodeList::GetNode (i);
+    Simulator::Schedule (printInterval, &LrWpanMac::PrintEvery, printInterval, node, stream, unit);
+  }
+}*/
+void L2rHelper::Print(Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+{
+  node->GetObject<LrWpanMac> ()->PrintRoutingTable(stream, unit);
+}
+void LrWpanMac::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
+{
+  *stream->GetStream () << "Node: " << 0 //GetObject<Node> ()->GetId ()
+                        << ", Time: " << Now ().As (unit)
+                        << ", Local time: " << 0//GetObject<Node> ()->GetLocalTime ().As (unit)
+                        << ", l2r Routing table" << std::endl;
+
+  m_routingTable.Print (stream);
+  *stream->GetStream () << std::endl;
+}
+L2rHelper::L2rHelper()
+{
+
+}
+L2rHelper::~L2rHelper()
+{
+
 }
 } // namespace ns3
