@@ -48,6 +48,7 @@ namespace ns3 {
 
 class Packet;
 class LrWpanCsmaCa;
+class Node;
 
 /**
  * \defgroup lr-wpan LR-WPAN models
@@ -1032,7 +1033,7 @@ public:
     Mac16Address OutputRoute();
     void L2R_Start (); 
     //AM: modified on 25/11
-    void PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
+    void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1045,11 +1046,15 @@ private:
   uint16_t m_msn;
   uint16_t m_depth;
   uint8_t m_tcieInterval;
+  uint16_t m_pqm;
   Mac16Address m_rootAddress;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;
   L2R_RoutingTable m_routingTable;
+  Timer m_printRoutingTableTimer;
   Ptr<UniformRandomVariable> m_uniformRandomVariable;
+  //uint32_t m_nodeID;
+  //void SetMac16();
   /**
    * Helper structure for managing transmission queue elements.
    */
@@ -1310,27 +1315,6 @@ private:
 };
 
 //AM: modified at 8/11
-class Node;
-class L2rHelper
-{
-public:
-  L2rHelper();
-  virtual ~L2rHelper ();
-/**
-   * \brief prints the routing tables of all nodes at a particular time.
-   * \param printTime the time at which the routing table is supposed to be printed.
-   * \param stream The output stream object to use 
-   * \param unit The time unit to be used in the report
-   *
-  */
-  static void PrintRoutingTableAllAt(Time printTime,Ptr<OutputStreamWrapper> stream, Time::Unit unit);
- // void PrintRoutingTableEvery (Time printInterval, Ptr<OutputStreamWrapper> stream, Time::Unit unit);
-private:
-  static void Print(Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit);
-
-
-
-};
 } // namespace ns3
 
 #endif /* LR_WPAN_MAC_H */

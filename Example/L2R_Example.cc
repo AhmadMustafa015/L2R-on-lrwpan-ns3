@@ -34,10 +34,10 @@ static void StateChangeNotification (std::string context, Time now, LrWpanPhyEnu
   /*NS_LOG_UNCOND (context << " state change at " << now.GetSeconds ()
                          << " from " << LrWpanHelper::LrWpanPhyEnumerationPrinter (oldState)
                          << " to " << LrWpanHelper::LrWpanPhyEnumerationPrinter (newState));*/
-  std::cout << context<< " state change at " << now.GetSeconds ()
+  /*std::cout << context<< " state change at " << now.GetSeconds ()
                          << " from " << LrWpanHelper::LrWpanPhyEnumerationPrinter (oldState)
                          << " to " << LrWpanHelper::LrWpanPhyEnumerationPrinter (newState)
-                         <<std::endl;
+                         <<std::endl;*/
 }
 
 int main (int argc, char *argv[])
@@ -45,9 +45,11 @@ int main (int argc, char *argv[])
   bool verbose = false;
   bool extended = false;
   bool printRoutingTable = true;
-  int nNodes = 4;
-  double sTotalTime = 10;
-  uint16_t tcieInterval = 5;
+  int nNodes = 20;
+  double sTotalTime = 80;
+  uint8_t tcieInterval = 7;
+  int xMax = 100; //max x direction
+  int yMax = 200; //max y direction
   //int nSinks = 1;
   //LogComponentEnable ("LrWpanPhy",LOG_LEVEL_ALL);
   LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
@@ -88,12 +90,12 @@ int main (int argc, char *argv[])
   yPos = 0;
   for (nodeCount=1; nodeCount<=nNodes; nodeCount++)
   {
-    //xPos=((int)(x->GetValue()*1000))%30+1; yPos=((int)(x->GetValue()*1000))%20+1;
+    xPos=((int)(x->GetValue()*1000))%100+1; yPos=((int)(x->GetValue()*1000))%200+1;
     
     std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" << std::endl;
     nodesPositionAlloc->Add (Vector (xPos, yPos, 0.0));
-    xPos = xPos + 50;
-    yPos = yPos + 50;
+    //xPos = xPos + 50;
+    //yPos = yPos + 50;
   }
   mobility.SetPositionAllocator (nodesPositionAlloc);
   mobility.Install (ch);
@@ -130,6 +132,7 @@ int main (int argc, char *argv[])
     McpsDataIndicationCallback cb1;
     cb1 = MakeCallback (&DataIndication);
     device->GetMac ()->SetMcpsDataIndicationCallback (cb1);
+    
   }
 
   // Tracing
@@ -171,18 +174,32 @@ int main (int argc, char *argv[])
                                   &LrWpanMac::McpsDataRequest,
                                   devContainer.Get(0)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p2);*/
 
-  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, 10);
+  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, tcieInterval);
   devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_SendTopologyDiscovery();
-  devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_Start();
-  L2rHelper l2rHelper;
+  /*Simulator::ScheduleWithContext(1,MicroSeconds(6),
+                                &LrWpanMac::L2R_Start,
+                                devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ());
+ *///devContainer.Get(1)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_Start();
+  /*if (printRoutingTable)
+  {
+    Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ((tr_name + ".routes"), std::ios::out);
+    lrWpanHelper.PrintRoutingTableAllAt (ch,Seconds (tcieInterval + 1), routingStream,Time::S);
+  }*/
+
   if (printRoutingTable)
   {
     Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ((tr_name + ".routes"), std::ios::out);
-    l2rHelper.PrintRoutingTableAllAt (Seconds (tcieInterval), routingStream,Time::S);
+    for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
+    { 
+      Ptr<NetDevice> d = *i;
+      Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+      Simulator::Schedule (Seconds (tcieInterval + 1), &LrWpanMac::PrintRoutingTable,device->GetMac (),
+                          d->GetNode(), routingStream,Time::S);
+    }  
   }
   Simulator::Stop (Seconds (sTotalTime));
   Simulator::Run ();
-  AnimationInterface anim ("lrwpan-data.xml");
+  AnimationInterface anim ("l2r-routing.xml");
 
   Simulator::Destroy ();
   return 0;

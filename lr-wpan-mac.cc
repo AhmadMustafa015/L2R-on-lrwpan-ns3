@@ -36,8 +36,6 @@
 #include <iomanip>
 #include "ns3/address-utils.h"
 #include "lr-wpan-net-device.h"
-#include "ns3/node.h"
-#include "ns3/node-list.h"
 #undef NS_LOG_APPEND_CONTEXT
 #define NS_LOG_APPEND_CONTEXT                                   \
   std::clog << "[address " << m_shortAddress << "] ";
@@ -133,7 +131,9 @@ LrWpanMac::GetTypeId (void)
 }
 
 LrWpanMac::LrWpanMac ()
-:m_periodicUpdateTimer (Timer::CANCEL_ON_DESTROY)
+:m_periodicUpdateTimer (Timer::CANCEL_ON_DESTROY),
+ m_routingTable (),
+ m_printRoutingTableTimer(Timer::CANCEL_ON_DESTROY)
 {
 
   // First set the state to a known value, call ChangeMacState to fire trace source.
@@ -149,15 +149,20 @@ LrWpanMac::LrWpanMac ()
   m_retransmission = 0;
   m_numCsmacaRetry = 0;
   m_txPkt = 0;
-
+  m_isSink = false;
   Ptr<UniformRandomVariable> uniformVar = CreateObject<UniformRandomVariable> ();
   uniformVar->SetAttribute ("Min", DoubleValue (0.0));
   uniformVar->SetAttribute ("Max", DoubleValue (255.0));
   m_macDsn = SequenceNumber8 (uniformVar->GetValue ());
   m_shortAddress = Mac16Address ("00:00");
   //AM: modified at 7/11
-  
-
+  //SetMac16();
+  m_printRoutingTableTimer.SetFunction(&LrWpanMac::L2R_SendPeriodicUpdate,this);
+  m_depth = 0;
+  m_msn = 0xf0;
+  m_lqt = 0;
+  m_pqm = 0;
+  m_tcieInterval = 0;
 }
 
 LrWpanMac::~LrWpanMac ()
@@ -229,14 +234,14 @@ LrWpanMac::SetRxOnWhenIdle (bool rxOnWhenIdle)
 void
 LrWpanMac::SetShortAddress (Mac16Address address)
 {
-  //NS_LOG_FUNCTION (this << address);
+  NS_LOG_FUNCTION (this << address);
   m_shortAddress = address;
 }
 
 void
 LrWpanMac::SetExtendedAddress (Mac64Address address)
 {
-  //NS_LOG_FUNCTION (this << address);
+  NS_LOG_FUNCTION (this << address);
   m_selfExt = address;
 }
 
@@ -251,7 +256,7 @@ LrWpanMac::GetShortAddress () const
 Mac64Address
 LrWpanMac::GetExtendedAddress () const
 {
-  NS_LOG_FUNCTION (this);
+  //NS_LOG_FUNCTION (this);
   return m_selfExt;
 }
 void
@@ -922,7 +927,7 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
 void
 LrWpanMac::PlmeCcaConfirm (LrWpanPhyEnumeration status)
 {
-  NS_LOG_FUNCTION (this << status);
+  //NS_LOG_FUNCTION (this << status);
   // Direct this call through the csmaCa object
   m_csmaCa->PlmeCcaConfirm (status);
 }
@@ -930,7 +935,7 @@ LrWpanMac::PlmeCcaConfirm (LrWpanPhyEnumeration status)
 void
 LrWpanMac::PlmeEdConfirm (LrWpanPhyEnumeration status, uint8_t energyLevel)
 {
-  NS_LOG_FUNCTION (this << status << energyLevel);
+  //NS_LOG_FUNCTION (this << status << energyLevel);
 
 }
 
@@ -1107,13 +1112,14 @@ LrWpanMac::AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol)
 }*/
 
 //AM: modified at 4/11 6:03
+
 L2R_Header::L2R_Header ()
 {
   m_depth = 0;
   m_MSN = 0;
   m_PQM = 0;
   m_meshRootAddress = Mac16Address("00:00");
-  m_TCIEInterval = 0;
+  m_TCIEInterval = 0xff;
   m_msgType = DataHeader;
   m_LQT = 0;
 }
@@ -1338,16 +1344,16 @@ L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
   
   *stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t"
                         << std::setiosflags (std::ios::left)
-                        << std::setw (10) << m_depth << "\t" << std::setw (10) << m_pqm << "\t"
+                        << std::setw (20) << m_depth << "\t" << std::setw (20) << m_pqm << "\t"
                         << std::setprecision (3) << (Simulator::Now () - m_lifeTime).GetSeconds ()
-                        << "s\t\t" << m_tcieInterval.GetSeconds () << "s\n";
+                        << "s\t\t" <<std::setprecision (3)<< m_tcieInterval.GetSeconds () << "s\n";
 }
 bool
 L2R_RoutingTable::AddRoute (L2R_RoutingTableEntry & rt)
 {
   //std::pair is a struct template that provides a way to store two heterogeneous objects as a single unit
   std::pair<std::map<Mac16Address, L2R_RoutingTableEntry>::iterator, bool> result = m_mac16AddressEntry.insert (std::make_pair (
-                                                                                                            rt.GetDestination (),rt));
+                                                                                                            rt.GetNextHop (),rt));
   return result.second;
 }
 bool
@@ -1400,7 +1406,7 @@ L2R_RoutingTable::LookupRoute (Mac16Address id,
 bool
 L2R_RoutingTable::Update (L2R_RoutingTableEntry & rt)
 {
-  std::map<Mac16Address, L2R_RoutingTableEntry>::iterator i = m_mac16AddressEntry.find (rt.GetDestination ());
+  std::map<Mac16Address, L2R_RoutingTableEntry>::iterator i = m_mac16AddressEntry.find (rt.GetNextHop ());
   if (i == m_mac16AddressEntry.end ())
     {
       return false;
@@ -1567,9 +1573,10 @@ void
 LrWpanMac::L2R_SendPeriodicUpdate()
 {
   std::map <Mac16Address, L2R_RoutingTableEntry> removedAddresses;
-  m_routingTable.Purge (removedAddresses);
+  //m_routingTable.Purge (removedAddresses);
   if (m_isSink)
   {
+    NS_LOG_FUNCTION (Seconds(Simulator::Now ()) << "Sending TC-IE by Sink ");
     L2R_Header TC_IE_H;
     TC_IE_H.SetMeshRootAddress(m_rootAddress);
     TC_IE_H.SetMsgType(TC_IE);
@@ -1577,6 +1584,7 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     TC_IE_H.SetMSN(m_msn);
     TC_IE_H.SetLQT(m_lqt);
     TC_IE_H.SetTCIEInterval(m_tcieInterval);
+    TC_IE_H.SetDepth(m_depth);
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (TC_IE_H);
     McpsDataRequestParams params;
@@ -1592,16 +1600,20 @@ LrWpanMac::L2R_SendPeriodicUpdate()
       m_msn = 0x00;
     else
       ++m_msn;
+  m_periodicUpdateTimer.Schedule (Seconds(m_tcieInterval));                          
+
   }
   else
   {
+    NS_LOG_FUNCTION (Seconds(Simulator::Now ())<<"Forwording TC-IE ");
     L2R_Header TC_IE_H;
     TC_IE_H.SetMeshRootAddress(m_rootAddress);
     TC_IE_H.SetMsgType(TC_IE);
-    TC_IE_H.SetPQM(0);
+    TC_IE_H.SetPQM(m_pqm);
     TC_IE_H.SetMSN(m_msn);
     TC_IE_H.SetLQT(m_lqt);
     TC_IE_H.SetTCIEInterval(m_tcieInterval);
+    TC_IE_H.SetDepth(m_depth);
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (TC_IE_H);
     McpsDataRequestParams params;
@@ -1617,10 +1629,9 @@ LrWpanMac::L2R_SendPeriodicUpdate()
   for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator rmItr = removedAddresses.begin (); rmItr
            != removedAddresses.end (); ++rmItr)
   {
-    NS_LOG_FUNCTION ("Update for removed record is: Destination: " << rmItr->second.GetDestination()
+    NS_LOG_FUNCTION ("Update for removed record is: Destination: " << rmItr->second.GetNextHop()
                                                                 << " depth:" << rmItr->second.GetDepth());
   }
-  m_periodicUpdateTimer.Schedule (Seconds(m_tcieInterval) + MicroSeconds (25 * m_uniformRandomVariable->GetInteger (0,1000)));                           
 }
 void
 LrWpanMac::L2R_SendTopologyDiscovery()
@@ -1632,6 +1643,7 @@ LrWpanMac::L2R_SendTopologyDiscovery()
   }
   else
   {
+    NS_LOG_FUNCTION ("Sending Topology Discovery Msg ");
     L2R_Header L2R_DIE;
     m_rootAddress = m_shortAddress; //change root name
     L2R_DIE.SetMeshRootAddress(m_rootAddress);
@@ -1647,6 +1659,7 @@ LrWpanMac::L2R_SendTopologyDiscovery()
     params.m_txOptions = TX_OPTION_NONE;
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
+    L2R_Start();
   }
 }
 void 
@@ -1655,20 +1668,17 @@ LrWpanMac::L2R_Start()
   m_uniformRandomVariable = CreateObject<UniformRandomVariable> ();
   m_periodicUpdateTimer.SetFunction (&LrWpanMac::L2R_SendPeriodicUpdate,this);
   if(m_isSink)
-  {
-    m_periodicUpdateTimer.Schedule (MicroSeconds (m_uniformRandomVariable->GetInteger (0,1000)));
-  }
+    m_periodicUpdateTimer.Schedule (MicroSeconds(10000));//m_uniformRandomVariable->GetInteger (0,2000)));
 }
 void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> p)
 {
-  NS_LOG_FUNCTION ("Received packet of size " << p->GetSize ());
   L2R_Header L2rRxMsg;
   p->RemoveHeader(L2rRxMsg);
   //McpsDataIndicationParams rxParams;
   Mac16Address sender = rxParams.m_srcAddr;
   Mac16Address receiver = rxParams.m_dstAddr;
   
-  L2R_RoutingTableEntry tableEntry; //did I use it
+  L2R_RoutingTableEntry tableEntry;
   EventId event;
   bool tableVerifier = m_routingTable.LookupRoute (sender,tableEntry);
   
@@ -1694,7 +1704,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
                 tempDepth,
                 tempPqm,
                 Simulator::Now (), //ToDo Life Time
-                Time(m_tcieInterval),//ToDo convert TcIE to time
+                Seconds(m_tcieInterval),//ToDo convert TcIE to time
                 sender,
                 false);
               newEntry.SetFlag (VALID);
@@ -1707,12 +1717,14 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         if (tempDepth >= m_depth)
         {
           //if Rx msg from upstream node discard
+          NS_LOG_FUNCTION ("Discard packet of size " << p->GetSize ()<<"MSN " <<tempMsn <<"Rx msg from upstream node");
           return;
         }
         else
         {
           if(tableVerifier == true) //already have this route in the entry
           {
+            NS_LOG_FUNCTION ("Discard packet of size " << p->GetSize ()<<"MSN " <<tempMsn <<" already have this route in the entry");
             return;
           }
           else
@@ -1723,12 +1735,12 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             tempDepth,
             tempPqm,
             Simulator::Now (), //ToDo Life Time
-            Time(m_tcieInterval),//ToDo convert TcIE to time
+            Seconds(m_tcieInterval),//ToDo convert TcIE to time
             sender,
             false);
             newEntry.SetFlag (VALID);
-            m_routingTable.AddRoute (newEntry);
-            NS_LOG_FUNCTION ("New Route added to routing tables");
+            bool returnSuccessful =  m_routingTable.AddRoute (newEntry);
+            NS_LOG_FUNCTION ("New Route added to routing tables" << returnSuccessful);
           }
           uint16_t minPqm = 0xffff;
           std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
@@ -1739,9 +1751,16 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             if(i->second.GetPQM () < minPqm)
             {
               minPqm = i->second.GetPQM ();
+              m_pqm = minPqm;
               m_depth = i->second.GetDepth() + 1;
             }
-          }     
+          }
+          if(m_isSink == false)     
+          {
+            event =  Simulator::ScheduleNow(&LrWpanMac::L2R_SendPeriodicUpdate,this);
+            m_routingTable.AddMacEvent(sender, event);
+            NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
+          } 
           //look if the mac in the routing table Done
           //do the pqm condition Done
           //ToDo my depth Done
@@ -1758,12 +1777,14 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         tempDepth,
         tempPqm,
         Simulator::Now (),
-        Time(m_tcieInterval),
+        Seconds(m_tcieInterval),
         sender,
         false);
         newEntry.SetFlag (VALID);
-        m_routingTable.AddRoute (newEntry);
-        NS_LOG_FUNCTION ("New Route added to routing tables");
+        bool returnSuccessful =  m_routingTable.AddRoute (newEntry);
+            NS_LOG_FUNCTION ("New Route added to routing tables" << returnSuccessful);
+        if(m_isSink) //code not completed here all nodes have zero pqm
+          return;
         uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
@@ -1773,6 +1794,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         if(i->second.GetPQM () < minPqm)
           {
             minPqm = i->second.GetPQM ();
+            m_pqm = minPqm;
             m_depth = i->second.GetDepth() + 1;
           }
         }
@@ -1789,7 +1811,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
        tableEntry.SetNextHop(sender);
        tableEntry.SetLifeTime(Simulator::Now ());
        tableEntry.SetPQM(tempPqm);
-       NS_LOG_FUNCTION ("Received update");
+       m_routingTable.Update(tableEntry);
+       NS_LOG_FUNCTION ("Received update For TcIE From " << sender);
+       if(m_isSink) //code not completed here all nodes have zero pqm
+          return;
        uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
@@ -1799,15 +1824,24 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         if(i->second.GetPQM () < minPqm)
           {
             minPqm = i->second.GetPQM ();
+            m_pqm = minPqm;
             m_depth = i->second.GetDepth() + 1;
           }
         }
-       event = Simulator::Schedule (Simulator::Now() + Seconds(m_tcieInterval),&LrWpanMac::L2R_SendPeriodicUpdate,this);
-       m_routingTable.AddMacEvent(sender, event);
-       NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
-       m_routingTable.Update(tableEntry);
        }
+       else
+       {
+        NS_LOG_FUNCTION ("Discard packet of size " << p->GetSize ()<<"MSN " <<tempMsn <<"Rx msg from upstream node");
+        break;
+       }
+       
      }
+    }
+    if(m_isSink == false)
+    {
+      event =  Simulator::ScheduleNow(&LrWpanMac::L2R_SendPeriodicUpdate,this);
+      m_routingTable.AddMacEvent(sender, event);
+      NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
     }
     break;
   }
@@ -1834,6 +1868,12 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
                              params, p0);
     }
+    else
+    {
+      NS_LOG_FUNCTION ("Discard packet of size " << p->GetSize () <<"Rx msg from upstream node");
+
+    }
+    
   break;
   }
   case DataHeader:
@@ -1904,42 +1944,34 @@ LrWpanMac::OutputRoute()
   
 }
 //AM: modified on 25/11
-void L2rHelper::PrintRoutingTableAllAt(Time printTime,Ptr<OutputStreamWrapper> stream, Time::Unit unit)
+void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
 {
-  for (uint32_t i = 0; i < NodeList::GetNNodes (); i++)
-  {
-    Ptr<Node> node = NodeList::GetNode (i);
-    Simulator::Schedule (printTime, &L2rHelper::Print,node, stream, unit);
-  }
-}
-/*void L2rHelper::PrintRoutingTableEvery (Time printInterval, Ptr<OutputStreamWrapper> stream, Time::Unit unit)
-{
-  for (uint32_t i = 0; i < NodeList::GetNNodes (); i++)
-  {
-    Ptr<Node> node = NodeList::GetNode (i);
-    Simulator::Schedule (printInterval, &LrWpanMac::PrintEvery, printInterval, node, stream, unit);
-  }
-}*/
-void L2rHelper::Print(Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit)
-{
-  node->GetObject<LrWpanMac> ()->PrintRoutingTable(stream, unit);
-}
-void LrWpanMac::PrintRoutingTable (Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
-{
-  *stream->GetStream () << "Node: " << 0 //GetObject<Node> ()->GetId ()
+  //Ptr<Node> node = NodeList::GetNode (0);
+  *stream->GetStream () << "Node: " <<  node->GetId ()
                         << ", Time: " << Now ().As (unit)
-                        << ", Local time: " << 0//GetObject<Node> ()->GetLocalTime ().As (unit)
-                        << ", l2r Routing table" << std::endl;
+                        << ", Local time: " << node->GetLocalTime ().As (unit)
+                        << ", l2r Routing table";
+  if(m_isSink == true)
+    *stream->GetStream () << ", Mesh Root";
+  *stream->GetStream () << std::endl;
+
 
   m_routingTable.Print (stream);
   *stream->GetStream () << std::endl;
+ //
+ // m_printRoutingTableTimer.Schedule(Seconds(m_tcieInterval));
 }
-L2rHelper::L2rHelper()
+/*void LrWpanMac::SetMac16()
 {
-
-}
-L2rHelper::~L2rHelper()
-{
-
-}
+  L2R_RoutingTableEntry rt(
+    0,
+    0,
+    Simulator::Now (),
+    Simulator::GetMaximumSimulationTime (),
+    m_shortAddress,
+    false);
+    rt.SetFlag(INVALID);
+    rt.SetEntriesChanged (false);
+    m_routingTable.AddRoute(rt);
+}*/
 } // namespace ns3
