@@ -1346,7 +1346,7 @@ void
 L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
 {
   
-  *stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t"
+  *stream->GetStream () << std::resetiosflags(std::ios::adjustfield) << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t"
                         << std::setiosflags (std::ios::left)
                         << std::setw (20) << m_depth << "\t" << std::setw (20) << m_pqm << "\t"
                         << std::setprecision (3) << m_lifeTime.GetSeconds ()
