@@ -11,6 +11,7 @@
 #include <iostream>
 #include "ns3/netanim-module.h"
 #include "vector"
+#include "string"
 using namespace ns3;
 
 
@@ -48,7 +49,7 @@ int main (int argc, char *argv[])
   int nNodes = 20;
   double sTotalTime = 80;
   uint8_t tcieInterval = 7;
-  int xMax = 100; //max x direction
+  int xMax = 200; //max x direction
   int yMax = 200; //max y direction
   //int nSinks = 1;
   //LogComponentEnable ("LrWpanPhy",LOG_LEVEL_ALL);
@@ -82,9 +83,12 @@ int main (int argc, char *argv[])
 
   // Install mobility
   MobilityHelper mobility;
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  Ptr <UniformRandomVariable> x= CreateObject <UniformRandomVariable>();
-  Ptr<ListPositionAllocator> nodesPositionAlloc = CreateObject<ListPositionAllocator> ();
+  ObjectFactory pos;
+  pos.SetTypeId ("ns3::RandomRectanglePositionAllocator");
+  pos.Set ("X", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max="+std::to_string(xMax)+"]"));
+  pos.Set ("Y", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max="+std::to_string(yMax)+"]"));
+  /*Ptr <UniformRandomVariable> x= CreateObject <UniformRandomVariable>();
+  Ptr<ListPositionAllocator> taPositionAlloc = CreateObject<ListPositionAllocator> ();
   int nodeCount, xPos, yPos;
   xPos = 0;
   yPos = 0;
@@ -93,11 +97,13 @@ int main (int argc, char *argv[])
     xPos=((int)(x->GetValue()*1000))%100+1; yPos=((int)(x->GetValue()*1000))%200+1;
     
     std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" << std::endl;
-    nodesPositionAlloc->Add (Vector (xPos, yPos, 0.0));
+    taPositionAlloc->Add (Vector (xPos, yPos, 0.0));
     //xPos = xPos + 50;
     //yPos = yPos + 50;
-  }
-  mobility.SetPositionAllocator (nodesPositionAlloc);
+  }*/
+  Ptr <PositionAllocator> taPositionAlloc = pos.Create ()->GetObject <PositionAllocator> ();
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.SetPositionAllocator (taPositionAlloc);
   mobility.Install (ch);
 
   //NS_LOG_INFO ("Create channels.");
