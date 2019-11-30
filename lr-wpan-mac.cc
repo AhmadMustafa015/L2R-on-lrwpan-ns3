@@ -157,7 +157,6 @@ LrWpanMac::LrWpanMac ()
   m_shortAddress = Mac16Address ("00:00");
   //AM: modified at 7/11
   //SetMac16();
-  m_printRoutingTableTimer.SetFunction(&LrWpanMac::L2R_SendPeriodicUpdate,this);
   m_depth = 0;
   m_msn = 0xf0;
   m_lqt = 0;
@@ -1350,7 +1349,7 @@ L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
   *stream->GetStream () << std::setiosflags (std::ios::fixed) << m_nextHop << "\t\t"
                         << std::setiosflags (std::ios::left)
                         << std::setw (20) << m_depth << "\t" << std::setw (20) << m_pqm << "\t"
-                        << std::setprecision (3) << (Simulator::Now () - m_lifeTime).GetSeconds ()
+                        << std::setprecision (3) << m_lifeTime.GetSeconds ()
                         << "s\t\t" <<std::setprecision (3)<< m_tcieInterval.GetSeconds () << "s\n";
 }
 bool
@@ -1958,6 +1957,7 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
 {
   //Ptr<Node> node = NodeList::GetNode (0);
   *stream->GetStream () << "Node: " <<  node->GetId ()
+                        << ", Depth: " << m_depth
                         << ", Time: " << Now ().As (unit)
                         << ", Local time: " << node->GetLocalTime ().As (unit)
                         << ", l2r Routing table";
@@ -1968,8 +1968,12 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
 
   m_routingTable.Print (stream);
   *stream->GetStream () << std::endl;
- //
- // m_printRoutingTableTimer.Schedule(Seconds(m_tcieInterval));
+ 
+ //m_printRoutingTableTimer.SetFunction(&LrWpanMac::PrintRoutingTable,this,node,stream,unit);
+ //m_printRoutingTableTimer.Schedule(Seconds(m_tcieInterval+1));
+  Time TCIEInter =  Seconds(m_tcieInterval + 1) + Now();
+  Simulator::Schedule (TCIEInter, &LrWpanMac::PrintRoutingTable,this,
+                          node, stream,unit);
 }
 /*void LrWpanMac::SetMac16()
 {

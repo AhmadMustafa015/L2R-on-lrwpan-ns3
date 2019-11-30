@@ -273,7 +273,7 @@ int main (int argc, char *argv[])
     { 
       Ptr<NetDevice> d = *i;
       Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
-      Simulator::Schedule (Seconds (tcieInterval + 1), &LrWpanMac::PrintRoutingTable,device->GetMac (),
+      Simulator::Schedule (Seconds(1.01), &LrWpanMac::PrintRoutingTable,device->GetMac (),
                           d->GetNode(), routingStream,Time::S);
     }  
   }
