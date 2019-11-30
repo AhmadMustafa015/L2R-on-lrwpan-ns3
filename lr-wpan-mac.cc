@@ -493,7 +493,12 @@ LrWpanMac::SetMcpsDataIndicationCallback (McpsDataIndicationCallback c)
 {
   m_mcpsDataIndicationCallback = c;
 }
-
+//AM: modified on 30/12
+void
+LrWpanMac::SetL2rReceiveUpdateCallback (L2rReceiveUpdateCallback c)
+{
+  m_l2rReceiveUpdateCallback = c;
+}
 void
 LrWpanMac::SetMcpsDataConfirmCallback (McpsDataConfirmCallback c)
 {
@@ -1710,6 +1715,8 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
               newEntry.SetFlag (VALID);
               m_routingTable.AddRoute(newEntry);
               NS_LOG_FUNCTION ("New Route added to routing tables");
+              m_depth = tempDepth+1;
+              m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
               //ToDo my depth
       }
       else
@@ -1755,17 +1762,18 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
               m_depth = i->second.GetDepth() + 1;
             }
           }
-          if(m_isSink == false)     
-          {
-            event =  Simulator::ScheduleNow(&LrWpanMac::L2R_SendPeriodicUpdate,this);
-            m_routingTable.AddMacEvent(sender, event);
-            NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
-          } 
+              m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
           //look if the mac in the routing table Done
           //do the pqm condition Done
           //ToDo my depth Done
         } 
       }
+      if(m_isSink == false)     
+      {
+        event =  Simulator::ScheduleNow(&LrWpanMac::L2R_SendPeriodicUpdate,this);
+        m_routingTable.AddMacEvent(sender, event);
+        NS_LOG_FUNCTION("EventCreated EventUID: " << event.GetUid ());
+      } 
     }
     else //msn < 0xf0
     {
@@ -1798,6 +1806,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             m_depth = i->second.GetDepth() + 1;
           }
         }
+              m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
      }
      else
      {
@@ -1828,6 +1837,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             m_depth = i->second.GetDepth() + 1;
           }
         }
+              m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
        }
        else
        {

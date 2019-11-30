@@ -12,15 +12,70 @@
 #include "ns3/netanim-module.h"
 #include "vector"
 #include "string"
+#include "ns3/node.h"
+#include "ns3/node-list.h"
 using namespace ns3;
 
+AnimationInterface * pAnim = 0;
+NetDeviceContainer devContainer;
+/// RGB structure
+struct rgb {
+  uint8_t r; ///< red
+  uint8_t g; ///< green
+  uint8_t b; ///< blue
+};
 
+struct rgb colors [] = {
+                        { 255, 0, 0 }, // Red
+                        { 0, 255, 0 }, // Blue
+                        { 0, 0, 255 }  // Green
+                        };
+void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &pqm,const Mac16Address &receiver)
+{
+  /*std::ostringstream oss;
+  oss << "Update:" << Simulator::Now ().GetSeconds ();
+  pAnim->UpdateLinkDescription (0, 1, oss.str ());
+  pAnim->UpdateLinkDescription (0, 2, oss.str ());
+  pAnim->UpdateLinkDescription (0, 3, oss.str ());
+  pAnim->UpdateLinkDescription (0, 4, oss.str ());
+  pAnim->UpdateLinkDescription (0, 5, oss.str ());
+  pAnim->UpdateLinkDescription (0, 6, oss.str ());
+  pAnim->UpdateLinkDescription (1, 7, oss.str ());
+  pAnim->UpdateLinkDescription (1, 8, oss.str ());
+  pAnim->UpdateLinkDescription (1, 9, oss.str ());
+  pAnim->UpdateLinkDescription (1, 10, oss.str ());
+  pAnim->UpdateLinkDescription (1, 11, oss.str ());
+  */
+  std::ostringstream node0Oss;
+  static uint32_t index = 0;
+  index++;
+  if (index == 3) 
+    index = 0;
+  struct rgb color = colors[index];
+  for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
+  {  
+    Ptr<NetDevice> d = *i;
+    Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    if(receiver == device->GetAddress ())
+    {
+      uint32_t nodeID = d->GetNode ()->GetId ();
+      node0Oss << "N:" << nodeID <<" D:" << depth <<" PQM: " << pqm <<" MAC:" << receiver;
+      // Every update change the node description for nodes
+      pAnim->UpdateNodeDescription (nodeID, node0Oss.str ());
+      // Every update change the color for nodes if receive update from mesh Root
+      pAnim->UpdateNodeColor (nodeID, color.r, color.g, color.b); 
+    }
+  }  
+  /*if (Simulator::Now ().GetSeconds () < 10) // This is important or the simulation
+    Simulator::ScheduleNow (modify);*/
+}
 static void DataIndication (McpsDataIndicationParams params, Ptr<Packet> p)
 {
-  //NS_LOG_UNCOND ("Received packet of size " << p->GetSize ());
-  
-  //To do send another packet after successfully recieve the packet
-  //this->McpsDataRequest(params, p);
+}
+static void L2rUpdateTcie(McpsDataIndicationParams params, uint16_t depth, uint16_t pqm, Mac16Address receiver)
+{
+  Mac16Address senderAdd = params.m_srcAddr;
+  modify(senderAdd,depth,pqm,receiver);
 }
 
 static void DataConfirm (McpsDataConfirmParams params)
@@ -51,6 +106,7 @@ int main (int argc, char *argv[])
   uint8_t tcieInterval = 7;
   int xMax = 200; //max x direction
   int yMax = 200; //max y direction
+  std::string animFile = "L2R_Protocol_Anim.xml" ;
   //int nSinks = 1;
   //LogComponentEnable ("LrWpanPhy",LOG_LEVEL_ALL);
   LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
@@ -115,7 +171,7 @@ int main (int argc, char *argv[])
 
   lrWpanHelper.SetChannel(channel);
   // Add and install the LrWpanNetDevice for each node
-  NetDeviceContainer devContainer = lrWpanHelper.Install(ch);
+  devContainer = lrWpanHelper.Install(ch);
   lrWpanHelper.AssociateToPan (devContainer, 10);
 
   std::cout << "Created " << devContainer.GetN() << " devices" << std::endl;
@@ -136,8 +192,11 @@ int main (int argc, char *argv[])
     device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
     //device->GetMac ()->
     McpsDataIndicationCallback cb1;
+    L2rReceiveUpdateCallback cb3;
     cb1 = MakeCallback (&DataIndication);
     device->GetMac ()->SetMcpsDataIndicationCallback (cb1);
+    cb3 = MakeCallback (&L2rUpdateTcie);
+    device->GetMac ()->SetL2rReceiveUpdateCallback(cb3);
     
   }
 
@@ -203,10 +262,12 @@ int main (int argc, char *argv[])
                           d->GetNode(), routingStream,Time::S);
     }  
   }
+  pAnim = new AnimationInterface (animFile); //Mandatory
+  //pAnim->EnablePacketMetadata (); //Optional
   Simulator::Stop (Seconds (sTotalTime));
   Simulator::Run ();
-  AnimationInterface anim ("l2r-routing.xml");
-
+  std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   Simulator::Destroy ();
+  delete pAnim;
   return 0;
-}
+  }

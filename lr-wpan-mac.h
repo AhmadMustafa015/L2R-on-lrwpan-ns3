@@ -221,8 +221,9 @@ typedef Callback<void, McpsDataConfirmParams> McpsDataConfirmCallback;
  *  \todo for now, we do not deliver all of the parameters in section
  *  7.1.1.3.1 but just send up the packet.
  */
-typedef Callback<void, McpsDataIndicationParams, Ptr<Packet> > McpsDataIndicationCallback;
-
+typedef Callback<void, McpsDataIndicationParams, Ptr<Packet>> McpsDataIndicationCallback;
+//AM: modified on 30/12
+typedef Callback<void, McpsDataIndicationParams,uint16_t ,uint16_t, Mac16Address> L2rReceiveUpdateCallback;
 
 /**
  * \ingroup lr-wpan
@@ -801,6 +802,8 @@ public:
    * \param c the callback
    */
   void SetMcpsDataIndicationCallback (McpsDataIndicationCallback c);
+  //AM: modified on 30/12
+  void SetL2rReceiveUpdateCallback (L2rReceiveUpdateCallback c);
 
   /**
    * Set the callback for the confirmation of a data transmission request.
@@ -1249,6 +1252,8 @@ private:
    * See IEEE 802.15.4-2006, section 7.1.1.3.
    */
   McpsDataIndicationCallback m_mcpsDataIndicationCallback;
+  //AM: modified on 30/12
+  L2rReceiveUpdateCallback m_l2rReceiveUpdateCallback;
 
   /**
    * This callback is used to report data transmission request status to the
