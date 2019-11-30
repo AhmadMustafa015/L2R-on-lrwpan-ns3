@@ -1172,17 +1172,16 @@ L2R_Header::GetSerializedSize (void) const
     * PQM                      : 0/2 octet
     * MSG Type                 : 0/1 octet
   */
-  uint32_t size = 2;
+  uint32_t size = 3;
   switch (m_msgType)
   {
   case TC_IE:
-    size += 7;
+    size += 8;
     break;
   case L2R_D_IE:
-    ++size;
     break;
   case DataHeader:
-    size += 5;
+    size += 4;
     break;
   }
   return size;
@@ -1197,6 +1196,7 @@ L2R_Header::Serialize (Buffer::Iterator start) const
   switch (m_msgType)
   {
   case TC_IE:
+    start.WriteHtonU16 (m_PQM);
     start.WriteU8(m_LQT);
     start.WriteU8 (m_TCIEInterval);
     start.WriteHtonU16 (m_MSN);
@@ -1222,6 +1222,7 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   switch (m_msgType)
   {
   case 0:
+    m_PQM = i.ReadNtohU16 ();
     m_LQT = i.ReadU8();
     m_TCIEInterval = i.ReadU8 ();
     m_MSN = i.ReadNtohU16 ();
@@ -1572,6 +1573,7 @@ LrWpanMac::L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieIn
   m_msn = 0xf0;
   m_lqt = lqt;
   m_tcieInterval = tcieInterval;
+  m_tcieIncr = 0;
 }
 void
 LrWpanMac::L2R_SendPeriodicUpdate()
@@ -1701,7 +1703,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     {       
       if(!m_isSink && m_depth == 0)
       {
-        uint16_t tempLqm = 0; //calculate LQM
+        uint16_t tempLqm = 1; //calculate LQM
         tempPqm += tempLqm;
         m_depth = tempDepth + 1;  
           L2R_RoutingTableEntry newEntry (
@@ -1716,7 +1718,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
               NS_LOG_FUNCTION ("New Route added to routing tables");
               m_depth = tempDepth+1;
               m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
-              //ToDo my depth
+              m_pqm = tempPqm;
       }
       else
       {
@@ -1735,7 +1737,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
           }
           else
           {
-            uint16_t tempLqm = 0; //calculate LQM
+            uint16_t tempLqm = 1; //calculate LQM
             tempPqm += tempLqm;
             L2R_RoutingTableEntry newEntry (
             tempDepth,
@@ -1778,7 +1780,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     {
       if(tableVerifier == false) //new Entry
       {
-        uint16_t tempLqm = 0; //calculate LQM
+        uint16_t tempLqm = 1; //calculate LQM
         tempPqm += tempLqm;
         L2R_RoutingTableEntry newEntry (
         tempDepth,
@@ -1791,7 +1793,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         bool returnSuccessful =  m_routingTable.AddRoute (newEntry);
             NS_LOG_FUNCTION ("New Route added to routing tables" << returnSuccessful);
         if(m_isSink) //code not completed here all nodes have zero pqm
+        {
+          m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
           return;
+        }
         uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
@@ -1805,13 +1810,13 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             m_depth = i->second.GetDepth() + 1;
           }
         }
-              m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
+        m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
      }
      else
      {
        if((m_msn == 0xef && tempMsn < 0xef) || m_msn < tempMsn)
        {
-        uint16_t tempLqm = 0; //calculate LQM
+        uint16_t tempLqm = 1; //calculate LQM
        tempPqm += tempLqm;
        tableEntry.SetDepth(tempDepth);
        tableEntry.SetEntriesChanged(true);
@@ -1822,7 +1827,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
        m_routingTable.Update(tableEntry);
        NS_LOG_FUNCTION ("Received update For TcIE From " << sender);
        if(m_isSink) //code not completed here all nodes have zero pqm
+        {
+          m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
           return;
+        }
        uint16_t minPqm = 10000;
         std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
         m_routingTable.GetListOfAllRoutes(allRoutes);
@@ -1953,17 +1961,34 @@ LrWpanMac::OutputRoute()
   
 }
 //AM: modified on 25/11
-void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit) const
+void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> stream, Time::Unit unit)
 {
   //Ptr<Node> node = NodeList::GetNode (0);
+  if(m_isSink == true)
+  {
+  ++m_tcieIncr;
+  for(uint8_t i = 0; i<6;i++)
+    {
+      *stream->GetStream () << "******************";
+      if(i == 2)
+        *stream->GetStream () << "TC-IE Updates number: " << m_tcieIncr;
+    }
+    *stream->GetStream () << std::endl;
+  }
   *stream->GetStream () << "Node: " <<  node->GetId ()
+                        << ", Mac Address: " << m_shortAddress
                         << ", Depth: " << m_depth
+                        << std::setprecision (4)
                         << ", Time: " << Now ().As (unit)
+                        << std::setprecision (4)
                         << ", Local time: " << node->GetLocalTime ().As (unit)
                         << ", l2r Routing table";
   if(m_isSink == true)
-    *stream->GetStream () << ", Mesh Root";
-  *stream->GetStream () << std::endl;
+  {
+    *stream->GetStream () << ", Mesh Root" << std::endl;
+  }
+  else
+    *stream->GetStream () << std::endl;
 
 
   m_routingTable.Print (stream);

@@ -1036,7 +1036,7 @@ public:
     Mac16Address OutputRoute();
     void L2R_Start (); 
     //AM: modified on 25/11
-    void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S) const;
+    void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1050,6 +1050,7 @@ private:
   uint16_t m_depth;
   uint8_t m_tcieInterval;
   uint16_t m_pqm;
+  uint32_t m_tcieIncr;
   Mac16Address m_rootAddress;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;
