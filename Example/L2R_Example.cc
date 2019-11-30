@@ -14,7 +14,10 @@
 #include "string"
 #include "ns3/node.h"
 #include "ns3/node-list.h"
+#include <math.h>
 using namespace ns3;
+
+#define PI 3.14159265
 
 AnimationInterface * pAnim = 0;
 NetDeviceContainer devContainer;
@@ -101,15 +104,15 @@ int main (int argc, char *argv[])
   bool verbose = false;
   bool extended = false;
   bool printRoutingTable = true;
-  int nNodes = 20;
+  int nNodes = 112;
   double sTotalTime = 80;
   uint8_t tcieInterval = 7;
-  int xMax = 200; //max x direction
-  int yMax = 200; //max y direction
+  //int xMax = 200; //max x direction
+  //int yMax = 200; //max y direction
   std::string animFile = "L2R_Protocol_Anim.xml" ;
   //int nSinks = 1;
   //LogComponentEnable ("LrWpanPhy",LOG_LEVEL_ALL);
-  LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
+  //LogComponentEnable ("LrWpanMac",LOG_LEVEL_ALL);
   std::stringstream ss;
   ss << nNodes;
   std::string t_nodes = ss.str ();
@@ -141,23 +144,35 @@ int main (int argc, char *argv[])
   MobilityHelper mobility;
   ObjectFactory pos;
   pos.SetTypeId ("ns3::RandomRectanglePositionAllocator");
-  pos.Set ("X", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max="+std::to_string(xMax)+"]"));
-  pos.Set ("Y", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max="+std::to_string(yMax)+"]"));
-  /*Ptr <UniformRandomVariable> x= CreateObject <UniformRandomVariable>();
+  Ptr <UniformRandomVariable> x= CreateObject <UniformRandomVariable>();
   Ptr<ListPositionAllocator> taPositionAlloc = CreateObject<ListPositionAllocator> ();
-  int nodeCount, xPos, yPos;
-  xPos = 0;
-  yPos = 0;
-  for (nodeCount=1; nodeCount<=nNodes; nodeCount++)
+  int nodeCount, xPos, yPos, txRange;
+  float radius, thetaRad;
+  xPos = yPos = 0;
+  txRange = 90;
+  radius = txRange;
+  thetaRad = (txRange / radius);
+
+  std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" << std::endl;
+  taPositionAlloc->Add (Vector (xPos, yPos, 0.0)); // mesh root?
+
+  for (nodeCount = 1; nodeCount < nNodes; nodeCount++)
   {
-    xPos=((int)(x->GetValue()*1000))%100+1; yPos=((int)(x->GetValue()*1000))%200+1;
-    
-    std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" << std::endl;
+    thetaRad += (txRange / radius)* (1 + x->GetValue()*0.3);
+    xPos = radius * sin(thetaRad) + x->GetValue()*30; 
+    yPos = radius * cos(thetaRad) + x->GetValue()*30;
+
+    std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" <<std::endl;
     taPositionAlloc->Add (Vector (xPos, yPos, 0.0));
-    //xPos = xPos + 50;
-    //yPos = yPos + 50;
-  }*/
-  Ptr <PositionAllocator> taPositionAlloc = pos.Create ()->GetObject <PositionAllocator> ();
+
+    if (thetaRad > (2 * PI - (txRange / radius)))
+    {
+      radius += txRange;
+      thetaRad = 0;
+    }
+  }
+
+  //Ptr <PositionAllocator> taPositionAlloc = pos.Create ()->GetObject <PositionAllocator> ();
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator (taPositionAlloc);
   mobility.Install (ch);
