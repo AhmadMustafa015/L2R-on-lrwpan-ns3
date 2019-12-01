@@ -14,10 +14,13 @@
 #include "string"
 #include "ns3/node.h"
 #include "ns3/node-list.h"
+#include "ns3/opengym-module.h"
+#include "wsngym.h"
 #include <math.h>
 using namespace ns3;
 
 #define PI 3.14159265
+
 bool verbose = false;
 AnimationInterface * pAnim = 0;
 NetDeviceContainer devContainer;
@@ -74,7 +77,8 @@ public:
                 std::string CSVfileName,
                 bool enableTracing,
                 bool enablePcap,
-                uint32_t meshNodeId
+                uint32_t meshNodeId,
+                uint32_t openGymPort
                 );
 private:
   uint32_t m_nNodes; ///< total number of nodes
@@ -89,10 +93,13 @@ private:
   bool m_enableTracing;
   bool m_enablePcap;
   uint32_t m_meshNodeId;
+  uint32_t m_openGymPort;
   Ptr<SingleModelSpectrumChannel> channel;
   NodeContainer ch;
 
 private:
+  /// Instantiate OpenGymInterface
+  void CreateOpenGymEnv();
   /// Create and initialize all nodes
   void CreateNodes ();
   /**
@@ -125,6 +132,7 @@ private:
 };
 int main (int argc, char *argv[])
 {
+  uint32_t openGymPort = 5555;
   CongestionControl congestionControl;
   uint32_t nNodes = 30;
   uint32_t nSinks = 1;
@@ -148,6 +156,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("verbose", "turn on all log components", verbose);
   cmd.AddValue ("enableTracing", "Output Tracing file[Default:0]", enableTracing);
   cmd.AddValue ("Enable Pcap", "Output Pcap packet tracing file[Default:0]", enablePcap);
+  cmd.AddValue ("openGymPort", "OpenGymInterface port[Default:5555]", openGymPort);
   cmd.Parse (argc, argv);
   LogComponentEnable ("LrWpanMac", LOG_LEVEL_ALL);
   std::ofstream out (CSVfileName.c_str ());
@@ -161,7 +170,8 @@ int main (int argc, char *argv[])
 
   congestionControl = CongestionControl();
   congestionControl.CaseRun (nNodes, nSinks, totalTime, periodicUpdateInterval,
-                              dataStart, printRoutingTable, CSVfileName, enableTracing, enablePcap, meshNodeId);
+                              dataStart, printRoutingTable, CSVfileName, 
+                              enableTracing, enablePcap, meshNodeId, openGymPort);
   return 0;
 }
 
@@ -182,7 +192,7 @@ void
 CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks, 
                           double totalTime, uint8_t periodicUpdateInterval,
                           double dataStart, bool printRoutes, std::string CSVfileName, 
-                          bool enableTracing, bool enablePcap, uint32_t meshNodeId)
+                          bool enableTracing, bool enablePcap, uint32_t meshNodeId, uint32_t openGymPort)
 {
   m_nNodes = nNodes;
   m_nSinks = nSinks;
@@ -194,6 +204,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_enableTracing = enableTracing;
   m_enablePcap = enablePcap;
   m_meshNodeId = meshNodeId;
+  m_openGymPort = openGymPort;
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -204,6 +215,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   std::cout << "Trace file generated is " << tr_name << ".tr\n";
 
+  CreateOpenGymEnv();
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
@@ -213,9 +225,17 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   //pAnim->EnablePacketMetadata (); //Optional
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Run ();
+  openGymInterface->NotifySimulationEnd();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   Simulator::Destroy ();
   delete pAnim;
+}
+void
+CongestionControl::CreateOpenGymEnv(uint32_t openGymPort)
+{
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (openGymPort);
+  Ptr<WSNGym> myWSNGym = CreateObject<WSNGym> ();
+  myWSNGym->SetOpenGymInterface(openGymInterface);
 }
 void 
 CongestionControl::CreateNodes()
