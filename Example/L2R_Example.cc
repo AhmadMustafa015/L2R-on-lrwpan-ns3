@@ -99,7 +99,7 @@ private:
 
 private:
   /// Instantiate OpenGymInterface
-  void CreateOpenGymInterface();
+  void CreateOpenGymEnv();
   /// Create and initialize all nodes
   void CreateNodes ();
   /**
@@ -215,7 +215,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   std::cout << "Trace file generated is " << tr_name << ".tr\n";
 
-  CreateOpenGymInterface();
+  CreateOpenGymEnv();
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
@@ -231,11 +231,11 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   delete pAnim;
 }
 void
-CongestionControl::CreateOpenGymInterface(uint32_t openGymPort)
+CongestionControl::CreateOpenGymEnv(uint32_t openGymPort)
 {
-  Ptr<OpenGymInterface> openGymInterface;
-  openGymInterface = OpenGymInterface::Get(openGymPort);
-
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (openGymPort);
+  Ptr<WSNGym> myWSNGym = CreateObject<WSNGym> ();
+  myWSNGym->SetOpenGymInterface(openGymInterface);
 }
 void 
 CongestionControl::CreateNodes()
