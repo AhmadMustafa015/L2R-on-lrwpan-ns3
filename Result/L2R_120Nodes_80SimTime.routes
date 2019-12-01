@@ -1,0 +1,4461 @@
+******************************************************TC-IE Updates number: 1******************************************************
+Node: 0, Mac Address: 00:01, Depth: 0, Time: +1.00999999999999999999s, Local time: +1.00999999999999999999s, l2r Routing table, Mesh Root
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:04		1                   	2                   	0.039s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+
+
+Node: 1, Mac Address: 00:20, Depth: 1, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+
+
+Node: 2, Mac Address: 00:30, Depth: 2, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.033s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+
+
+Node: 3, Mac Address: 00:40, Depth: 1, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+
+
+Node: 4, Mac Address: 00:50, Depth: 1, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0f		6                   	7                   	0.027s		7.000s
+
+
+Node: 5, Mac Address: 00:60, Depth: 2, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:05		1                   	2                   	0.029s		7.000s
+
+
+Node: 6, Mac Address: 00:70, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.035s		7.000s
+00:13		9                   	10                  	0.039s		7.000s
+
+
+Node: 7, Mac Address: 00:80, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.042s		7.000s
+
+
+Node: 8, Mac Address: 00:90, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:15		7                   	8                   	0.039s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+
+
+Node: 9, Mac Address: 00:a0, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		4                   	5                   	0.021s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+
+
+Node: 10, Mac Address: 00:b0, Depth: 3, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:0a		5                   	6                   	0.071s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+
+
+Node: 11, Mac Address: 00:c0, Depth: 3, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		4                   	5                   	0.021s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+
+
+Node: 12, Mac Address: 00:d0, Depth: 2, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.015s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+00:1b		3                   	4                   	0.027s		7.000s
+
+
+Node: 13, Mac Address: 00:e0, Depth: 2, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.033s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:1c		4                   	5                   	0.048s		7.000s
+00:1d		4                   	5                   	0.022s		7.000s
+
+
+Node: 14, Mac Address: 00:f0, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1e		5                   	6                   	0.025s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+
+
+Node: 15, Mac Address: 00:10, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+
+
+Node: 16, Mac Address: 00:11, Depth: 3, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:06		2                   	3                   	0.033s		7.000s
+00:10		7                   	8                   	0.035s		7.000s
+00:12		10                  	11                  	0.054s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+
+
+Node: 17, Mac Address: 00:12, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.043s		7.000s
+00:22		12                  	13                  	0.045s		7.000s
+
+
+Node: 18, Mac Address: 00:13, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:14		8                   	9                   	0.066s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+
+
+Node: 19, Mac Address: 00:14, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.045s		7.000s
+00:13		9                   	10                  	0.070s		7.000s
+00:15		7                   	8                   	0.034s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+
+
+Node: 20, Mac Address: 00:15, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.046s		7.000s
+00:16		6                   	7                   	0.036s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+
+
+Node: 21, Mac Address: 00:16, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.031s		7.000s
+00:0a		5                   	6                   	0.023s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.043s		7.000s
+
+
+Node: 22, Mac Address: 00:17, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+00:29		7                   	8                   	0.039s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 23, Mac Address: 00:18, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.071s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:17		6                   	7                   	0.041s		7.000s
+00:19		4                   	5                   	0.023s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 24, Mac Address: 00:19, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		3                   	4                   	0.078s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2b		5                   	6                   	0.047s		7.000s
+00:2c		6                   	7                   	0.063s		7.000s
+
+
+Node: 25, Mac Address: 00:1a, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0c		3                   	4                   	0.019s		7.000s
+00:19		4                   	5                   	0.032s		7.000s
+00:1b		3                   	4                   	0.039s		7.000s
+00:2d		5                   	6                   	0.058s		7.000s
+
+
+Node: 26, Mac Address: 00:1b, Depth: 3, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0d		2                   	3                   	0.017s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+
+
+Node: 27, Mac Address: 00:1c, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+
+
+Node: 28, Mac Address: 00:1d, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:1e		5                   	6                   	0.050s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:31		5                   	6                   	0.029s		7.000s
+
+
+Node: 29, Mac Address: 00:1e, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:32		8                   	9                   	0.031s		7.000s
+
+
+Node: 30, Mac Address: 00:1f, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:20		8                   	9                   	0.038s		7.000s
+00:33		8                   	9                   	0.030s		7.000s
+00:34		8                   	9                   	0.055s		7.000s
+
+
+Node: 31, Mac Address: 00:20, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1f		7                   	8                   	0.029s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 32, Mac Address: 00:21, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:11		3                   	4                   	0.036s		7.000s
+00:20		8                   	9                   	0.047s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 33, Mac Address: 00:22, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:12		10                  	11                  	0.061s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 34, Mac Address: 00:23, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 35, Mac Address: 00:24, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.039s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+
+
+Node: 36, Mac Address: 00:25, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:14		8                   	9                   	0.074s		7.000s
+00:24		10                  	11                  	0.079s		7.000s
+00:3b		10                  	11                  	0.058s		7.000s
+
+
+Node: 37, Mac Address: 00:26, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.031s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+00:3c		9                   	10                  	0.044s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+
+
+Node: 38, Mac Address: 00:27, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.034s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+
+
+Node: 39, Mac Address: 00:28, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:16		6                   	7                   	0.025s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:29		7                   	8                   	0.029s		7.000s
+00:3f		8                   	9                   	0.052s		7.000s
+
+
+Node: 40, Mac Address: 00:29, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.050s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.038s		7.000s
+00:41		7                   	8                   	0.046s		7.000s
+
+
+Node: 41, Mac Address: 00:2a, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:18		5                   	6                   	0.025s		7.000s
+00:41		7                   	8                   	0.054s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+
+
+Node: 42, Mac Address: 00:2b, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:19		4                   	5                   	0.023s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:44		7                   	8                   	0.038s		7.000s
+
+
+Node: 43, Mac Address: 00:2c, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+
+
+Node: 44, Mac Address: 00:2d, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+
+
+Node: 45, Mac Address: 00:2e, Depth: 4, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1b		3                   	4                   	0.021s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:2f		5                   	6                   	0.036s		7.000s
+
+
+Node: 46, Mac Address: 00:2f, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:48		6                   	7                   	0.029s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+
+
+Node: 47, Mac Address: 00:30, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2f		5                   	6                   	0.031s		7.000s
+00:31		5                   	6                   	0.025s		7.000s
+00:49		6                   	7                   	0.047s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+
+
+Node: 48, Mac Address: 00:31, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:32		6                   	7                   	0.082s		7.000s
+00:4a		7                   	8                   	0.062s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+
+
+Node: 49, Mac Address: 00:32, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1e		5                   	6                   	0.050s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:33		7                   	8                   	0.080s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+
+
+Node: 50, Mac Address: 00:33, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.029s		7.000s
+00:32		6                   	7                   	0.072s		7.000s
+
+
+Node: 51, Mac Address: 00:34, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 52, Mac Address: 00:35, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:20		8                   	9                   	0.047s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 53, Mac Address: 00:36, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:21		4                   	5                   	0.039s		7.000s
+00:35		9                   	10                  	0.038s		7.000s
+00:51		11                  	12                  	0.052s		7.000s
+
+
+Node: 54, Mac Address: 00:37, Depth: 13, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 55, Mac Address: 00:38, Depth: 12, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 56, Mac Address: 00:39, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:23		11                  	12                  	0.044s		7.000s
+00:24		10                  	11                  	0.065s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.069s		7.000s
+
+
+Node: 57, Mac Address: 00:3a, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:24		10                  	11                  	0.079s		7.000s
+00:39		11                  	12                  	0.071s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:55		13                  	14                  	0.063s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+
+
+Node: 58, Mac Address: 00:3b, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:25		11                  	12                  	0.061s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:3c		9                   	10                  	0.046s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 59, Mac Address: 00:3c, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+
+
+Node: 60, Mac Address: 00:3d, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3c		9                   	10                  	0.035s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.053s		7.000s
+
+
+Node: 61, Mac Address: 00:3e, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:27		8                   	9                   	0.041s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 62, Mac Address: 00:3f, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:28		7                   	8                   	0.043s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 63, Mac Address: 00:40, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:5d		9                   	10                  	0.035s		7.000s
+
+
+Node: 64, Mac Address: 00:41, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.032s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+00:5e		8                   	9                   	0.037s		7.000s
+
+
+Node: 65, Mac Address: 00:42, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2a		6                   	7                   	0.031s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:43		8                   	9                   	0.057s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 66, Mac Address: 00:43, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2b		5                   	6                   	0.047s		7.000s
+00:42		7                   	8                   	0.040s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 67, Mac Address: 00:44, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:62		9                   	10                  	0.043s		7.000s
+
+
+Node: 68, Mac Address: 00:45, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:46		6                   	7                   	0.051s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 69, Mac Address: 00:46, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:47		5                   	6                   	0.031s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+00:65		6                   	7                   	0.039s		7.000s
+
+
+Node: 70, Mac Address: 00:47, Depth: 5, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+00:48		6                   	7                   	0.037s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 71, Mac Address: 00:48, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:66		7                   	8                   	0.063s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 72, Mac Address: 00:49, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:48		6                   	7                   	0.066s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:68		7                   	8                   	0.052s		7.000s
+
+
+Node: 73, Mac Address: 00:4a, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:30		6                   	7                   	0.035s		7.000s
+00:31		5                   	6                   	0.084s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:4b		6                   	7                   	0.040s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 74, Mac Address: 00:4b, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:31		5                   	6                   	0.025s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:69		7                   	8                   	0.038s		7.000s
+
+
+Node: 75, Mac Address: 00:4c, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.053s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:4d		8                   	9                   	0.030s		7.000s
+
+
+Node: 76, Mac Address: 00:4d, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.072s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+
+
+Node: 77, Mac Address: 00:4e, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:6d		10                  	11                  	0.050s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 78, Mac Address: 00:4f, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:34		8                   	9                   	0.034s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 80, Mac Address: 00:51, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:36		10                  	11                  	0.045s		7.000s
+00:71		12                  	13                  	0.049s		7.000s
+
+
+Node: 81, Mac Address: 00:52, Depth: 14, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 82, Mac Address: 00:53, Depth: 13, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 83, Mac Address: 00:54, Depth: 13, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 84, Mac Address: 00:55, Depth: 13, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.046s		7.000s
+00:3a		13                  	14                  	0.066s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 85, Mac Address: 00:56, Depth: 12, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.050s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+00:78		12                  	13                  	0.054s		7.000s
+
+
+Node: 86, Mac Address: 00:57, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3b		12                  	13                  	0.042s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+00:78		12                  	13                  	0.041s		7.000s
+
+
+Node: 87, Mac Address: 00:58, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3c		9                   	10                  	0.035s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 88, Mac Address: 00:59, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.050s		7.000s
+
+
+Node: 89, Mac Address: 00:5a, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.044s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 90, Mac Address: 00:5b, Depth: 11, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+
+
+Node: 91, Mac Address: 00:5c, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.038s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 92, Mac Address: 00:5d, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.032s		7.000s
+00:41		7                   	8                   	0.062s		7.000s
+
+
+Node: 93, Mac Address: 00:5e, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:41		8                   	9                   	0.043s		7.000s
+00:42		7                   	8                   	0.033s		7.000s
+
+
+Node: 94, Mac Address: 00:5f, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:42		7                   	8                   	0.033s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 95, Mac Address: 00:60, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.035s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 96, Mac Address: 00:61, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.057s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+
+
+Node: 97, Mac Address: 00:62, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:44		7                   	8                   	0.038s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 98, Mac Address: 00:63, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:45		6                   	7                   	0.056s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+
+
+Node: 99, Mac Address: 00:64, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 100, Mac Address: 00:65, Depth: 6, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:47		5                   	6                   	0.027s		7.000s
+00:64		7                   	8                   	0.038s		7.000s
+
+
+Node: 101, Mac Address: 00:66, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:48		6                   	7                   	0.060s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 102, Mac Address: 00:67, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.027s		7.000s
+00:66		8                   	9                   	0.035s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 103, Mac Address: 00:68, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.046s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:67		7                   	8                   	0.030s		7.000s
+
+
+Node: 104, Mac Address: 00:69, Depth: 7, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4a		7                   	8                   	0.042s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:6a		8                   	9                   	0.037s		7.000s
+
+
+Node: 105, Mac Address: 00:6a, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:69		7                   	8                   	0.030s		7.000s
+00:6b		8                   	9                   	0.031s		7.000s
+
+
+Node: 106, Mac Address: 00:6b, Depth: 8, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4c		7                   	8                   	0.028s		7.000s
+00:6a		8                   	9                   	0.045s		7.000s
+
+
+Node: 107, Mac Address: 00:6c, Depth: 9, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4d		8                   	9                   	0.030s		7.000s
+00:6b		8                   	9                   	0.047s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+
+
+Node: 108, Mac Address: 00:6d, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+00:6e		10                  	11                  	0.052s		7.000s
+
+
+Node: 109, Mac Address: 00:6e, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:4f		9                   	10                  	0.038s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 110, Mac Address: 00:6f, Depth: 10, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4f		9                   	10                  	0.038s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 112, Mac Address: 00:71, Depth: 12, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:51		11                  	12                  	0.046s		7.000s
+
+
+Node: 113, Mac Address: 00:72, Depth: 15, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:52		14                  	15                  	0.049s		7.000s
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 117, Mac Address: 00:76, Depth: 14, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:55		13                  	14                  	0.050s		7.000s
+00:77		13                  	14                  	0.053s		7.000s
+
+
+Node: 118, Mac Address: 00:77, Depth: 13, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 119, Mac Address: 00:78, Depth: 12, Time: +1.0100s, Local time: +1.0100s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +3.0200s, Local time: +3.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +3.0200s, Local time: +3.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +3.0200s, Local time: +3.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +3.0200s, Local time: +3.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +3.0200s, Local time: +3.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +7.0400s, Local time: +7.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +7.0400s, Local time: +7.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +7.0400s, Local time: +7.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +7.0400s, Local time: +7.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +7.0400s, Local time: +7.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+******************************************************TC-IE Updates number: 2******************************************************
+Node: 0, Mac Address: 00:10, Depth: 0, Time: +10.0200s, Local time: +10.0200s, l2r Routing table, Mesh Root
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:04		1                   	2                   	0.039s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+
+
+Node: 1, Mac Address: 00:20, Depth: 1, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+
+
+Node: 2, Mac Address: 00:30, Depth: 1, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+
+
+Node: 3, Mac Address: 00:40, Depth: 1, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+
+
+Node: 4, Mac Address: 00:50, Depth: 1, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0f		6                   	7                   	0.027s		7.000s
+
+
+Node: 5, Mac Address: 00:60, Depth: 1, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:05		1                   	2                   	0.029s		7.000s
+
+
+Node: 6, Mac Address: 00:70, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.035s		7.000s
+00:13		9                   	10                  	0.039s		7.000s
+
+
+Node: 7, Mac Address: 00:80, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.042s		7.000s
+
+
+Node: 8, Mac Address: 00:90, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:15		7                   	8                   	0.039s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+
+
+Node: 9, Mac Address: 00:a0, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		4                   	5                   	0.021s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+
+
+Node: 10, Mac Address: 00:b0, Depth: 3, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:0a		5                   	6                   	0.071s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+
+
+Node: 11, Mac Address: 00:c0, Depth: 2, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		1                   	2                   	7.014s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+
+
+Node: 12, Mac Address: 00:d0, Depth: 2, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.015s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+00:1b		3                   	4                   	0.027s		7.000s
+
+
+Node: 13, Mac Address: 00:e0, Depth: 2, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.033s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:1c		4                   	5                   	0.048s		7.000s
+00:1d		4                   	5                   	0.022s		7.000s
+
+
+Node: 14, Mac Address: 00:f0, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1e		5                   	6                   	0.025s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+
+
+Node: 15, Mac Address: 00:10, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+
+
+Node: 16, Mac Address: 00:11, Depth: 3, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:06		2                   	3                   	0.033s		7.000s
+00:10		7                   	8                   	0.035s		7.000s
+00:12		10                  	11                  	0.054s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+
+
+Node: 17, Mac Address: 00:12, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.043s		7.000s
+00:22		12                  	13                  	0.045s		7.000s
+
+
+Node: 18, Mac Address: 00:13, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:14		8                   	9                   	0.066s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+
+
+Node: 19, Mac Address: 00:14, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.045s		7.000s
+00:13		9                   	10                  	0.070s		7.000s
+00:15		7                   	8                   	0.034s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+
+
+Node: 20, Mac Address: 00:15, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.046s		7.000s
+00:16		6                   	7                   	0.036s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+
+
+Node: 21, Mac Address: 00:16, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.031s		7.000s
+00:0a		5                   	6                   	0.023s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.043s		7.000s
+
+
+Node: 22, Mac Address: 00:17, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+00:29		7                   	8                   	0.039s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 23, Mac Address: 00:18, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.071s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:17		6                   	7                   	0.041s		7.000s
+00:19		4                   	5                   	0.023s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 24, Mac Address: 00:19, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		3                   	4                   	0.078s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2b		5                   	6                   	0.047s		7.000s
+00:2c		6                   	7                   	0.063s		7.000s
+
+
+Node: 25, Mac Address: 00:1a, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0c		3                   	4                   	0.019s		7.000s
+00:19		4                   	5                   	0.032s		7.000s
+00:1b		3                   	4                   	0.039s		7.000s
+00:2d		5                   	6                   	0.058s		7.000s
+
+
+Node: 26, Mac Address: 00:1b, Depth: 3, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0d		2                   	3                   	0.017s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+
+
+Node: 27, Mac Address: 00:1c, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+
+
+Node: 28, Mac Address: 00:1d, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:1e		5                   	6                   	0.050s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:31		5                   	6                   	0.029s		7.000s
+
+
+Node: 29, Mac Address: 00:1e, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:32		8                   	9                   	0.031s		7.000s
+
+
+Node: 30, Mac Address: 00:1f, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:20		8                   	9                   	0.038s		7.000s
+00:33		8                   	9                   	0.030s		7.000s
+00:34		8                   	9                   	0.055s		7.000s
+
+
+Node: 31, Mac Address: 00:20, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1f		7                   	8                   	0.029s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 32, Mac Address: 00:21, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:11		3                   	4                   	0.036s		7.000s
+00:20		8                   	9                   	0.047s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 33, Mac Address: 00:22, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:12		10                  	11                  	0.061s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 34, Mac Address: 00:23, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 35, Mac Address: 00:24, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.039s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+
+
+Node: 36, Mac Address: 00:25, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:14		8                   	9                   	0.074s		7.000s
+00:24		10                  	11                  	0.079s		7.000s
+00:3b		10                  	11                  	0.058s		7.000s
+
+
+Node: 37, Mac Address: 00:26, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.031s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+00:3c		9                   	10                  	0.044s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+
+
+Node: 38, Mac Address: 00:27, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.034s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+
+
+Node: 39, Mac Address: 00:28, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:16		6                   	7                   	0.025s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:29		7                   	8                   	0.029s		7.000s
+00:3f		8                   	9                   	0.052s		7.000s
+
+
+Node: 40, Mac Address: 00:29, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.050s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.038s		7.000s
+00:41		7                   	8                   	0.046s		7.000s
+
+
+Node: 41, Mac Address: 00:2a, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:18		5                   	6                   	0.025s		7.000s
+00:41		7                   	8                   	0.054s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+
+
+Node: 42, Mac Address: 00:2b, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:19		4                   	5                   	0.023s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:44		7                   	8                   	0.038s		7.000s
+
+
+Node: 43, Mac Address: 00:2c, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+
+
+Node: 44, Mac Address: 00:2d, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+
+
+Node: 45, Mac Address: 00:2e, Depth: 4, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1b		3                   	4                   	0.021s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:2f		5                   	6                   	0.036s		7.000s
+
+
+Node: 46, Mac Address: 00:2f, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:48		6                   	7                   	0.029s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+
+
+Node: 47, Mac Address: 00:30, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2f		5                   	6                   	0.031s		7.000s
+00:31		5                   	6                   	0.025s		7.000s
+00:49		6                   	7                   	0.047s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+
+
+Node: 48, Mac Address: 00:31, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:32		6                   	7                   	0.082s		7.000s
+00:4a		7                   	8                   	0.062s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+
+
+Node: 49, Mac Address: 00:32, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1e		5                   	6                   	0.050s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:33		7                   	8                   	0.080s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+
+
+Node: 50, Mac Address: 00:33, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.029s		7.000s
+00:32		6                   	7                   	0.072s		7.000s
+
+
+Node: 51, Mac Address: 00:34, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 52, Mac Address: 00:35, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:20		8                   	9                   	0.047s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 53, Mac Address: 00:36, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:21		4                   	5                   	0.039s		7.000s
+00:35		9                   	10                  	0.038s		7.000s
+00:51		11                  	12                  	0.052s		7.000s
+
+
+Node: 54, Mac Address: 00:37, Depth: 13, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 55, Mac Address: 00:38, Depth: 12, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 56, Mac Address: 00:39, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:23		11                  	12                  	0.044s		7.000s
+00:24		10                  	11                  	0.065s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.069s		7.000s
+
+
+Node: 57, Mac Address: 00:3a, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:24		10                  	11                  	0.079s		7.000s
+00:39		11                  	12                  	0.071s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:55		13                  	14                  	0.063s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+
+
+Node: 58, Mac Address: 00:3b, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:25		11                  	12                  	0.061s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:3c		9                   	10                  	0.046s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 59, Mac Address: 00:3c, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+
+
+Node: 60, Mac Address: 00:3d, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3c		9                   	10                  	0.035s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.053s		7.000s
+
+
+Node: 61, Mac Address: 00:3e, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:27		8                   	9                   	0.041s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 62, Mac Address: 00:3f, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:28		7                   	8                   	0.043s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 63, Mac Address: 00:40, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:5d		9                   	10                  	0.035s		7.000s
+
+
+Node: 64, Mac Address: 00:41, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.032s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+00:5e		8                   	9                   	0.037s		7.000s
+
+
+Node: 65, Mac Address: 00:42, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2a		6                   	7                   	0.031s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:43		8                   	9                   	0.057s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 66, Mac Address: 00:43, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2b		5                   	6                   	0.047s		7.000s
+00:42		7                   	8                   	0.040s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 67, Mac Address: 00:44, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:62		9                   	10                  	0.043s		7.000s
+
+
+Node: 68, Mac Address: 00:45, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:46		6                   	7                   	0.051s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 69, Mac Address: 00:46, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:47		5                   	6                   	0.031s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+00:65		6                   	7                   	0.039s		7.000s
+
+
+Node: 70, Mac Address: 00:47, Depth: 5, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+00:48		6                   	7                   	0.037s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 71, Mac Address: 00:48, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:66		7                   	8                   	0.063s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 72, Mac Address: 00:49, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:48		6                   	7                   	0.066s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:68		7                   	8                   	0.052s		7.000s
+
+
+Node: 73, Mac Address: 00:4a, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:30		6                   	7                   	0.035s		7.000s
+00:31		5                   	6                   	0.084s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:4b		6                   	7                   	0.040s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 74, Mac Address: 00:4b, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:31		5                   	6                   	0.025s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:69		7                   	8                   	0.038s		7.000s
+
+
+Node: 75, Mac Address: 00:4c, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.053s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:4d		8                   	9                   	0.030s		7.000s
+
+
+Node: 76, Mac Address: 00:4d, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.072s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+
+
+Node: 77, Mac Address: 00:4e, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:6d		10                  	11                  	0.050s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 78, Mac Address: 00:4f, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:34		8                   	9                   	0.034s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 80, Mac Address: 00:51, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:36		10                  	11                  	0.045s		7.000s
+00:71		12                  	13                  	0.049s		7.000s
+
+
+Node: 81, Mac Address: 00:52, Depth: 14, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 82, Mac Address: 00:53, Depth: 13, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 83, Mac Address: 00:54, Depth: 13, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 84, Mac Address: 00:55, Depth: 13, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.046s		7.000s
+00:3a		13                  	14                  	0.066s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 85, Mac Address: 00:56, Depth: 12, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.050s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+00:78		12                  	13                  	0.054s		7.000s
+
+
+Node: 86, Mac Address: 00:57, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3b		12                  	13                  	0.042s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+00:78		12                  	13                  	0.041s		7.000s
+
+
+Node: 87, Mac Address: 00:58, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3c		9                   	10                  	0.035s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 88, Mac Address: 00:59, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.050s		7.000s
+
+
+Node: 89, Mac Address: 00:5a, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.044s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 90, Mac Address: 00:5b, Depth: 11, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+
+
+Node: 91, Mac Address: 00:5c, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.038s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 92, Mac Address: 00:5d, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.032s		7.000s
+00:41		7                   	8                   	0.062s		7.000s
+
+
+Node: 93, Mac Address: 00:5e, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:41		8                   	9                   	0.043s		7.000s
+00:42		7                   	8                   	0.033s		7.000s
+
+
+Node: 94, Mac Address: 00:5f, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:42		7                   	8                   	0.033s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 95, Mac Address: 00:60, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.035s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 96, Mac Address: 00:61, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.057s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+
+
+Node: 97, Mac Address: 00:62, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:44		7                   	8                   	0.038s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 98, Mac Address: 00:63, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:45		6                   	7                   	0.056s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+
+
+Node: 99, Mac Address: 00:64, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 100, Mac Address: 00:65, Depth: 6, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:47		5                   	6                   	0.027s		7.000s
+00:64		7                   	8                   	0.038s		7.000s
+
+
+Node: 101, Mac Address: 00:66, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:48		6                   	7                   	0.060s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 102, Mac Address: 00:67, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.027s		7.000s
+00:66		8                   	9                   	0.035s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 103, Mac Address: 00:68, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.046s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:67		7                   	8                   	0.030s		7.000s
+
+
+Node: 104, Mac Address: 00:69, Depth: 7, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4a		7                   	8                   	0.042s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:6a		8                   	9                   	0.037s		7.000s
+
+
+Node: 105, Mac Address: 00:6a, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:69		7                   	8                   	0.030s		7.000s
+00:6b		8                   	9                   	0.031s		7.000s
+
+
+Node: 106, Mac Address: 00:6b, Depth: 8, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4c		7                   	8                   	0.028s		7.000s
+00:6a		8                   	9                   	0.045s		7.000s
+
+
+Node: 107, Mac Address: 00:6c, Depth: 9, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4d		8                   	9                   	0.030s		7.000s
+00:6b		8                   	9                   	0.047s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+
+
+Node: 108, Mac Address: 00:6d, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+00:6e		10                  	11                  	0.052s		7.000s
+
+
+Node: 109, Mac Address: 00:6e, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:4f		9                   	10                  	0.038s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 110, Mac Address: 00:6f, Depth: 10, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4f		9                   	10                  	0.038s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 112, Mac Address: 00:71, Depth: 12, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:51		11                  	12                  	0.046s		7.000s
+
+
+Node: 113, Mac Address: 00:72, Depth: 15, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:52		14                  	15                  	0.049s		7.000s
+
+
+Node: 117, Mac Address: 00:76, Depth: 14, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:55		13                  	14                  	0.050s		7.000s
+00:77		13                  	14                  	0.053s		7.000s
+
+
+Node: 118, Mac Address: 00:77, Depth: 13, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 119, Mac Address: 00:78, Depth: 12, Time: +10.0200s, Local time: +10.0200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +15.0800s, Local time: +15.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +15.0800s, Local time: +15.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +15.0800s, Local time: +15.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +15.0800s, Local time: +15.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +15.0800s, Local time: +15.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+******************************************************TC-IE Updates number: 3******************************************************
+Node: 0, Mac Address: 00:10, Depth: 0, Time: +28.0400s, Local time: +28.0400s, l2r Routing table, Mesh Root
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:04		1                   	2                   	0.039s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+
+
+Node: 1, Mac Address: 00:20, Depth: 1, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+
+
+Node: 2, Mac Address: 00:30, Depth: 1, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+
+
+Node: 3, Mac Address: 00:40, Depth: 1, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+
+
+Node: 4, Mac Address: 00:50, Depth: 1, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0f		6                   	7                   	0.027s		7.000s
+
+
+Node: 5, Mac Address: 00:60, Depth: 1, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:05		1                   	2                   	0.029s		7.000s
+
+
+Node: 6, Mac Address: 00:70, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.035s		7.000s
+00:13		9                   	10                  	0.039s		7.000s
+
+
+Node: 7, Mac Address: 00:80, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.042s		7.000s
+
+
+Node: 8, Mac Address: 00:90, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:15		7                   	8                   	0.039s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+
+
+Node: 9, Mac Address: 00:a0, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		4                   	5                   	0.021s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+
+
+Node: 10, Mac Address: 00:b0, Depth: 3, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:0a		5                   	6                   	0.071s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+
+
+Node: 11, Mac Address: 00:c0, Depth: 2, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		1                   	2                   	7.014s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+
+
+Node: 12, Mac Address: 00:d0, Depth: 2, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.015s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+00:1b		3                   	4                   	0.027s		7.000s
+
+
+Node: 13, Mac Address: 00:e0, Depth: 2, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.033s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:1c		4                   	5                   	0.048s		7.000s
+00:1d		4                   	5                   	0.022s		7.000s
+
+
+Node: 14, Mac Address: 00:f0, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1e		5                   	6                   	0.025s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+
+
+Node: 15, Mac Address: 00:10, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+
+
+Node: 16, Mac Address: 00:11, Depth: 3, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:06		2                   	3                   	0.033s		7.000s
+00:10		7                   	8                   	0.035s		7.000s
+00:12		10                  	11                  	0.054s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+
+
+Node: 17, Mac Address: 00:12, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.043s		7.000s
+00:22		12                  	13                  	0.045s		7.000s
+
+
+Node: 18, Mac Address: 00:13, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:14		8                   	9                   	0.066s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+
+
+Node: 19, Mac Address: 00:14, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.045s		7.000s
+00:13		9                   	10                  	0.070s		7.000s
+00:15		7                   	8                   	0.034s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+
+
+Node: 20, Mac Address: 00:15, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.046s		7.000s
+00:16		6                   	7                   	0.036s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+
+
+Node: 21, Mac Address: 00:16, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.031s		7.000s
+00:0a		5                   	6                   	0.023s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.043s		7.000s
+
+
+Node: 22, Mac Address: 00:17, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+00:29		7                   	8                   	0.039s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 23, Mac Address: 00:18, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.071s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:17		6                   	7                   	0.041s		7.000s
+00:19		4                   	5                   	0.023s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 24, Mac Address: 00:19, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		3                   	4                   	0.078s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2b		5                   	6                   	0.047s		7.000s
+00:2c		6                   	7                   	0.063s		7.000s
+
+
+Node: 25, Mac Address: 00:1a, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0c		3                   	4                   	0.019s		7.000s
+00:19		4                   	5                   	0.032s		7.000s
+00:1b		3                   	4                   	0.039s		7.000s
+00:2d		5                   	6                   	0.058s		7.000s
+
+
+Node: 26, Mac Address: 00:1b, Depth: 3, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0d		2                   	3                   	0.017s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+
+
+Node: 27, Mac Address: 00:1c, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+
+
+Node: 28, Mac Address: 00:1d, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:1e		5                   	6                   	0.050s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:31		5                   	6                   	0.029s		7.000s
+
+
+Node: 29, Mac Address: 00:1e, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:32		8                   	9                   	0.031s		7.000s
+
+
+Node: 30, Mac Address: 00:1f, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:20		8                   	9                   	0.038s		7.000s
+00:33		8                   	9                   	0.030s		7.000s
+00:34		8                   	9                   	0.055s		7.000s
+
+
+Node: 31, Mac Address: 00:20, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1f		7                   	8                   	0.029s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 32, Mac Address: 00:21, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:11		3                   	4                   	0.036s		7.000s
+00:20		8                   	9                   	0.047s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 33, Mac Address: 00:22, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:12		10                  	11                  	0.061s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 34, Mac Address: 00:23, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 35, Mac Address: 00:24, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.039s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+
+
+Node: 36, Mac Address: 00:25, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:14		8                   	9                   	0.074s		7.000s
+00:24		10                  	11                  	0.079s		7.000s
+00:3b		10                  	11                  	0.058s		7.000s
+
+
+Node: 37, Mac Address: 00:26, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.031s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+00:3c		9                   	10                  	0.044s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+
+
+Node: 38, Mac Address: 00:27, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.034s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+
+
+Node: 39, Mac Address: 00:28, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:16		6                   	7                   	0.025s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:29		7                   	8                   	0.029s		7.000s
+00:3f		8                   	9                   	0.052s		7.000s
+
+
+Node: 40, Mac Address: 00:29, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.050s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.038s		7.000s
+00:41		7                   	8                   	0.046s		7.000s
+
+
+Node: 41, Mac Address: 00:2a, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:18		5                   	6                   	0.025s		7.000s
+00:41		7                   	8                   	0.054s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+
+
+Node: 42, Mac Address: 00:2b, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:19		4                   	5                   	0.023s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:44		7                   	8                   	0.038s		7.000s
+
+
+Node: 43, Mac Address: 00:2c, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+
+
+Node: 44, Mac Address: 00:2d, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+
+
+Node: 45, Mac Address: 00:2e, Depth: 4, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1b		3                   	4                   	0.021s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:2f		5                   	6                   	0.036s		7.000s
+
+
+Node: 46, Mac Address: 00:2f, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:48		6                   	7                   	0.029s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+
+
+Node: 47, Mac Address: 00:30, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2f		5                   	6                   	0.031s		7.000s
+00:31		5                   	6                   	0.025s		7.000s
+00:49		6                   	7                   	0.047s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+
+
+Node: 48, Mac Address: 00:31, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:32		6                   	7                   	0.082s		7.000s
+00:4a		7                   	8                   	0.062s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+
+
+Node: 49, Mac Address: 00:32, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1e		5                   	6                   	0.050s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:33		7                   	8                   	0.080s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+
+
+Node: 50, Mac Address: 00:33, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.029s		7.000s
+00:32		6                   	7                   	0.072s		7.000s
+
+
+Node: 51, Mac Address: 00:34, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 52, Mac Address: 00:35, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:20		8                   	9                   	0.047s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 53, Mac Address: 00:36, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:21		4                   	5                   	0.039s		7.000s
+00:35		9                   	10                  	0.038s		7.000s
+00:51		11                  	12                  	0.052s		7.000s
+
+
+Node: 54, Mac Address: 00:37, Depth: 13, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 55, Mac Address: 00:38, Depth: 12, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 56, Mac Address: 00:39, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:23		11                  	12                  	0.044s		7.000s
+00:24		10                  	11                  	0.065s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.069s		7.000s
+
+
+Node: 57, Mac Address: 00:3a, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:24		10                  	11                  	0.079s		7.000s
+00:39		11                  	12                  	0.071s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:55		13                  	14                  	0.063s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+
+
+Node: 58, Mac Address: 00:3b, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:25		11                  	12                  	0.061s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:3c		9                   	10                  	0.046s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 59, Mac Address: 00:3c, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+
+
+Node: 60, Mac Address: 00:3d, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3c		9                   	10                  	0.035s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.053s		7.000s
+
+
+Node: 61, Mac Address: 00:3e, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:27		8                   	9                   	0.041s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 62, Mac Address: 00:3f, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:28		7                   	8                   	0.043s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 63, Mac Address: 00:40, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:5d		9                   	10                  	0.035s		7.000s
+
+
+Node: 64, Mac Address: 00:41, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.032s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+00:5e		8                   	9                   	0.037s		7.000s
+
+
+Node: 65, Mac Address: 00:42, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2a		6                   	7                   	0.031s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:43		8                   	9                   	0.057s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 66, Mac Address: 00:43, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2b		5                   	6                   	0.047s		7.000s
+00:42		7                   	8                   	0.040s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 67, Mac Address: 00:44, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:62		9                   	10                  	0.043s		7.000s
+
+
+Node: 68, Mac Address: 00:45, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:46		6                   	7                   	0.051s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 69, Mac Address: 00:46, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:47		5                   	6                   	0.031s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+00:65		6                   	7                   	0.039s		7.000s
+
+
+Node: 70, Mac Address: 00:47, Depth: 5, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+00:48		6                   	7                   	0.037s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 71, Mac Address: 00:48, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:66		7                   	8                   	0.063s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 72, Mac Address: 00:49, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:48		6                   	7                   	0.066s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:68		7                   	8                   	0.052s		7.000s
+
+
+Node: 73, Mac Address: 00:4a, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:30		6                   	7                   	0.035s		7.000s
+00:31		5                   	6                   	0.084s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:4b		6                   	7                   	0.040s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 74, Mac Address: 00:4b, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:31		5                   	6                   	0.025s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:69		7                   	8                   	0.038s		7.000s
+
+
+Node: 75, Mac Address: 00:4c, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.053s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:4d		8                   	9                   	0.030s		7.000s
+
+
+Node: 76, Mac Address: 00:4d, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.072s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+
+
+Node: 77, Mac Address: 00:4e, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:6d		10                  	11                  	0.050s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 78, Mac Address: 00:4f, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:34		8                   	9                   	0.034s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 80, Mac Address: 00:51, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:36		10                  	11                  	0.045s		7.000s
+00:71		12                  	13                  	0.049s		7.000s
+
+
+Node: 81, Mac Address: 00:52, Depth: 14, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 82, Mac Address: 00:53, Depth: 13, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 83, Mac Address: 00:54, Depth: 13, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 84, Mac Address: 00:55, Depth: 13, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.046s		7.000s
+00:3a		13                  	14                  	0.066s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 85, Mac Address: 00:56, Depth: 12, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.050s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+00:78		12                  	13                  	0.054s		7.000s
+
+
+Node: 86, Mac Address: 00:57, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3b		12                  	13                  	0.042s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+00:78		12                  	13                  	0.041s		7.000s
+
+
+Node: 87, Mac Address: 00:58, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3c		9                   	10                  	0.035s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 88, Mac Address: 00:59, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.050s		7.000s
+
+
+Node: 89, Mac Address: 00:5a, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.044s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 90, Mac Address: 00:5b, Depth: 11, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+
+
+Node: 91, Mac Address: 00:5c, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.038s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 92, Mac Address: 00:5d, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.032s		7.000s
+00:41		7                   	8                   	0.062s		7.000s
+
+
+Node: 93, Mac Address: 00:5e, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:41		8                   	9                   	0.043s		7.000s
+00:42		7                   	8                   	0.033s		7.000s
+
+
+Node: 94, Mac Address: 00:5f, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:42		7                   	8                   	0.033s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 95, Mac Address: 00:60, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.035s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 96, Mac Address: 00:61, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.057s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+
+
+Node: 97, Mac Address: 00:62, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:44		7                   	8                   	0.038s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 98, Mac Address: 00:63, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:45		6                   	7                   	0.056s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+
+
+Node: 99, Mac Address: 00:64, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 100, Mac Address: 00:65, Depth: 6, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:47		5                   	6                   	0.027s		7.000s
+00:64		7                   	8                   	0.038s		7.000s
+
+
+Node: 101, Mac Address: 00:66, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:48		6                   	7                   	0.060s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 102, Mac Address: 00:67, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.027s		7.000s
+00:66		8                   	9                   	0.035s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 103, Mac Address: 00:68, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.046s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:67		7                   	8                   	0.030s		7.000s
+
+
+Node: 104, Mac Address: 00:69, Depth: 7, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4a		7                   	8                   	0.042s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:6a		8                   	9                   	0.037s		7.000s
+
+
+Node: 105, Mac Address: 00:6a, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:69		7                   	8                   	0.030s		7.000s
+00:6b		8                   	9                   	0.031s		7.000s
+
+
+Node: 106, Mac Address: 00:6b, Depth: 8, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4c		7                   	8                   	0.028s		7.000s
+00:6a		8                   	9                   	0.045s		7.000s
+
+
+Node: 107, Mac Address: 00:6c, Depth: 9, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4d		8                   	9                   	0.030s		7.000s
+00:6b		8                   	9                   	0.047s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+
+
+Node: 108, Mac Address: 00:6d, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+00:6e		10                  	11                  	0.052s		7.000s
+
+
+Node: 109, Mac Address: 00:6e, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:4f		9                   	10                  	0.038s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 110, Mac Address: 00:6f, Depth: 10, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4f		9                   	10                  	0.038s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 112, Mac Address: 00:71, Depth: 12, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:51		11                  	12                  	0.046s		7.000s
+
+
+Node: 113, Mac Address: 00:72, Depth: 15, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:52		14                  	15                  	0.049s		7.000s
+
+
+Node: 117, Mac Address: 00:76, Depth: 14, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:55		13                  	14                  	0.050s		7.000s
+00:77		13                  	14                  	0.053s		7.000s
+
+
+Node: 118, Mac Address: 00:77, Depth: 13, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 119, Mac Address: 00:78, Depth: 12, Time: +28.0400s, Local time: +28.0400s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +31.1600s, Local time: +31.1600s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +31.1600s, Local time: +31.1600s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +31.1600s, Local time: +31.1600s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +31.1600s, Local time: +31.1600s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +31.1600s, Local time: +31.1600s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 79, Mac Address: 00:50, Depth: 0, Time: +63.3200s, Local time: +63.3200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 111, Mac Address: 00:70, Depth: 0, Time: +63.3200s, Local time: +63.3200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 114, Mac Address: 00:73, Depth: 0, Time: +63.3200s, Local time: +63.3200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 115, Mac Address: 00:74, Depth: 0, Time: +63.3200s, Local time: +63.3200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+Node: 116, Mac Address: 00:75, Depth: 0, Time: +63.3200s, Local time: +63.3200s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+
+
+******************************************************TC-IE Updates number: 4******************************************************
+Node: 0, Mac Address: 00:10, Depth: 0, Time: +64.0800s, Local time: +64.0800s, l2r Routing table, Mesh Root
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:04		1                   	2                   	0.039s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+
+
+Node: 1, Mac Address: 00:20, Depth: 1, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+
+
+Node: 2, Mac Address: 00:30, Depth: 1, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+
+
+Node: 3, Mac Address: 00:40, Depth: 1, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:03		4                   	5                   	0.022s		7.000s
+00:05		1                   	2                   	0.038s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+
+
+Node: 4, Mac Address: 00:50, Depth: 1, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	0.012s		7.000s
+00:04		1                   	2                   	0.033s		7.000s
+00:0f		6                   	7                   	0.027s		7.000s
+
+
+Node: 5, Mac Address: 00:60, Depth: 1, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:01		0                   	1                   	7.013s		7.000s
+00:05		1                   	2                   	0.029s		7.000s
+
+
+Node: 6, Mac Address: 00:70, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.035s		7.000s
+00:13		9                   	10                  	0.039s		7.000s
+
+
+Node: 7, Mac Address: 00:80, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.042s		7.000s
+
+
+Node: 8, Mac Address: 00:90, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:15		7                   	8                   	0.039s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+
+
+Node: 9, Mac Address: 00:a0, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		4                   	5                   	0.021s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+
+
+Node: 10, Mac Address: 00:b0, Depth: 3, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		2                   	3                   	0.042s		7.000s
+00:0a		5                   	6                   	0.071s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+
+
+Node: 11, Mac Address: 00:c0, Depth: 2, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:03		1                   	2                   	7.014s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:19		4                   	5                   	0.027s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+
+
+Node: 12, Mac Address: 00:d0, Depth: 2, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.015s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:0e		3                   	4                   	0.020s		7.000s
+00:1b		3                   	4                   	0.027s		7.000s
+
+
+Node: 13, Mac Address: 00:e0, Depth: 2, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:04		1                   	2                   	0.033s		7.000s
+00:0d		2                   	3                   	0.017s		7.000s
+00:1c		4                   	5                   	0.048s		7.000s
+00:1d		4                   	5                   	0.022s		7.000s
+
+
+Node: 14, Mac Address: 00:f0, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1e		5                   	6                   	0.025s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+
+
+Node: 15, Mac Address: 00:10, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+
+
+Node: 16, Mac Address: 00:11, Depth: 3, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:06		2                   	3                   	0.033s		7.000s
+00:10		7                   	8                   	0.035s		7.000s
+00:12		10                  	11                  	0.054s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+
+
+Node: 17, Mac Address: 00:12, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.043s		7.000s
+00:22		12                  	13                  	0.045s		7.000s
+
+
+Node: 18, Mac Address: 00:13, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:07		8                   	9                   	0.038s		7.000s
+00:14		8                   	9                   	0.066s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+
+
+Node: 19, Mac Address: 00:14, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:08		7                   	8                   	0.045s		7.000s
+00:13		9                   	10                  	0.070s		7.000s
+00:15		7                   	8                   	0.034s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+
+
+Node: 20, Mac Address: 00:15, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.028s		7.000s
+00:14		8                   	9                   	0.046s		7.000s
+00:16		6                   	7                   	0.036s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+
+
+Node: 21, Mac Address: 00:16, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:09		6                   	7                   	0.031s		7.000s
+00:0a		5                   	6                   	0.023s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.043s		7.000s
+
+
+Node: 22, Mac Address: 00:17, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.023s		7.000s
+00:16		6                   	7                   	0.030s		7.000s
+00:18		5                   	6                   	0.069s		7.000s
+00:29		7                   	8                   	0.039s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 23, Mac Address: 00:18, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0a		5                   	6                   	0.071s		7.000s
+00:0b		4                   	5                   	0.021s		7.000s
+00:17		6                   	7                   	0.041s		7.000s
+00:19		4                   	5                   	0.023s		7.000s
+00:2a		6                   	7                   	0.064s		7.000s
+
+
+Node: 24, Mac Address: 00:19, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0b		3                   	4                   	0.078s		7.000s
+00:0c		3                   	4                   	0.019s		7.000s
+00:18		5                   	6                   	0.025s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2b		5                   	6                   	0.047s		7.000s
+00:2c		6                   	7                   	0.063s		7.000s
+
+
+Node: 25, Mac Address: 00:1a, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0c		3                   	4                   	0.019s		7.000s
+00:19		4                   	5                   	0.032s		7.000s
+00:1b		3                   	4                   	0.039s		7.000s
+00:2d		5                   	6                   	0.058s		7.000s
+
+
+Node: 26, Mac Address: 00:1b, Depth: 3, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0d		2                   	3                   	0.017s		7.000s
+00:1a		4                   	5                   	0.029s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+
+
+Node: 27, Mac Address: 00:1c, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+
+
+Node: 28, Mac Address: 00:1d, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0e		3                   	4                   	0.020s		7.000s
+00:1e		5                   	6                   	0.050s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:31		5                   	6                   	0.029s		7.000s
+
+
+Node: 29, Mac Address: 00:1e, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:32		8                   	9                   	0.031s		7.000s
+
+
+Node: 30, Mac Address: 00:1f, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:0f		6                   	7                   	0.027s		7.000s
+00:20		8                   	9                   	0.038s		7.000s
+00:33		8                   	9                   	0.030s		7.000s
+00:34		8                   	9                   	0.055s		7.000s
+
+
+Node: 31, Mac Address: 00:20, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:10		7                   	8                   	0.031s		7.000s
+00:1f		7                   	8                   	0.029s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 32, Mac Address: 00:21, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:11		3                   	4                   	0.036s		7.000s
+00:20		8                   	9                   	0.047s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 33, Mac Address: 00:22, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:12		10                  	11                  	0.061s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 34, Mac Address: 00:23, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:24		10                  	11                  	0.041s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 35, Mac Address: 00:24, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:13		9                   	10                  	0.039s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:25		11                  	12                  	0.061s		7.000s
+00:39		12                  	13                  	0.058s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+
+
+Node: 36, Mac Address: 00:25, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:14		8                   	9                   	0.074s		7.000s
+00:24		10                  	11                  	0.079s		7.000s
+00:3b		10                  	11                  	0.058s		7.000s
+
+
+Node: 37, Mac Address: 00:26, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.031s		7.000s
+00:27		8                   	9                   	0.058s		7.000s
+00:3c		9                   	10                  	0.044s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+
+
+Node: 38, Mac Address: 00:27, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:15		7                   	8                   	0.034s		7.000s
+00:26		8                   	9                   	0.033s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+
+
+Node: 39, Mac Address: 00:28, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:16		6                   	7                   	0.025s		7.000s
+00:17		6                   	7                   	0.027s		7.000s
+00:29		7                   	8                   	0.029s		7.000s
+00:3f		8                   	9                   	0.052s		7.000s
+
+
+Node: 40, Mac Address: 00:29, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:17		6                   	7                   	0.027s		7.000s
+00:28		7                   	8                   	0.050s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.038s		7.000s
+00:41		7                   	8                   	0.046s		7.000s
+
+
+Node: 41, Mac Address: 00:2a, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:18		5                   	6                   	0.025s		7.000s
+00:41		7                   	8                   	0.054s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+
+
+Node: 42, Mac Address: 00:2b, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:19		4                   	5                   	0.023s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:44		7                   	8                   	0.038s		7.000s
+
+
+Node: 43, Mac Address: 00:2c, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+
+
+Node: 44, Mac Address: 00:2d, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+
+
+Node: 45, Mac Address: 00:2e, Depth: 4, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1b		3                   	4                   	0.021s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:2f		5                   	6                   	0.036s		7.000s
+
+
+Node: 46, Mac Address: 00:2f, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2e		4                   	5                   	0.024s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:48		6                   	7                   	0.029s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+
+
+Node: 47, Mac Address: 00:30, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1c		4                   	5                   	0.048s		7.000s
+00:2f		5                   	6                   	0.031s		7.000s
+00:31		5                   	6                   	0.025s		7.000s
+00:49		6                   	7                   	0.047s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+
+
+Node: 48, Mac Address: 00:31, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1d		4                   	5                   	0.022s		7.000s
+00:30		6                   	7                   	0.033s		7.000s
+00:32		6                   	7                   	0.082s		7.000s
+00:4a		7                   	8                   	0.062s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+
+
+Node: 49, Mac Address: 00:32, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1e		5                   	6                   	0.050s		7.000s
+00:31		5                   	6                   	0.065s		7.000s
+00:33		7                   	8                   	0.080s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+
+
+Node: 50, Mac Address: 00:33, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.029s		7.000s
+00:32		6                   	7                   	0.072s		7.000s
+
+
+Node: 51, Mac Address: 00:34, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:1f		7                   	8                   	0.032s		7.000s
+00:20		8                   	9                   	0.045s		7.000s
+00:35		5                   	6                   	0.050s		7.000s
+
+
+Node: 52, Mac Address: 00:35, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:20		8                   	9                   	0.047s		7.000s
+00:21		4                   	5                   	0.039s		7.000s
+00:34		8                   	9                   	0.034s		7.000s
+00:36		5                   	6                   	0.055s		7.000s
+
+
+Node: 53, Mac Address: 00:36, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:21		4                   	5                   	0.039s		7.000s
+00:35		9                   	10                  	0.038s		7.000s
+00:51		11                  	12                  	0.052s		7.000s
+
+
+Node: 54, Mac Address: 00:37, Depth: 13, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 55, Mac Address: 00:38, Depth: 12, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:22		12                  	13                  	0.045s		7.000s
+00:23		11                  	12                  	0.044s		7.000s
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 56, Mac Address: 00:39, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:23		11                  	12                  	0.044s		7.000s
+00:24		10                  	11                  	0.065s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.069s		7.000s
+
+
+Node: 57, Mac Address: 00:3a, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:24		10                  	11                  	0.079s		7.000s
+00:39		11                  	12                  	0.071s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:55		13                  	14                  	0.063s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+
+
+Node: 58, Mac Address: 00:3b, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:25		11                  	12                  	0.061s		7.000s
+00:3a		13                  	14                  	0.055s		7.000s
+00:3c		9                   	10                  	0.046s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 59, Mac Address: 00:3c, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3b		10                  	11                  	0.075s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+
+
+Node: 60, Mac Address: 00:3d, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:26		8                   	9                   	0.033s		7.000s
+00:3c		9                   	10                  	0.035s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.053s		7.000s
+
+
+Node: 61, Mac Address: 00:3e, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:27		8                   	9                   	0.041s		7.000s
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 62, Mac Address: 00:3f, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:28		7                   	8                   	0.043s		7.000s
+00:3e		10                  	11                  	0.056s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 63, Mac Address: 00:40, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:5d		9                   	10                  	0.035s		7.000s
+
+
+Node: 64, Mac Address: 00:41, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:29		7                   	8                   	0.029s		7.000s
+00:2a		6                   	7                   	0.031s		7.000s
+00:40		8                   	9                   	0.032s		7.000s
+00:42		7                   	8                   	0.060s		7.000s
+00:5e		8                   	9                   	0.037s		7.000s
+
+
+Node: 65, Mac Address: 00:42, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2a		6                   	7                   	0.031s		7.000s
+00:41		8                   	9                   	0.043s		7.000s
+00:43		8                   	9                   	0.057s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 66, Mac Address: 00:43, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2b		5                   	6                   	0.047s		7.000s
+00:42		7                   	8                   	0.040s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 67, Mac Address: 00:44, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:43		8                   	9                   	0.035s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:62		9                   	10                  	0.043s		7.000s
+
+
+Node: 68, Mac Address: 00:45, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2c		6                   	7                   	0.028s		7.000s
+00:2d		5                   	6                   	0.050s		7.000s
+00:46		6                   	7                   	0.051s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 69, Mac Address: 00:46, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2d		5                   	6                   	0.025s		7.000s
+00:45		6                   	7                   	0.056s		7.000s
+00:47		5                   	6                   	0.031s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+00:65		6                   	7                   	0.039s		7.000s
+
+
+Node: 70, Mac Address: 00:47, Depth: 5, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2e		4                   	5                   	0.024s		7.000s
+00:46		6                   	7                   	0.048s		7.000s
+00:48		6                   	7                   	0.037s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 71, Mac Address: 00:48, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:66		7                   	8                   	0.063s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 72, Mac Address: 00:49, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:2f		5                   	6                   	0.026s		7.000s
+00:30		6                   	7                   	0.043s		7.000s
+00:48		6                   	7                   	0.066s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:68		7                   	8                   	0.052s		7.000s
+
+
+Node: 73, Mac Address: 00:4a, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:30		6                   	7                   	0.035s		7.000s
+00:31		5                   	6                   	0.084s		7.000s
+00:49		6                   	7                   	0.046s		7.000s
+00:4b		6                   	7                   	0.040s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 74, Mac Address: 00:4b, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:31		5                   	6                   	0.025s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:69		7                   	8                   	0.038s		7.000s
+
+
+Node: 75, Mac Address: 00:4c, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.053s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:4d		8                   	9                   	0.030s		7.000s
+
+
+Node: 76, Mac Address: 00:4d, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:32		6                   	7                   	0.072s		7.000s
+00:4c		7                   	8                   	0.028s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+
+
+Node: 77, Mac Address: 00:4e, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:6d		10                  	11                  	0.050s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 78, Mac Address: 00:4f, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:34		8                   	9                   	0.034s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 80, Mac Address: 00:51, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:36		10                  	11                  	0.045s		7.000s
+00:71		12                  	13                  	0.049s		7.000s
+
+
+Node: 81, Mac Address: 00:52, Depth: 14, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:37		13                  	14                  	0.047s		7.000s
+
+
+Node: 82, Mac Address: 00:53, Depth: 13, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:38		12                  	13                  	0.050s		7.000s
+
+
+Node: 83, Mac Address: 00:54, Depth: 13, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.058s		7.000s
+
+
+Node: 84, Mac Address: 00:55, Depth: 13, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:39		12                  	13                  	0.046s		7.000s
+00:3a		13                  	14                  	0.066s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 85, Mac Address: 00:56, Depth: 12, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3a		13                  	14                  	0.055s		7.000s
+00:55		13                  	14                  	0.050s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+00:78		12                  	13                  	0.054s		7.000s
+
+
+Node: 86, Mac Address: 00:57, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3b		12                  	13                  	0.042s		7.000s
+00:56		12                  	13                  	0.051s		7.000s
+00:58		10                  	11                  	0.037s		7.000s
+00:78		12                  	13                  	0.041s		7.000s
+
+
+Node: 87, Mac Address: 00:58, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3c		9                   	10                  	0.035s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
+Node: 88, Mac Address: 00:59, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3d		9                   	10                  	0.039s		7.000s
+00:5a		11                  	12                  	0.050s		7.000s
+
+
+Node: 89, Mac Address: 00:5a, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:59		10                  	11                  	0.044s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 90, Mac Address: 00:5b, Depth: 11, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:3e		10                  	11                  	0.056s		7.000s
+00:5a		11                  	12                  	0.047s		7.000s
+
+
+Node: 91, Mac Address: 00:5c, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.038s		7.000s
+00:5b		12                  	13                  	0.048s		7.000s
+
+
+Node: 92, Mac Address: 00:5d, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:40		8                   	9                   	0.032s		7.000s
+00:41		7                   	8                   	0.062s		7.000s
+
+
+Node: 93, Mac Address: 00:5e, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:41		8                   	9                   	0.043s		7.000s
+00:42		7                   	8                   	0.033s		7.000s
+
+
+Node: 94, Mac Address: 00:5f, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:42		7                   	8                   	0.033s		7.000s
+00:5e		8                   	9                   	0.047s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+
+
+Node: 95, Mac Address: 00:60, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.035s		7.000s
+00:5f		8                   	9                   	0.037s		7.000s
+
+
+Node: 96, Mac Address: 00:61, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:43		8                   	9                   	0.057s		7.000s
+00:44		7                   	8                   	0.032s		7.000s
+00:60		9                   	10                  	0.042s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+
+
+Node: 97, Mac Address: 00:62, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:44		7                   	8                   	0.038s		7.000s
+00:61		8                   	9                   	0.034s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+
+
+Node: 98, Mac Address: 00:63, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:45		6                   	7                   	0.056s		7.000s
+00:62		9                   	10                  	0.040s		7.000s
+00:64		7                   	8                   	0.030s		7.000s
+
+
+Node: 99, Mac Address: 00:64, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:63		8                   	9                   	0.035s		7.000s
+00:65		6                   	7                   	0.028s		7.000s
+
+
+Node: 100, Mac Address: 00:65, Depth: 6, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:46		6                   	7                   	0.048s		7.000s
+00:47		5                   	6                   	0.027s		7.000s
+00:64		7                   	8                   	0.038s		7.000s
+
+
+Node: 101, Mac Address: 00:66, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:48		6                   	7                   	0.060s		7.000s
+00:67		7                   	8                   	0.033s		7.000s
+
+
+Node: 102, Mac Address: 00:67, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.027s		7.000s
+00:66		8                   	9                   	0.035s		7.000s
+00:68		8                   	9                   	0.031s		7.000s
+
+
+Node: 103, Mac Address: 00:68, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:49		6                   	7                   	0.046s		7.000s
+00:4a		7                   	8                   	0.042s		7.000s
+00:67		7                   	8                   	0.030s		7.000s
+
+
+Node: 104, Mac Address: 00:69, Depth: 7, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4a		7                   	8                   	0.042s		7.000s
+00:4b		6                   	7                   	0.027s		7.000s
+00:6a		8                   	9                   	0.037s		7.000s
+
+
+Node: 105, Mac Address: 00:6a, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:69		7                   	8                   	0.030s		7.000s
+00:6b		8                   	9                   	0.031s		7.000s
+
+
+Node: 106, Mac Address: 00:6b, Depth: 8, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4c		7                   	8                   	0.028s		7.000s
+00:6a		8                   	9                   	0.045s		7.000s
+
+
+Node: 107, Mac Address: 00:6c, Depth: 9, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4d		8                   	9                   	0.030s		7.000s
+00:6b		8                   	9                   	0.047s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+
+
+Node: 108, Mac Address: 00:6d, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:6c		9                   	10                  	0.036s		7.000s
+00:6e		10                  	11                  	0.052s		7.000s
+
+
+Node: 109, Mac Address: 00:6e, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4e		11                  	12                  	0.046s		7.000s
+00:4f		9                   	10                  	0.038s		7.000s
+00:6d		10                  	11                  	0.050s		7.000s
+00:6f		10                  	11                  	0.039s		7.000s
+
+
+Node: 110, Mac Address: 00:6f, Depth: 10, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:4f		9                   	10                  	0.038s		7.000s
+00:6e		10                  	11                  	0.043s		7.000s
+
+
+Node: 112, Mac Address: 00:71, Depth: 12, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:51		11                  	12                  	0.046s		7.000s
+
+
+Node: 113, Mac Address: 00:72, Depth: 15, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:52		14                  	15                  	0.049s		7.000s
+
+
+Node: 117, Mac Address: 00:76, Depth: 14, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:55		13                  	14                  	0.050s		7.000s
+00:77		13                  	14                  	0.053s		7.000s
+
+
+Node: 118, Mac Address: 00:77, Depth: 13, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:76		14                  	15                  	0.056s		7.000s
+
+
+Node: 119, Mac Address: 00:78, Depth: 12, Time: +64.0800s, Local time: +64.0800s, l2r Routing table
+
+L2R Routing table
+Destination		depth		PQM		LifeTime		TCIEInterval
+00:56		12                  	13                  	0.051s		7.000s
+00:57		11                  	12                  	0.039s		7.000s
+
+
