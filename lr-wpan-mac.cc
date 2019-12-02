@@ -1895,8 +1895,27 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   break;
   }
   case DataHeader:
-
+  {
+    if(m_isSink)
+      return;
+    std::cout << "New Data Received: " << std::endl;
+    std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
+    L2R_Header dataHeader;
+    dataHeader.SetMsgType(DataHeader);
+    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+    p0->AddHeader (dataHeader); //serialize is called here
+    McpsDataRequestParams params;
+    params.m_dstPanId = 10;
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = this->OutputRoute ();
+    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    params.m_txOptions = TX_OPTION_ACK;  
+    std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<params.m_dstAddr << std::endl;
+    Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, params, p0);
+  
   break;
+  }
   }
 }
 void
@@ -1912,7 +1931,7 @@ LrWpanMac::OutputRoute()
   std::map<Mac16Address, L2R_RoutingTableEntry> possibleRoutes;
   bool anyAvailabeAncestor;
   anyAvailabeAncestor = m_routingTable.GetListOfDestinationWithNextHop(possibleRoutes, m_depth);  // neighbours with depth < my_depth
-  Mac16Address nextHopAddress = 0;
+  Mac16Address nextHopAddress = Mac16Address("00:00");
   if(anyAvailabeAncestor == true)
   {
     std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = possibleRoutes.begin();

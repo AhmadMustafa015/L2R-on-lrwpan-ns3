@@ -44,11 +44,11 @@ static void L2rUpdateTcie(McpsDataIndicationParams params, uint16_t depth, uint1
   modify(senderAdd,depth,pqm,receiver);
 }
 
-static void DataConfirm (McpsDataConfirmParams params)
+/*static void DataConfirm (McpsDataConfirmParams params)
 {
   std::cout << "LrWpanMcpsDataConfirmStatus = " << params.m_status << std::endl;
 }
-
+*/
 static void StateChangeNotification (std::string context, Time now, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState)
 {
 }
@@ -124,16 +124,16 @@ private:
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
-  uint32_t nNodes = 30;
+  uint32_t nNodes = 5;
   uint32_t nSinks = 1;
-  double totalTime = 100;
-  uint8_t periodicUpdateInterval = 15;
+  double totalTime = 12;
+  uint8_t periodicUpdateInterval = 101;
   double dataStart = 5.0;
   bool printRoutingTable = true;
   std::string CSVfileName = "CongestionControl.csv";
   uint32_t meshNodeId = 0;
   bool enableTracing = false;
-  bool enablePcap = false;
+  bool enablePcap = true;
   uint32_t distanceBtwNodes = 80; 
 
   CommandLine cmd;
@@ -149,7 +149,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("Enable Pcap", "Output Pcap packet tracing file[Default:0]", enablePcap);
   cmd.AddValue ("distanceBtwNodes", "Distance Between Nodes[Default:80]", distanceBtwNodes);
   cmd.Parse (argc, argv);
-  LogComponentEnable ("LrWpanMac", LOG_LEVEL_ALL);
+  //LogComponentEnable ("LrWpanMac", LOG_LEVEL_ALL);
   std::ofstream out (CSVfileName.c_str ());
   out << "SimulationSecond," <<
   "ReceiveRate," <<
@@ -209,6 +209,30 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
+
+    Ptr<NetDevice> d = devContainer.Get (4);
+    Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    //std::cout << "Node: " << nodeID << "Send data packet to: ";
+    L2R_Header dataHeader;
+    dataHeader.SetMsgType(DataHeader);
+    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+    p0->AddHeader (dataHeader); //serialize is called here
+    McpsDataRequestParams params;
+    params.m_dstPanId = 10;
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = Mac16Address("00:04");
+    std::cout << params.m_dstAddr << std::endl;
+    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    params.m_txOptions = TX_OPTION_ACK; 
+    for(uint8_t i =0; i <10; i++) 
+    {
+      std::cout << "Sending Data Packet From: " << "00:05" << "To: " << "00:04" << std::endl;
+      Simulator::ScheduleWithContext (1, Seconds (8),
+                                      &LrWpanMac::McpsDataRequest,
+                                      devContainer.Get(4)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
+    }
+    std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;
   //InstallApplications ();
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
@@ -288,9 +312,9 @@ CongestionControl::CreateDevices (std::string tr_name)
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     device->GetPhy ()->TraceConnect ("TrxState", std::string ("phy" + temp), MakeCallback (&StateChangeNotification));
     temp++; 
-    McpsDataConfirmCallback cb0;
-    cb0 = MakeCallback (&DataConfirm);
-    device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
+    //McpsDataConfirmCallback cb0;
+    //cb0 = MakeCallback (&DataConfirm);
+    //device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
     //device->GetMac ()->
     McpsDataIndicationCallback cb1;
     L2rReceiveUpdateCallback cb3;
@@ -305,9 +329,9 @@ CongestionControl::CreateDevices (std::string tr_name)
     AsciiTraceHelper ascii;
     Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream (tr_name + ".tr");
     lrWpanHelper.EnableAsciiAll (stream);
-    if(m_enablePcap == true)
-      lrWpanHelper.EnablePcapAll (std::string (tr_name), true);
   }
+  if(m_enablePcap == true)
+    lrWpanHelper.EnablePcapAll (std::string (tr_name), true);
   Packet::EnablePrinting ();
   devContainer.Get(m_meshNodeId)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, m_periodicUpdateInterval);
   devContainer.Get(m_meshNodeId)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_SendTopologyDiscovery();
@@ -366,20 +390,21 @@ void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &p
   static uint32_t index = 0;
   index = depth %3;
   struct rgb color = colors[index];
+  uint32_t nodeID;
   for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
   {  
     Ptr<NetDevice> d = *i;
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    nodeID = d->GetNode ()->GetId ();
+    pAnim->UpdateNodeSize(nodeID, 15,15);
     if(receiver == device->GetAddress ())
     {
-      uint32_t nodeID = d->GetNode ()->GetId ();
       node0Oss << "N:" << nodeID <<" D:" << depth <<" PQM: " << pqm <<" MAC:" << receiver;
       // Every update change the node description for nodes
       pAnim->UpdateNodeDescription (nodeID, node0Oss.str ());
       // Every update change the color for nodes if receive update from mesh Root
-
       pAnim->UpdateNodeColor (nodeID, (color.r * (depth+1) %255), (color.r * (depth+2) %255),(color.r * (depth+3) %255)); 
     }
-  }  
+  } 
 }
 
