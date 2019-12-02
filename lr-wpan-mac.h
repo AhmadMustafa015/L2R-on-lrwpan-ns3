@@ -1037,6 +1037,15 @@ public:
     void L2R_Start (); 
     //AM: modified on 25/11
     void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
+    //AM: modified 1/12
+    uint16_t GetDepth() const
+    {
+      return m_depth;
+    }
+    uint16_t GetPqm () const
+    {
+      return m_pqm;
+    }
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);

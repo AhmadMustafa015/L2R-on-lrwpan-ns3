@@ -1181,7 +1181,7 @@ L2R_Header::GetSerializedSize (void) const
   case L2R_D_IE:
     break;
   case DataHeader:
-    size += 4;
+    size += 2;
     break;
   }
   return size;
@@ -1192,10 +1192,10 @@ L2R_Header::Serialize (Buffer::Iterator start) const
   // we can serialize two bytes at the start of the buffer.
   // we write them in network byte order.
   start.WriteU8(m_msgType);
-  WriteTo(start,m_meshRootAddress);
   switch (m_msgType)
   {
   case TC_IE:
+    WriteTo(start,m_meshRootAddress);
     start.WriteHtonU16 (m_PQM);
     start.WriteU8(m_LQT);
     start.WriteU8 (m_TCIEInterval);
@@ -1203,6 +1203,7 @@ L2R_Header::Serialize (Buffer::Iterator start) const
     start.WriteHtonU16 (m_depth);
     break;
   case L2R_D_IE:
+    WriteTo(start,m_meshRootAddress);
     break;
   case DataHeader:
     start.WriteHtonU16 (m_depth);
@@ -1976,13 +1977,14 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
     *stream->GetStream () << std::endl;
   }
   *stream->GetStream () << "Node: " <<  node->GetId ()
+                        << std::resetiosflags(std::ios::adjustfield) << std::setiosflags (std::ios::fixed)
                         << ", Mac Address: " << m_shortAddress
                         << ", Depth: " << m_depth
                         << std::setprecision (4)
                         << ", Time: " << Now ().As (unit)
                         << std::setprecision (4)
                         << ", Local time: " << node->GetLocalTime ().As (unit)
-                        << ", l2r Routing table";
+                        << ", L2R Routing table";
   if(m_isSink == true)
   {
     *stream->GetStream () << ", Mesh Root" << std::endl;
@@ -2013,4 +2015,6 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
     rt.SetEntriesChanged (false);
     m_routingTable.AddRoute(rt);
 }*/
+
+
 } // namespace ns3
