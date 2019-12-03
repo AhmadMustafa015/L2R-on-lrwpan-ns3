@@ -204,13 +204,10 @@ struct McpsDataIndicationParams
 };
 //AM: modified on 3/12
 struct MeshRootData
-  :m_queueSize(0),
-  m_arrivalRate(0),
-  m_avgDelay(0)
 {
-  uint16_t m_queueSize;
-  uint16_t m_arrivalRate;
-  uint16_t m_avgDelay;
+  float m_queueSize;
+  float m_arrivalRate;
+  float m_avgDelay;
 };
 
 
@@ -1078,44 +1075,30 @@ public:
    * be removed in a future release.
    */
   typedef void (* StateTracedCallback)
-    (LrWpanMacState oldState, LrWpanMacState newState);
-    //AM: modified at 7/11
-    //void AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol);
-    //L2R Protocol
-    void L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieInterval);
-    void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
-    void L2R_SendPeriodicUpdate();
-    void L2R_SendTopologyDiscovery();
-    void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
-    //AB: modified on 19/11
-    Mac16Address OutputRoute();
-    void L2R_Start (); 
-    //AM: modified on 25/11
-    void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
-    //AM: modified 1/12
-    uint16_t GetDepth() const
-    {
-      return m_depth;
-    }
-    uint16_t GetPqm () const
-    {
-      return m_pqm;
-    }
-    uint32_t GetTotalPacketDroppedByQueue()
-    {
-      return m_totalPacketDroppedByNode;
-    }
-    uint32_t GetTotalPacketSentByNode()
-    {
-      return m_totalPacketSentByNode;
-    }
-    uint32_t GetTotalPacketRxByMeshRoot()
-    {
-      return m_totalPacketRxByMesh;
-    }
+  (LrWpanMacState oldState, LrWpanMacState newState);
+  //AM: modified at 7/11
+  //void AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol);
+  //L2R Protocol
+  void L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieInterval);
+  void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
+  void L2R_SendPeriodicUpdate();
+  void L2R_SendTopologyDiscovery();
+  void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
+  //AB: modified on 19/11
+  Mac16Address OutputRoute();
+  void L2R_Start (); 
+  //AM: modified on 25/11
+  void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
+  //AM: modified 1/12
+  void SetMaxQueueSize(uint32_t maxQueue);
+  uint16_t GetDepth(void) const;
+  uint16_t GetPqm (void) const;
+  uint32_t GetTotalPacketDroppedByQueue(void) const;
+  uint32_t GetTotalPacketSentByNode(void) const;
+  uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;
   uint16_t GetArrivalRate(void) const;
-  uint16_t GetAvgDelay (void) const;
+  Time GetAvgDelay (void) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1139,13 +1122,15 @@ private:
   uint32_t m_totalPacketRxByMesh;
   uint32_t m_totalPacketDroppedByNode;
   uint32_t m_totalPacketSentByNode;
-  uint32_t m_maxQueueSize;
-  std::map<uint32_t nodeID, MeshRootData> m_meshDataSet;
+  uint16_t m_maxQueueSize;
+  uint32_t m_delayCountPacket;
+  std::map<uint32_t, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
 
   float m_nQueueSize;
-  uint16_t m_avgDelay;
-  uint16_t m_arrivalRate;
+  std::map<uint64_t, Time> m_delayForEachPacket;
+  Time m_avgDelay;
+  uint16_t m_arrivalRate; //ToDo Calculate arrival Rate
   //uint32_t m_nodeID;
   //void SetMac16();
   /**
