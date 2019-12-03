@@ -202,6 +202,17 @@ struct McpsDataIndicationParams
   uint8_t m_mpduLinkQuality;  //!< LQI value measured during reception of the MPDU
   uint8_t m_dsn;          //!< The DSN of the received data frame
 };
+//AM: modified on 3/12
+struct MeshRootData
+  :m_queueSize(0),
+  m_arrivalRate(0),
+  m_avgDelay(0)
+{
+  uint16_t m_queueSize;
+  uint16_t m_arrivalRate;
+  uint16_t m_avgDelay;
+};
+
 
 /**
  * \ingroup lr-wpan
@@ -260,6 +271,9 @@ public:
   void SetTCIEInterval(uint8_t tcieinterval);
   void SetMsgType (enum L2R_MsgType msgType);
   void SetLQT(uint8_t lqt);
+  void SetQueueSize(uint16_t queue);
+  void SetDelay(uint16_t delay);
+  void SetArrivalRate(uint16_t arrivalRate);
   /**
    * Get the header data.
    * \return The data.
@@ -271,7 +285,9 @@ public:
   uint8_t GetTCIEInterval(void) const;
   enum L2R_MsgType GetMsgType(void) const;
   uint8_t GetLQT(void) const;
-
+  uint16_t GetQueueSize(void) const;
+  uint16_t GetDelay(void) const;
+  uint16_t GetArrivalRate(void) const;
   /**
    * \brief Get the type ID.
    * \return the object TypeId
@@ -290,6 +306,9 @@ private:
   uint16_t m_MSN;
   uint8_t m_LQT;
   uint8_t m_msgType;
+  uint16_t m_queueSize;
+  uint16_t m_arrivalRate;
+  uint16_t m_avgDelay; 
   
 };
 
@@ -501,6 +520,38 @@ public:
   {
     ++m_l2rMissedTcIe; 
   }
+  //algorithm Parameter
+  void
+  SetArrivalRatePar (float arrivalPar)
+  {
+    m_arrivalPar = arrivalPar;
+  }
+  void 
+  SetQueuePar(float queuePar)
+  {
+    m_queuePar = queuePar;
+  }
+  void 
+  SetDelayPar(float delayPar)
+  {
+    m_delayPar = delayPar;
+  }
+  float
+  GetQueuePar()
+  {
+    return m_queuePar;
+  }
+  float
+  GetArrivalPar()
+  {
+    return m_arrivalPar;
+  }
+  float
+  GetDelayPar()
+  {
+    return m_delayPar;
+  }
+
 private:
   // Fields
   /// Destination Sequence Number
@@ -526,6 +577,10 @@ private:
   Mac16Address m_dst;
   Mac16Address m_nextHop;
   uint16_t m_lqm;
+  //algorithm Parameters
+  float m_queuePar;
+  float m_delayPar;
+  float m_arrivalPar;
 };
 
 /**
@@ -1046,6 +1101,21 @@ public:
     {
       return m_pqm;
     }
+    uint32_t GetTotalPacketDroppedByQueue()
+    {
+      return m_totalPacketDroppedByNode;
+    }
+    uint32_t GetTotalPacketSentByNode()
+    {
+      return m_totalPacketSentByNode;
+    }
+    uint32_t GetTotalPacketRxByMeshRoot()
+    {
+      return m_totalPacketRxByMesh;
+    }
+  uint16_t GetQueueSize(void) const;
+  uint16_t GetArrivalRate(void) const;
+  uint16_t GetAvgDelay (void) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1066,6 +1136,16 @@ private:
   L2R_RoutingTable m_routingTable;
   Timer m_printRoutingTableTimer;
   Ptr<UniformRandomVariable> m_uniformRandomVariable;
+  uint32_t m_totalPacketRxByMesh;
+  uint32_t m_totalPacketDroppedByNode;
+  uint32_t m_totalPacketSentByNode;
+  uint32_t m_maxQueueSize;
+  std::map<uint32_t nodeID, MeshRootData> m_meshDataSet;
+  uint32_t m_nodeId;
+
+  float m_nQueueSize;
+  uint16_t m_avgDelay;
+  uint16_t m_arrivalRate;
   //uint32_t m_nodeID;
   //void SetMac16();
   /**

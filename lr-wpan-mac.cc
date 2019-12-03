@@ -162,6 +162,9 @@ LrWpanMac::LrWpanMac ()
   m_lqt = 0;
   m_pqm = 0;
   m_tcieInterval = 0;
+  m_arrivalRate = 0;
+  m_avgDelay = 0;
+  m_nQueueSize = 0;
 }
 
 LrWpanMac::~LrWpanMac ()
@@ -645,8 +648,8 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
             {
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
-
-          if (acceptFrame)
+                        //Added new filtering layer check queue
+          if (acceptFrame && (m_txQueue.size () >= m_maxQueueSize) ) //AM: Modified at 3/12
             {
               m_macRxTrace (originalPkt);
               // \todo: What should we do if we receive a frame while waiting for an ACK?
@@ -740,7 +743,14 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
             }
           else
             {
+              if(m_txQueue.size () >= m_maxQueueSize)
+              { 
+                std::cout <<"A packet dropped: " << "Queue Size = " << m_txQueue.size () 
+                          <<" exceeds the limit: " << m_maxQueueSize << std::endl;
+                ++m_totalPacketDroppedByNode;
+              }
               m_macRxDropTrace (originalPkt);
+              
             }
         }
     }
@@ -1126,6 +1136,9 @@ L2R_Header::L2R_Header ()
   m_TCIEInterval = 0xff;
   m_msgType = DataHeader;
   m_LQT = 0;
+  m_queueSize = 0;
+  m_arrivalRate;
+  m_avgDelay =0;
 }
 L2R_Header::~L2R_Header ()
 {
@@ -1181,7 +1194,7 @@ L2R_Header::GetSerializedSize (void) const
   case L2R_D_IE:
     break;
   case DataHeader:
-    size += 2;
+    size += 8;
     break;
   }
   return size;
@@ -1208,6 +1221,9 @@ L2R_Header::Serialize (Buffer::Iterator start) const
   case DataHeader:
     start.WriteHtonU16 (m_depth);
     start.WriteHtonU16 (m_PQM);
+    start.WriteHtonU16 (m_queueSize);
+    start.WriteHtonH16 (m_avgDelay);
+    start.WriteHtonH16 (m_arrivalRate);
     break;
   }
 }
@@ -1234,11 +1250,11 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   case 2:
     m_depth = i.ReadNtohU16 ();
     m_PQM = i.ReadNtohU16 ();
+    m_queueSize = i.ReadNtohU16 ();
+    m_avgDelay = i.ReadNtohU16 ();
+    m_arrivalRate = i.ReadNtohU16 ();
     break;
   }
-
-  
-  
   uint32_t dist = i.GetDistanceFrom (start);
   // we return the number of bytes effectively read.
   return dist;
@@ -1296,6 +1312,21 @@ void L2R_Header::SetLQT(uint8_t lqt)
 {
   m_LQT = lqt;
 }
+void
+L2R_Header::SetArrivalRate(uint16_t arrivalRate)
+{
+  m_arrivalRate = arrivalRate;
+}
+void
+L2R_Header::SetQueueSize(uint16_t q)
+{
+  m_queueSize = q;
+}
+void 
+L2R_Header::SetDelay(uint16_t delay)
+{
+  m_avgDelay = delay;
+}
 enum L2R_MsgType
 L2R_Header::GetMsgType (void) const
 {
@@ -1318,6 +1349,22 @@ uint8_t L2R_Header::GetLQT(void) const
 {
   return m_LQT;
 }
+uint16_t
+L2R_Header::GetArrivalRate(void) const
+{
+  return m_arrivalRate;
+}
+uint16_t
+L2R_Header::GetDelay(void) const
+{
+  return m_avgDelay;
+}
+uint16_t
+L2R_Header::GetQueueSize(void) const
+{
+  return m_queueSize;
+}
+
 //AM: modified at 6/11 6:03
 //Routing Protocol
 //AM: modified at 8/11
@@ -1332,7 +1379,10 @@ L2R_RoutingTableEntry::L2R_RoutingTableEntry (uint16_t depth,
     m_lifeTime (lifetime),
     m_flag (VALID),
     m_tcieInterval (tcieInterval),
-    m_entriesChanged (areChanged)
+    m_entriesChanged (areChanged),
+    m_delayPar(1),
+    m_queuePar(1),
+    m_arrivalPar(1)
 {
   m_nextHop = nextHop;
   m_l2rMissedTcIe = 0; 
@@ -1680,6 +1730,7 @@ LrWpanMac::L2R_Start()
 void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> p)
 {
   L2R_Header L2rRxMsg;
+  Ptr<Packet> originalPkt = p->Copy (); // because we will strip headers
   p->RemoveHeader(L2rRxMsg);
   //McpsDataIndicationParams rxParams;
   Mac16Address sender = rxParams.m_srcAddr;
@@ -1897,22 +1948,30 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   case DataHeader:
   {
     if(m_isSink)
+    {
+      std::cout<<"Mesh Successfully Received a packet " << std::endl;
+      L2R_Header dataHeader;
+      originalPkt->RemoveHeader(dataHeader);
+      MeshRootData newEntry = {dataHeader.GetQueueSize()/m_maxQueueSize, //number of element in the queue / queue size
+                                dataHeader.GetArrivalRate()/m_tcieInterval,//avg of the msg received / time ToDo make it normalized
+                                dataHeader.GetDelay()}; //The time that the packet stay in the queue 
+      
+      m_meshRootData.insert (std::make_pair(m_nodeId, newEntry));
+      ++m_totalPacketRxByMesh;
       return;
+    }
     std::cout << "New Data Received: " << std::endl;
     std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
-    L2R_Header dataHeader;
-    dataHeader.SetMsgType(DataHeader);
-    Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
-    p0->AddHeader (dataHeader); //serialize is called here
+
     McpsDataRequestParams params;
-    params.m_dstPanId = 10;
+    params.m_dstPanId = this->GetPanId();;
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
     params.m_dstAddr = this->OutputRoute ();
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_ACK;  
     std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<params.m_dstAddr << std::endl;
-    Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, params, p0);
+    Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, params, originalPkt);
   
   break;
   }
@@ -1995,7 +2054,8 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
     }
     *stream->GetStream () << std::endl;
   }
-  *stream->GetStream () << "Node: " <<  node->GetId ()
+  m_nodeId = node->GetId ();
+  *stream->GetStream () << "Node: " <<  m_nodeId
                         << std::resetiosflags(std::ios::adjustfield) << std::setiosflags (std::ios::fixed)
                         << ", Mac Address: " << m_shortAddress
                         << ", Depth: " << m_depth
@@ -2021,19 +2081,20 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
   Simulator::Schedule (TCIEInter, &LrWpanMac::PrintRoutingTable,this,
                           node, stream,unit);
 }
-/*void LrWpanMac::SetMac16()
+uint16_t
+LrWpanMac::GetQueueSize(void) const
 {
-  L2R_RoutingTableEntry rt(
-    0,
-    0,
-    Simulator::Now (),
-    Simulator::GetMaximumSimulationTime (),
-    m_shortAddress,
-    false);
-    rt.SetFlag(INVALID);
-    rt.SetEntriesChanged (false);
-    m_routingTable.AddRoute(rt);
-}*/
-
+  return m_txQueue.size();
+}
+uint16_t 
+LrWpanMac::GetArrivalRate(void) const
+{
+  return m_arrivalRate;
+}
+uint16_t
+LrWpanMac::GetAvgDelay(void) const
+{
+  return m_avgDelay;
+}
 
 } // namespace ns3
