@@ -162,7 +162,7 @@ LrWpanMac::LrWpanMac ()
   m_lqt = 0;
   m_pqm = 0;
   m_tcieInterval = 0;
-  m_arrivalRate = 0;
+  m_arrivalRate = Seconds(0);
   m_nQueueSize = 0;
   m_maxQueueSize = 100;
   m_delayCountPacket = 0;
@@ -170,6 +170,7 @@ LrWpanMac::LrWpanMac ()
   m_totalPacketRxByMesh = 0;
   m_totalPacketSentByNode = 0;
   m_totalPacketDroppedByNode = 0;
+  m_arrivalRateComplement = 0;
 }
 
 LrWpanMac::~LrWpanMac ()
@@ -474,11 +475,16 @@ LrWpanMac::CheckQueue ()
       TxQueueElement *txQElement = m_txQueue.front ();
       m_txPkt = txQElement->txQPkt;
       //AM: modified on 4/12
-      Time now = Simulator::Now ();
-      m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(), now));
-      std::map<uint64_t, Time>::const_iterator i = m_delayForEachPacket.find (m_txPkt->GetUid());
-      m_avgDelay += m_avgDelay + (now - i->second);
-      ++m_delayCountPacket;
+      L2R_Header l2rHeader;
+      m_txPkt->PeekHeader(l2rHeader);
+      if(!m_isSink && l2rHeader.GetMsgType() == DataHeader)
+      {
+        Time now = Simulator::Now ();
+        m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(), now));
+        std::map<uint64_t, Time>::const_iterator i = m_delayForEachPacket.find (m_txPkt->GetUid());
+        m_avgDelay += m_avgDelay + (now - i->second);
+        ++m_delayCountPacket;
+      }
       //end
       m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
     }
@@ -512,6 +518,10 @@ void
 LrWpanMac::SetL2rReceiveUpdateCallback (L2rReceiveUpdateCallback c)
 {
   m_l2rReceiveUpdateCallback = c;
+}
+void LrWpanMac::SetMeshRootRxMsgUpdateCallback (meshRootRxMsgCallback c)
+{
+  m_meshRxMsgCallback = c;
 }
 void
 LrWpanMac::SetMcpsDataConfirmCallback (McpsDataConfirmCallback c)
@@ -661,7 +671,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_txQueue.size () >= m_maxQueueSize) ) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (m_txQueue.size () >= m_maxQueueSize)) ) //AM: Modified at 3/12
             {
               m_macRxTrace (originalPkt);
               // \todo: What should we do if we receive a frame while waiting for an ACK?
@@ -1206,7 +1216,7 @@ L2R_Header::GetSerializedSize (void) const
   case L2R_D_IE:
     break;
   case DataHeader:
-    size += 8;
+    size += 14;
     break;
   }
   return size;
@@ -1231,11 +1241,12 @@ L2R_Header::Serialize (Buffer::Iterator start) const
     WriteTo(start,m_meshRootAddress);
     break;
   case DataHeader:
+    WriteTo(start,m_srcAddress);
     start.WriteHtonU16 (m_depth);
     start.WriteHtonU16 (m_PQM);
     start.WriteHtonU16 (m_queueSize);
-    start.WriteHtonU16 (m_avgDelay);
-    start.WriteHtonU16 (m_arrivalRate);
+    start.WriteHtonU32 (m_avgDelay);
+    start.WriteHtonU32 (m_arrivalRate);
     break;
   }
 }
@@ -1247,10 +1258,10 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   // in host byte order.
   Buffer::Iterator i = start;
   m_msgType = i.ReadU8();
-  ReadFrom (i, m_meshRootAddress);
   switch (m_msgType)
   {
   case 0:
+    ReadFrom (i, m_meshRootAddress);
     m_PQM = i.ReadNtohU16 ();
     m_LQT = i.ReadU8();
     m_TCIEInterval = i.ReadU8 ();
@@ -1258,13 +1269,15 @@ L2R_Header::Deserialize (Buffer::Iterator start)
     m_depth = i.ReadNtohU16 ();
     break;
   case 1:
+    ReadFrom (i, m_meshRootAddress);
     break;
   case 2:
+    ReadFrom (i, m_srcAddress);
     m_depth = i.ReadNtohU16 ();
     m_PQM = i.ReadNtohU16 ();
     m_queueSize = i.ReadNtohU16 ();
-    m_avgDelay = i.ReadNtohU16 ();
-    m_arrivalRate = i.ReadNtohU16 ();
+    m_avgDelay = i.ReadNtohU32 ();
+    m_arrivalRate = i.ReadNtohU32 ();
     break;
   }
   uint32_t dist = i.GetDistanceFrom (start);
@@ -1325,7 +1338,7 @@ void L2R_Header::SetLQT(uint8_t lqt)
   m_LQT = lqt;
 }
 void
-L2R_Header::SetArrivalRate(uint16_t arrivalRate)
+L2R_Header::SetArrivalRate(uint32_t arrivalRate)
 {
   m_arrivalRate = arrivalRate;
 }
@@ -1335,9 +1348,14 @@ L2R_Header::SetQueueSize(uint16_t q)
   m_queueSize = q;
 }
 void 
-L2R_Header::SetDelay(uint16_t delay)
+L2R_Header::SetDelay(uint32_t delay)
 {
   m_avgDelay = delay;
+}
+void 
+L2R_Header::SetSrcMacAddress(Mac16Address src)
+{
+  m_srcAddress = src;
 }
 enum L2R_MsgType
 L2R_Header::GetMsgType (void) const
@@ -1361,12 +1379,12 @@ uint8_t L2R_Header::GetLQT(void) const
 {
   return m_LQT;
 }
-uint16_t
+uint32_t
 L2R_Header::GetArrivalRate(void) const
 {
   return m_arrivalRate;
 }
-uint16_t
+uint32_t
 L2R_Header::GetDelay(void) const
 {
   return m_avgDelay;
@@ -1375,6 +1393,11 @@ uint16_t
 L2R_Header::GetQueueSize(void) const
 {
   return m_queueSize;
+}
+Mac16Address
+L2R_Header::GetSrcAddress(void) const
+{
+  return m_srcAddress;
 }
 
 //AM: modified at 6/11 6:03
@@ -1767,7 +1790,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     {       
       if(!m_isSink && m_depth == 0)
       {
-        uint16_t tempLqm = 1; //calculate LQM //ToDo Calcuate Lqm A1 A2 A3
+        uint16_t tempLqm = 1; //ToDo What LQM should be for node with 1 depth
         tempPqm += tempLqm;
         m_depth = tempDepth + 1;  
           L2R_RoutingTableEntry newEntry (
@@ -1801,7 +1824,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
           }
           else
           {
-            uint16_t tempLqm = 1; //calculate LQM
+            uint16_t tempLqm = 1; //ToDo What LQM should be for node in initialization
             tempPqm += tempLqm;
             L2R_RoutingTableEntry newEntry (
             tempDepth,
@@ -1844,7 +1867,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     {
       if(tableVerifier == false) //new Entry
       {
-        uint16_t tempLqm = 1; //calculate LQM
+        uint16_t tempLqm = 1; //ToDo What LQM should be for new nodes 
         tempPqm += tempLqm;
         L2R_RoutingTableEntry newEntry (
         tempDepth,
@@ -1875,42 +1898,52 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
           }
         }
         m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
-        m_arrivalRate = 0;
      }
      else
      {
        if((m_msn == 0xef && tempMsn < 0xef) || m_msn < tempMsn)
        {
-        uint16_t tempLqm = 1; //calculate LQM
-       tempPqm += tempLqm;
-       tableEntry.SetDepth(tempDepth);
-       tableEntry.SetEntriesChanged(true);
-       tableEntry.SetFlag(VALID);
-       tableEntry.SetNextHop(sender);
-       tableEntry.SetLifeTime(Simulator::Now ());
-       tableEntry.SetPQM(tempPqm);
-       m_routingTable.Update(tableEntry);
-       NS_LOG_FUNCTION ("Received update For TcIE From " << sender);
-       if(m_isSink) //code not completed here all nodes have zero pqm
-        {
-          m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
-          return;
-        }
-       uint16_t minPqm = 10000;
-        std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
-        m_routingTable.GetListOfAllRoutes(allRoutes);
-        for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
-          != allRoutes.end (); ++i) 
-        {
-        if(i->second.GetPQM () < minPqm)
+          double arrivalRateMovingAvg = 0;
+          std::queue<Time> temp_myqueue = m_arrivalRateMovingAvg;
+          while (!temp_myqueue.empty())
           {
-            minPqm = i->second.GetPQM ();
-            m_pqm = minPqm;
-            m_depth = i->second.GetDepth() + 1;
+	    	    arrivalRateMovingAvg += temp_myqueue.front().GetSeconds();
+		        temp_myqueue.pop();
+	        }
+          if(m_arrivalRateMovingAvg.size() != 0)
+            arrivalRateMovingAvg = arrivalRateMovingAvg / m_arrivalRateMovingAvg.size();
+          uint16_t tempLqm = tableEntry.GetQueuePar() * m_txQueue.size() / m_maxQueueSize +
+                              tableEntry.GetArrivalPar() * arrivalRateMovingAvg +
+                              tableEntry.GetDelayPar() * m_avgDelay.GetSeconds() / m_delayCountPacket;
+
+          tempPqm += tempLqm;
+          tableEntry.SetDepth(tempDepth);
+          tableEntry.SetEntriesChanged(true);
+          tableEntry.SetFlag(VALID);
+          tableEntry.SetNextHop(sender);
+          tableEntry.SetLifeTime(Simulator::Now ());
+          tableEntry.SetPQM(tempPqm);
+          m_routingTable.Update(tableEntry);
+          NS_LOG_FUNCTION ("Received update For TcIE From " << sender);
+          if(m_isSink) //code not completed here all nodes have zero pqm
+          {
+            m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
+            return;
           }
-        }
-        m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
-        m_arrivalRate = 0;
+          uint16_t minPqm = 10000;
+          std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
+          m_routingTable.GetListOfAllRoutes(allRoutes);
+          for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
+            != allRoutes.end (); ++i) 
+          {
+            if(i->second.GetPQM () < minPqm)
+            {
+              minPqm = i->second.GetPQM ();
+              m_pqm = minPqm;
+              m_depth = i->second.GetDepth() + 1;
+            }
+          }
+          m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
        }
        else
        {
@@ -1954,7 +1987,6 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     else
     {
       NS_LOG_FUNCTION ("Discard packet of size " << p->GetSize () <<"Rx msg from upstream node");
-
     }
     
   break;
@@ -1966,20 +1998,37 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       std::cout<<"Mesh Successfully Received a packet " << std::endl;
       L2R_Header dataHeader;
       originalPkt->RemoveHeader(dataHeader);
+
       float ent1 = dataHeader.GetQueueSize()/m_maxQueueSize;
-      float ent2 = dataHeader.GetArrivalRate()/m_tcieInterval;
-      float ent3 = dataHeader.GetDelay();
+      float *ent2 = reinterpret_cast<float*>(&dataHeader.GetArrivalRate());
+      float *ent3 = reinterpret_cast<float*>(&dataHeader.GetDelay());
+      srcAddress = dataHeader.GetSrcAddress();
       MeshRootData newEntry = {ent1, //number of element in the queue / queue size
-                               ent2,//avg of the msg received / time ToDo make it normalized
-                               ent3,}; //The time that the packet stay in the queue 
+                               *ent2,//avg of the msg received / time ToDo make it normalized
+                               *ent3,}; //The time that the packet stay in the queue 
       
-      m_meshRootData.insert (std::make_pair(m_nodeId, newEntry));
+      m_meshRootData.insert (std::make_pair(srcAddress, newEntry));
       ++m_totalPacketRxByMesh;
+      m_meshRxMsgCallback(newEntry,srcAddress);
       return;
     }
     std::cout << "New Data Received: " << std::endl;
     std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
     Time now = Simulator::Now ();
+    if (m_arrivalRateMovingAvg.size() >= 20)
+      m_arrivalRateMovingAvg.pop();
+    
+    if(m_arrivalRateComplement == 0)
+    {
+      m_arrivalRate = now;
+      ++m_arrivalRateComplement;
+    }
+    else
+    {
+      m_arrivalRate = now - m_arrivalRate;
+      m_arrivalRateMovingAvg.push(m_arrivalRate);
+      m_arrivalRateComplement = 0;
+    }
     m_delayForEachPacket.insert(std::make_pair (originalPkt->GetUid(), now));
     McpsDataRequestParams params;
     params.m_dstPanId = this->GetPanId();;
@@ -1988,7 +2037,6 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     params.m_dstAddr = this->OutputRoute ();
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_ACK;  
-    ++m_arrivalRate;
     std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<params.m_dstAddr << std::endl;
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, params, originalPkt);
   
@@ -2105,15 +2153,29 @@ LrWpanMac::GetQueueSize(void) const
 {
   return m_txQueue.size();
 }
-uint16_t 
+uint32_t 
 LrWpanMac::GetArrivalRate(void) const
 {
-  return m_arrivalRate;
+  float sendArrival = 0;
+  std::queue<Time> temp_myqueue = m_arrivalRateMovingAvg;
+  while (!temp_myqueue.empty())
+  {
+		sendArrival += temp_myqueue.front().GetSeconds();
+		temp_myqueue.pop();
+	}
+  if(m_arrivalRateMovingAvg.size() != 0)
+    sendArrival = sendArrival / m_arrivalRateMovingAvg.size();
+  uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendArrival);
+  return *pInt;
 }
-Time
+uint32_t
 LrWpanMac::GetAvgDelay(void) const
 {
-  return m_avgDelay;
+  float sendDelay = 0;
+  if (m_delayCountPacket ! = 0)
+    sendDelay = m_avgDelay / m_delayCountPacket;
+  uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
+  return *pInt;
 }
 void 
 LrWpanMac::SetMaxQueueSize(uint32_t maxQueue)

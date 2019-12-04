@@ -117,17 +117,17 @@ private:
    * Packet receive function
    * \param packet
    */
-  void ReceivePacket (Ptr <Packet> packet);
+  void ReceivePacket (MeshRootData para,Mac16Address srcAddress);
   ///check Throughput
   void CheckThroughput ();
 };
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
-  uint32_t nNodes = 5;
+  uint32_t nNodes = 30;
   uint32_t nSinks = 1;
-  double totalTime = 12;
-  uint8_t periodicUpdateInterval = 101;
+  double totalTime = 100;
+  uint8_t periodicUpdateInterval = 50;
   double dataStart = 5.0;
   bool printRoutingTable = true;
   std::string CSVfileName = "CongestionControl.csv";
@@ -152,9 +152,10 @@ int main (int argc, char *argv[])
   //LogComponentEnable ("LrWpanMac", LOG_LEVEL_ALL);
   std::ofstream out (CSVfileName.c_str ());
   out << "SimulationSecond," <<
-  "ReceiveRate," <<
-  "PacketsReceived," <<
-  "NumberOfSinks," <<
+  "Sender Mac Addr," <<
+  "Normalized Queue Length," <<
+  "Arrival Rate Moving Avg," <<
+  "Avg Delay," <<
   std::endl;
   out.close ();
   SeedManager::SetSeed (167);
@@ -172,8 +173,12 @@ CongestionControl::CongestionControl()
 {
 }
 void
-CongestionControl::ReceivePacket (Ptr <Packet> packet)
+CongestionControl::ReceivePacket (MeshRootData para,Mac16Address srcAddress)
 {
+  std::ofstream out (m_CSVfileName.c_str (), std::ios::app);
+  out << (Simulator::Now ()).GetSeconds ()<< "," << srcAddress << "," << para.m_queueSize 
+      << "," << para.m_arrivalRate << "," << para.m_avgDelay << std::endl;
+  out.close ();
 }
 void
 CongestionControl::CheckThroughput ()
@@ -213,7 +218,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
     Ptr<NetDevice> d = devContainer.Get (4);
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
-    L2R_Header dataHeader;
+    /*L2R_Header dataHeader;
     dataHeader.SetMsgType(DataHeader);
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (dataHeader); //serialize is called here
@@ -233,7 +238,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
                                       devContainer.Get(4)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
     }
     std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;
-  //InstallApplications ();
+  //InstallApplications ();*/
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
@@ -312,6 +317,7 @@ CongestionControl::CreateDevices (std::string tr_name)
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     device->GetPhy ()->TraceConnect ("TrxState", std::string ("phy" + temp), MakeCallback (&StateChangeNotification));
     temp++; 
+    uint32_t nodeID = d->GetNode ()->GetId ();
     //McpsDataConfirmCallback cb0;
     //cb0 = MakeCallback (&DataConfirm);
     //device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
@@ -322,6 +328,12 @@ CongestionControl::CreateDevices (std::string tr_name)
     device->GetMac ()->SetMcpsDataIndicationCallback (cb1);
     cb3 = MakeCallback (&L2rUpdateTcie);
     device->GetMac ()->SetL2rReceiveUpdateCallback(cb3);
+    if(nodeID == m_meshNodeId)
+      {
+        meshRootRxMsgCallback cb2;
+        cb3 = MakeCallback (&ReceivePacket);
+        device->GetMac ()->SetMeshRootRxMsgUpdateCallback(cb3);
+      }
   }
   if(m_enableTracing == true)
   {

@@ -43,6 +43,7 @@
 #include "ns3/output-stream-wrapper.h"
 #include "ns3/timer.h"
 #include "ns3/random-variable-stream.h"
+#include "queue"
 namespace ns3 {
   //AM: modified at 4/11
 
@@ -232,7 +233,7 @@ typedef Callback<void, McpsDataConfirmParams> McpsDataConfirmCallback;
 typedef Callback<void, McpsDataIndicationParams, Ptr<Packet>> McpsDataIndicationCallback;
 //AM: modified on 30/12
 typedef Callback<void, McpsDataIndicationParams,uint16_t ,uint16_t, Mac16Address> L2rReceiveUpdateCallback;
-
+typedef Callback<void,MeshRootData,Mac16Address> meshRootRxMsgCallback;
 /**
  * \ingroup lr-wpan
  *
@@ -269,8 +270,9 @@ public:
   void SetMsgType (enum L2R_MsgType msgType);
   void SetLQT(uint8_t lqt);
   void SetQueueSize(uint16_t queue);
-  void SetDelay(uint16_t delay);
-  void SetArrivalRate(uint16_t arrivalRate);
+  void SetDelay(uint32_t delay);
+  void SetArrivalRate(uint32_t arrivalRate);
+  void SetSrcMacAddress (Mac16Address srcAddress);
   /**
    * Get the header data.
    * \return The data.
@@ -283,8 +285,9 @@ public:
   enum L2R_MsgType GetMsgType(void) const;
   uint8_t GetLQT(void) const;
   uint16_t GetQueueSize(void) const;
-  uint16_t GetDelay(void) const;
-  uint16_t GetArrivalRate(void) const;
+  uint32_t GetDelay(void) const;
+  uint32_t GetArrivalRate(void) const;
+  Mac16Address GetSrcAddress (void) const;
   /**
    * \brief Get the type ID.
    * \return the object TypeId
@@ -304,8 +307,9 @@ private:
   uint8_t m_LQT;
   uint8_t m_msgType;
   uint16_t m_queueSize;
-  uint16_t m_arrivalRate;
-  uint16_t m_avgDelay; 
+  uint32_t m_arrivalRate;
+  uint32_t m_avgDelay; 
+  Mac16Address m_srcAddress;
   
 };
 
@@ -856,6 +860,7 @@ public:
   void SetMcpsDataIndicationCallback (McpsDataIndicationCallback c);
   //AM: modified on 30/12
   void SetL2rReceiveUpdateCallback (L2rReceiveUpdateCallback c);
+  void SetMeshRootRxMsgUpdateCallback (meshRootRxMsgCallback c);
 
   /**
    * Set the callback for the confirmation of a data transmission request.
@@ -1097,8 +1102,8 @@ public:
   uint32_t GetTotalPacketSentByNode(void) const;
   uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;
-  uint16_t GetArrivalRate(void) const;
-  Time GetAvgDelay (void) const;
+  uint32_t GetArrivalRate(void) const;
+  uint32_t GetAvgDelay (void) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1122,15 +1127,15 @@ private:
   uint32_t m_totalPacketRxByMesh;
   uint32_t m_totalPacketDroppedByNode;
   uint32_t m_totalPacketSentByNode;
-  uint16_t m_maxQueueSize;
+  uint32_t m_maxQueueSize;
   uint32_t m_delayCountPacket;
-  std::map<uint32_t, MeshRootData> m_meshRootData;
+  std::multimap<Mac16Address, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
-
-  float m_nQueueSize;
   std::map<uint64_t, Time> m_delayForEachPacket;
   Time m_avgDelay;
-  uint16_t m_arrivalRate; //ToDo Calculate arrival Rate
+  Time m_arrivalRate;
+  std::queue<Time> m_arrivalRateMovingAvg;
+  uint8_t m_arrivalRateComplement;
   //uint32_t m_nodeID;
   //void SetMac16();
   /**
@@ -1329,7 +1334,7 @@ private:
   McpsDataIndicationCallback m_mcpsDataIndicationCallback;
   //AM: modified on 30/12
   L2rReceiveUpdateCallback m_l2rReceiveUpdateCallback;
-
+  meshRootRxMsgCallback m_meshRxMsgCallback;
   /**
    * This callback is used to report data transmission request status to the
    * upper layers.
