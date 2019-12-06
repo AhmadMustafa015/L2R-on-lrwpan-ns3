@@ -15,12 +15,16 @@ class l2rapplication : public Application
 public:
   static TypeId GetTypeId (void);
 
-  l2rapplication(Ptr<NetDevice> dev,Ptr<RandomVariableStream> rnd);
-  ~l2rapplication();  
+  l2rapplication();
+  virtual ~l2rapplication();  
   int64_t AssignStreams (int64_t stream); //ToDo
   void Start(Time start);
-void Stop (Time start);
-void totalPacketPrint();
+  void Stop (Time start);
+  void TotalPacketPrint();
+  void Setup(Ptr<NetDevice> dev,Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off);
+  void SetMaxBytes (uint64_t maxBytes); //ToDo
+  void SetPacketSize(uint32_t pktSize);
+
 private:
   /**
    * \brief Cancel all pending events.
@@ -57,7 +61,6 @@ private:
    * \brief Handle a Connection Succeed event
    * \param socket the connected socket
    */
-  void SetMaxBytes (uint64_t maxBytes); //ToDo
 
   bool            m_connected;    //!< True if connected
   Ptr<RandomVariableStream>  m_onTime;       //!< rng for On Time
@@ -73,6 +76,7 @@ private:
   EventId         m_sendEvent;    //!< Event id of pending "send packet" event
   Ptr<NetDevice>  m_netDevice;
   uint32_t m_totalPacketsSend;
+  uint64_t m_totalPacketsDroped;
 };
 
 } // namespace ns3

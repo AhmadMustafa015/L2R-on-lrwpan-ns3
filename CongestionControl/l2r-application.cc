@@ -19,20 +19,32 @@ namespace ns3 {
 //NS_LOG_COMPONENT_DEFINE ("l2rApplication");
 
 //NS_OBJECT_ENSURE_REGISTERED (l2rApplication);
-l2rapplication::l2rapplication(Ptr<NetDevice> dev, Ptr<RandomVariableStream> rnd)
-  :m_residualBits (0),
+TypeId l2rapplication::GetTypeId (void)
+{
+  static TypeId tid = TypeId ("l2rapplication")
+    .SetParent<Application> ()
+    .SetGroupName ("Applications")
+    .AddConstructor<l2rapplication> ()
+    ;
+  return tid;
+}
+l2rapplication::l2rapplication()
+:m_residualBits (0),
   m_lastStartTime (Seconds (0)),
   m_totBytes (0)
 {
-  m_netDevice = dev;
-  m_onTime = rnd;
-  m_offTime = rnd;
   m_cbrRate = 250000;
-  m_pktSize = 20;
+  m_pktSize = 80;
   m_maxBytes = 0; 
   m_totBytes = 0;
   m_totalPacketsSend = 0;
-
+}
+void
+l2rapplication::Setup(Ptr<NetDevice> dev, Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off)
+{
+  m_netDevice = dev;
+  m_onTime = on;
+  m_offTime = off;
 }
 l2rapplication::~l2rapplication()
 {
@@ -73,30 +85,38 @@ void
 l2rapplication::SendPacket () //ToDo
 {
   Ptr<LrWpanNetDevice> device = m_netDevice->GetObject<LrWpanNetDevice> ();  
-  Ptr<Packet> packet = Create<Packet> ();
+  Ptr<Packet> packet = Create<Packet> (m_pktSize);
   m_totBytes += m_pktSize;
-
-  L2R_Header L2R_DataHeader;
-  L2R_DataHeader.SetSrcMacAddress(device->GetMac ()->GetShortAddress());
-  L2R_DataHeader.SetMsgType(DataHeader);
-  L2R_DataHeader.SetDepth(device->GetMac ()->GetDepth());
-  L2R_DataHeader.SetPQM(device->GetMac ()->GetPqm());
-  L2R_DataHeader.SetQueueSize(device->GetMac ()->GetQueueSize());
-  L2R_DataHeader.SetDelay(device->GetMac ()->GetAvgDelay());
-  L2R_DataHeader.SetArrivalRate(device->GetMac ()->GetArrivalRate());
-  ++m_totalPacketsSend;
-  packet->AddHeader (L2R_DataHeader); //serialize is called here
-  McpsDataRequestParams params;
-  params.m_dstPanId = device->GetMac ()->GetPanId();
-  params.m_srcAddrMode = SHORT_ADDR;
-  params.m_dstAddrMode = SHORT_ADDR;
-  params.m_dstAddr = device->GetMac ()->OutputRoute();
-  params.m_msduHandle = 0;
-  params.m_txOptions = TX_OPTION_ACK;
-  Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
-                             params, packet);
-  m_lastStartTime = Simulator::Now ();
-  m_residualBits = 0;
+  if(device->GetMac ()->GetQueueSize() < device->GetMac ()->GetMaxQueueSize ())
+  {
+    L2R_Header L2R_DataHeader;
+    L2R_DataHeader.SetSrcMacAddress(device->GetMac ()->GetShortAddress());
+    L2R_DataHeader.SetMsgType(DataHeader);
+    L2R_DataHeader.SetDepth(device->GetMac ()->GetDepth());
+    L2R_DataHeader.SetPQM(device->GetMac ()->GetPqm());
+    L2R_DataHeader.SetQueueSize(device->GetMac ()->GetQueueSize());
+    L2R_DataHeader.SetDelay(device->GetMac ()->GetAvgDelay());
+    L2R_DataHeader.SetArrivalRate(device->GetMac ()->GetArrivalRate());
+    ++m_totalPacketsSend;
+    packet->AddHeader (L2R_DataHeader); //serialize is called here
+    McpsDataRequestParams params;
+    params.m_dstPanId = device->GetMac ()->GetPanId();
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = device->GetMac ()->OutputRoute();
+    params.m_msduHandle = 0;
+    params.m_txOptions = TX_OPTION_ACK;
+    Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
+                               params, packet);
+    m_lastStartTime = Simulator::Now ();
+    m_residualBits = 0;
+  }
+  else
+  {
+    ++m_totalPacketsDroped;
+    m_residualBits += m_pktSize;
+  }
+  
   ScheduleNextTx ();
 }
 void 
@@ -165,9 +185,14 @@ l2rapplication::ScheduleNextTx ()
     }
 }
 void
-l2rapplication::totalPacketPrint()
+l2rapplication::TotalPacketPrint()
 {
-  std::cout << m_totalPacketsSend << std::endl;
+  std::cout <<"Total Packet Sent: " <<m_totalPacketsSend << " Total Packets Delayed No Enough Memory: "<< m_totalPacketsDroped  << std::endl;
+}
+void 
+l2rapplication::SetPacketSize(uint32_t pktSize)
+{
+  m_pktSize = pktSize;
 }
 
 }

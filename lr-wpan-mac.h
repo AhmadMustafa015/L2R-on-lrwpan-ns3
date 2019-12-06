@@ -1089,13 +1089,13 @@ public:
   void L2R_SendPeriodicUpdate();
   void L2R_SendTopologyDiscovery();
   void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
+  void SetMaxQueueSize(uint32_t maxQueue);
   //AB: modified on 19/11
   Mac16Address OutputRoute();
   void L2R_Start (); 
   //AM: modified on 25/11
   void PrintRoutingTable (Ptr<Node> node, Ptr<OutputStreamWrapper> stream, Time::Unit unit = Time::S);
   //AM: modified 1/12
-  void SetMaxQueueSize(uint32_t maxQueue);
   uint16_t GetDepth(void) const;
   uint16_t GetPqm (void) const;
   uint32_t GetTotalPacketDroppedByQueue(void) const;
@@ -1104,6 +1104,7 @@ public:
   uint16_t GetQueueSize(void) const;
   uint32_t GetArrivalRate(void) const;
   uint32_t GetAvgDelay (void) const;
+  uint32_t GetMaxQueueSize(void) const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);

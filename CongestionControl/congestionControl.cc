@@ -103,6 +103,9 @@ private:
   Ptr<SingleModelSpectrumChannel> channel;
   NodeContainer ch;
   uint32_t m_distanceBtwNodes;
+  uint32_t m_packetSize;
+  uint64_t m_maxTxBytePerNode;
+  uint16_t m_maxQueueSize;
   //l2rapplication m_applicationContainer;
 
 private:
@@ -132,16 +135,18 @@ private:
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
-  uint32_t nNodes = 8;
+  uint32_t nNodes = 20;
   uint32_t nSinks = 1;
-  double totalTime = 15;
+  double totalTime = 30;
   uint8_t periodicUpdateInterval = 30;
-  double dataStart = 8.0;
+  double dataStart = 2.0;
   bool printRoutingTable = true;
   uint32_t meshNodeId = 0;
   bool enableTracing = false;
   bool enablePcap = true;
   uint32_t distanceBtwNodes = 80; 
+  //double onTime = 1;
+  //double offTime = 1;
 
   CommandLine cmd;
   cmd.AddValue ("nNodes", "Number of wifi nodes[Default:30]", nNodes);
@@ -200,7 +205,9 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_enablePcap = enablePcap;
   m_meshNodeId = meshNodeId;
   m_distanceBtwNodes = distanceBtwNodes;
-
+  m_packetSize = 80;
+  m_maxTxBytePerNode = 5600;
+  m_maxQueueSize = 30;
   std::stringstream ss;
   ss << m_nNodes;
   std::string t_nodes = ss.str ();
@@ -214,7 +221,6 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   SetupMobility ();
   CreateDevices (tr_name);
 
-    Ptr<NetDevice> d = devContainer.Get (7);
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
     L2R_Header dataHeader;
@@ -246,21 +252,21 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
                                       devContainer.Get(7)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
     }
     std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;*/
-  //InstallApplications ();
-  Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
-  var->SetAttribute ("Min", DoubleValue (1.0));
-  var->SetAttribute ("Max", DoubleValue (2.0));
-  l2rapplication m_applicationContainer(d,var);
-  m_applicationContainer.Start(Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
-  m_applicationContainer.Stop (Seconds (m_totalTime));
+  InstallApplications ();
+  
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Run ();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
+  for(uint32_t i = 1; i < m_nNodes; i++)
+  {
+    Ptr<l2rapplication> app = ch.Get (i)->GetApplication(0)->GetObject<l2rapplication> ();
+    app->TotalPacketPrint();
+  }
   Simulator::Destroy ();
-  m_applicationContainer.totalPacketPrint();
+  //m_applicationContainer->TotalPacketPrint();
   delete pAnim;
 }
 void 
@@ -333,6 +339,7 @@ CongestionControl::CreateDevices (std::string tr_name)
     device->GetPhy ()->TraceConnect ("TrxState", std::string ("phy" + temp), MakeCallback (&StateChangeNotification));
     temp++; 
     uint32_t nodeID = d->GetNode ()->GetId ();
+    device->GetMac ()->SetMaxQueueSize(m_maxQueueSize);
     //McpsDataConfirmCallback cb0;
     //cb0 = MakeCallback (&DataConfirm);
     //device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
@@ -381,24 +388,29 @@ CongestionControl::CreateDevices (std::string tr_name)
 }
 void
 CongestionControl::InstallApplications()
-{
+{  
+
   uint8_t temp = 0;
   for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
   {
     Ptr<NetDevice> d = *i;
     
-    /*Ptr<ConstantRandomVariable> xRand = CreateObject<ConstantRandomVariable> ();
-    xRand->SetAttribute ("Min", DoubleValue (0.0));
-    xRand->SetAttribute ("Max", DoubleValue (1.0));*/
-    rvg->SetAttribute("Constant",DoubleValue (1.0));
     if(d->GetNode()->GetId () == m_meshNodeId)
       continue;
-    //Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
-    /*m_applicationContainer.push_back(l2rapplication(d,rvg));
-    //m_applicationContainer[temp].AssignStreams(xRand);
+    Ptr<UniformRandomVariable> on = CreateObject<UniformRandomVariable> ();
+    on->SetAttribute ("Min", DoubleValue (0));
+    on->SetAttribute ("Max", DoubleValue (1));
+    Ptr<UniformRandomVariable> off = CreateObject<UniformRandomVariable> ();
+    off->SetAttribute ("Min", DoubleValue (0));
+    off->SetAttribute ("Max", DoubleValue (1));
     Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
-    m_applicationContainer[temp].Start(Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
-    m_applicationContainer[temp].Stop (Seconds (m_totalTime));*/
+    Ptr<l2rapplication> app = CreateObject<l2rapplication> ();
+    ch.Get (d->GetNode()->GetId ())->AddApplication (app);
+    app->Setup(d,on, off);
+    app->Start(Seconds (on->GetValue (m_dataStart, m_dataStart +1)));
+    app->Stop (Seconds (m_totalTime));
+    app->SetPacketSize(m_packetSize);
+    app->SetMaxBytes(m_maxTxBytePerNode);
     ++temp;
   }
 }

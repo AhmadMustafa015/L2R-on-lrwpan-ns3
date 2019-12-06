@@ -2184,11 +2184,6 @@ LrWpanMac::GetAvgDelay(void) const
   uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
   return *pInt;
 }
-void 
-LrWpanMac::SetMaxQueueSize(uint32_t maxQueue)
-{
-  m_maxQueueSize = maxQueue;
-}
 uint16_t 
 LrWpanMac::GetDepth(void) const
 {
@@ -2213,6 +2208,16 @@ uint32_t
 LrWpanMac::GetTotalPacketRxByMeshRoot(void) const
 {
   return m_totalPacketRxByMesh;
+}
+void 
+LrWpanMac::SetMaxQueueSize (uint32_t maxQueue)
+{
+  m_maxQueueSize = maxQueue;
+}
+uint32_t 
+LrWpanMac::GetMaxQueueSize(void) const
+{
+  return m_maxQueueSize;
 }
 
 } // namespace ns3
