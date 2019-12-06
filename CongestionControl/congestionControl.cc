@@ -23,6 +23,8 @@ bool verbose = false;
 AnimationInterface * pAnim = 0;
 NetDeviceContainer devContainer;
 LrWpanHelper lrWpanHelper;
+Ptr<ConstantRandomVariable> rvg = CreateObject<ConstantRandomVariable> ();
+std::string CSVfileName = "CongestionControl.csv";
 void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &pqm,const Mac16Address &receiver);
 /// RGB structure
 struct rgb {
@@ -49,6 +51,13 @@ static void L2rUpdateTcie(McpsDataIndicationParams params, uint16_t depth, uint1
   std::cout << "LrWpanMcpsDataConfirmStatus = " << params.m_status << std::endl;
 }
 */
+static void ReceivePacket (MeshRootData para,Mac16Address srcAddress)
+{
+  std::ofstream out (CSVfileName.c_str (), std::ios::app);
+  out << (Simulator::Now ()).GetSeconds ()<< "," << srcAddress << "," << para.m_queueSize 
+      << "," << para.m_arrivalRate << "," << para.m_avgDelay << std::endl;
+  out.close ();
+}
 static void StateChangeNotification (std::string context, Time now, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState)
 {
 }
@@ -94,7 +103,7 @@ private:
   Ptr<SingleModelSpectrumChannel> channel;
   NodeContainer ch;
   uint32_t m_distanceBtwNodes;
-  std::vector<l2rapplication> m_applicationContainer;
+  //l2rapplication m_applicationContainer;
 
 private:
   /// Create and initialize all nodes
@@ -117,20 +126,18 @@ private:
    * Packet receive function
    * \param packet
    */
-  void ReceivePacket (MeshRootData para,Mac16Address srcAddress);
   ///check Throughput
   void CheckThroughput ();
 };
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
-  uint32_t nNodes = 30;
+  uint32_t nNodes = 8;
   uint32_t nSinks = 1;
-  double totalTime = 100;
-  uint8_t periodicUpdateInterval = 50;
-  double dataStart = 5.0;
+  double totalTime = 15;
+  uint8_t periodicUpdateInterval = 30;
+  double dataStart = 8.0;
   bool printRoutingTable = true;
-  std::string CSVfileName = "CongestionControl.csv";
   uint32_t meshNodeId = 0;
   bool enableTracing = false;
   bool enablePcap = true;
@@ -173,14 +180,6 @@ CongestionControl::CongestionControl()
 {
 }
 void
-CongestionControl::ReceivePacket (MeshRootData para,Mac16Address srcAddress)
-{
-  std::ofstream out (m_CSVfileName.c_str (), std::ios::app);
-  out << (Simulator::Now ()).GetSeconds ()<< "," << srcAddress << "," << para.m_queueSize 
-      << "," << para.m_arrivalRate << "," << para.m_avgDelay << std::endl;
-  out.close ();
-}
-void
 CongestionControl::CheckThroughput ()
 {
 }
@@ -215,30 +214,45 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   SetupMobility ();
   CreateDevices (tr_name);
 
-    Ptr<NetDevice> d = devContainer.Get (4);
-    Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    Ptr<NetDevice> d = devContainer.Get (7);
+    /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
-    /*L2R_Header dataHeader;
+    L2R_Header dataHeader;
+    float delay1 = 5.45;
+    float arrivalRate = 6.45;
+    uint16_t QueueS = 7;
+    uint32_t* pInt1 = reinterpret_cast<uint32_t*>(&delay1);
+    uint32_t* pInt2 = reinterpret_cast<uint32_t*>(&arrivalRate);
     dataHeader.SetMsgType(DataHeader);
+    dataHeader.SetDelay(*pInt1);
+    dataHeader.SetArrivalRate(*pInt2);
+    dataHeader.SetQueueSize(QueueS);
+    dataHeader.SetSrcMacAddress(Mac16Address("00:08"));
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (dataHeader); //serialize is called here
     McpsDataRequestParams params;
     params.m_dstPanId = 10;
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = Mac16Address("00:04");
+    params.m_dstAddr = Mac16Address("00:07");
     std::cout << params.m_dstAddr << std::endl;
     params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     params.m_txOptions = TX_OPTION_ACK; 
-    for(uint8_t i =0; i <10; i++) 
+    for(uint8_t i =0; i <2; i++) 
     {
-      std::cout << "Sending Data Packet From: " << "00:05" << "To: " << "00:04" << std::endl;
+      std::cout << "Sending Data Packet From: " << "00:08" << "To: " << "00:07" << std::endl;
       Simulator::ScheduleWithContext (1, Seconds (8),
                                       &LrWpanMac::McpsDataRequest,
-                                      devContainer.Get(4)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
+                                      devContainer.Get(7)->GetObject<LrWpanNetDevice> ()->GetMac (), params, p0);
     }
-    std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;
-  //InstallApplications ();*/
+    std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;*/
+  //InstallApplications ();
+  Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
+  var->SetAttribute ("Min", DoubleValue (1.0));
+  var->SetAttribute ("Max", DoubleValue (2.0));
+  l2rapplication m_applicationContainer(d,var);
+  m_applicationContainer.Start(Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
+  m_applicationContainer.Stop (Seconds (m_totalTime));
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
@@ -246,6 +260,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   Simulator::Run ();
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   Simulator::Destroy ();
+  m_applicationContainer.totalPacketPrint();
   delete pAnim;
 }
 void 
@@ -331,8 +346,8 @@ CongestionControl::CreateDevices (std::string tr_name)
     if(nodeID == m_meshNodeId)
       {
         meshRootRxMsgCallback cb2;
-        cb3 = MakeCallback (&ReceivePacket);
-        device->GetMac ()->SetMeshRootRxMsgUpdateCallback(cb3);
+        cb2 = MakeCallback (&ReceivePacket);
+        device->GetMac ()->SetMeshRootRxMsgUpdateCallback(cb2);
       }
   }
   if(m_enableTracing == true)
@@ -345,7 +360,7 @@ CongestionControl::CreateDevices (std::string tr_name)
   if(m_enablePcap == true)
     lrWpanHelper.EnablePcapAll (std::string (tr_name), true);
   Packet::EnablePrinting ();
-  devContainer.Get(m_meshNodeId)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 8, m_periodicUpdateInterval);
+  devContainer.Get(m_meshNodeId)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_AssignL2RProtocolForSink(true, 0xffff, m_periodicUpdateInterval);
   devContainer.Get(m_meshNodeId)->GetObject<LrWpanNetDevice> ()->GetMac ()->L2R_SendTopologyDiscovery();
   if (m_printRoutingTable)
   {
@@ -371,13 +386,19 @@ CongestionControl::InstallApplications()
   for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
   {
     Ptr<NetDevice> d = *i;
+    
+    /*Ptr<ConstantRandomVariable> xRand = CreateObject<ConstantRandomVariable> ();
+    xRand->SetAttribute ("Min", DoubleValue (0.0));
+    xRand->SetAttribute ("Max", DoubleValue (1.0));*/
+    rvg->SetAttribute("Constant",DoubleValue (1.0));
     if(d->GetNode()->GetId () == m_meshNodeId)
       continue;
     //Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
-    m_applicationContainer.push_back(l2rapplication(d));
+    /*m_applicationContainer.push_back(l2rapplication(d,rvg));
+    //m_applicationContainer[temp].AssignStreams(xRand);
     Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
     m_applicationContainer[temp].Start(Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
-    m_applicationContainer[temp].Stop (Seconds (m_totalTime));
+    m_applicationContainer[temp].Stop (Seconds (m_totalTime));*/
     ++temp;
   }
 }

@@ -159,11 +159,10 @@ LrWpanMac::LrWpanMac ()
   //SetMac16();
   m_depth = 0;
   m_msn = 0xf0;
-  m_lqt = 0;
+  m_lqt = 0xffff;
   m_pqm = 0;
   m_tcieInterval = 0;
   m_arrivalRate = Seconds(0);
-  m_nQueueSize = 0;
   m_maxQueueSize = 100;
   m_delayCountPacket = 0;
   m_avgDelay = Seconds(0);
@@ -671,7 +670,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_isSink || (m_txQueue.size () >= m_maxQueueSize)) ) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (m_txQueue.size () <= m_maxQueueSize)) ) //AM: Modified at 3/12
             {
               m_macRxTrace (originalPkt);
               // \todo: What should we do if we receive a frame while waiting for an ACK?
@@ -767,7 +766,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
             {
               if(m_txQueue.size () >= m_maxQueueSize)
               { 
-                std::cout <<"A packet dropped: " << "Queue Size = " << m_txQueue.size () 
+                std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped: " << "Queue Size = " << m_txQueue.size () 
                           <<" exceeds the limit: " << m_maxQueueSize << std::endl;
                 ++m_totalPacketDroppedByNode;
               }
@@ -1211,7 +1210,7 @@ L2R_Header::GetSerializedSize (void) const
   switch (m_msgType)
   {
   case TC_IE:
-    size += 8;
+    size += 10;
     break;
   case L2R_D_IE:
     break;
@@ -1232,7 +1231,7 @@ L2R_Header::Serialize (Buffer::Iterator start) const
   case TC_IE:
     WriteTo(start,m_meshRootAddress);
     start.WriteHtonU16 (m_PQM);
-    start.WriteU8(m_LQT);
+    start.WriteHtonU16(m_LQT);
     start.WriteU8 (m_TCIEInterval);
     start.WriteHtonU16 (m_MSN);
     start.WriteHtonU16 (m_depth);
@@ -1263,7 +1262,7 @@ L2R_Header::Deserialize (Buffer::Iterator start)
   case 0:
     ReadFrom (i, m_meshRootAddress);
     m_PQM = i.ReadNtohU16 ();
-    m_LQT = i.ReadU8();
+    m_LQT = i.ReadNtohU16();
     m_TCIEInterval = i.ReadU8 ();
     m_MSN = i.ReadNtohU16 ();
     m_depth = i.ReadNtohU16 ();
@@ -1333,7 +1332,7 @@ void L2R_Header::SetMsgType (enum L2R_MsgType msgType)
 {
   m_msgType = msgType;
 }
-void L2R_Header::SetLQT(uint8_t lqt)
+void L2R_Header::SetLQT(uint16_t lqt)
 {
   m_LQT = lqt;
 }
@@ -1375,7 +1374,7 @@ L2R_Header::GetMsgType (void) const
       return DataHeader;
     }
 }
-uint8_t L2R_Header::GetLQT(void) const
+uint16_t L2R_Header::GetLQT(void) const
 {
   return m_LQT;
 }
@@ -1653,7 +1652,7 @@ L2R_RoutingTable::GetEventId (Mac16Address address)
     }
 }
 void
-LrWpanMac::L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieInterval)
+LrWpanMac::L2R_AssignL2RProtocolForSink(bool isSink, uint16_t lqt, uint8_t tcieInterval)
 {
   m_isSink = isSink;
   m_msn = 0xf0;
@@ -1995,14 +1994,20 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   {
     if(m_isSink)
     {
-      std::cout<<"Mesh Successfully Received a packet " << std::endl;
+      std::cout<<"Mesh Successfully Received a packet with: " << std::endl;
       L2R_Header dataHeader;
       originalPkt->RemoveHeader(dataHeader);
 
-      float ent1 = dataHeader.GetQueueSize()/m_maxQueueSize;
-      float *ent2 = reinterpret_cast<float*>(&dataHeader.GetArrivalRate());
-      float *ent3 = reinterpret_cast<float*>(&dataHeader.GetDelay());
-      srcAddress = dataHeader.GetSrcAddress();
+      float ent1 = dataHeader.GetQueueSize()/float(m_maxQueueSize);
+      uint32_t arrivalRate  = dataHeader.GetArrivalRate();
+      uint32_t avdelay = dataHeader.GetDelay();
+      float *ent2 = reinterpret_cast<float*>(&arrivalRate);
+      float *ent3 = reinterpret_cast<float*>(&avdelay);
+      std::cout <<"Queue Size: " << ent1 << std::endl;
+      std::cout <<"Arrival Rate: " << *ent2 << std::endl;
+      std::cout <<"AvgDelay: " << *ent3 << std::endl;
+
+      Mac16Address srcAddress = dataHeader.GetSrcAddress();
       MeshRootData newEntry = {ent1, //number of element in the queue / queue size
                                *ent2,//avg of the msg received / time ToDo make it normalized
                                *ent3,}; //The time that the packet stay in the queue 
@@ -2030,15 +2035,15 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       m_arrivalRateComplement = 0;
     }
     m_delayForEachPacket.insert(std::make_pair (originalPkt->GetUid(), now));
-    McpsDataRequestParams params;
-    params.m_dstPanId = this->GetPanId();;
-    params.m_srcAddrMode = SHORT_ADDR;
-    params.m_dstAddrMode = SHORT_ADDR;
-    params.m_dstAddr = this->OutputRoute ();
-    params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
-    params.m_txOptions = TX_OPTION_ACK;  
-    std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<params.m_dstAddr << std::endl;
-    Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, params, originalPkt);
+    McpsDataRequestParams paramsSend;
+    paramsSend.m_dstPanId = this->GetPanId();;
+    paramsSend.m_srcAddrMode = SHORT_ADDR;
+    paramsSend.m_dstAddrMode = SHORT_ADDR;
+    paramsSend.m_dstAddr = this->OutputRoute ();
+    paramsSend.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+    paramsSend.m_txOptions = TX_OPTION_ACK;  
+    std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
+    Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
   break;
   }
@@ -2086,6 +2091,8 @@ LrWpanMac::OutputRoute()
         nextHopAddress = j->second.GetNextHop();
       }
     }
+    if (nextHopAddress == "00:00")
+      std::cout << "Node Doesn't send any thing no Ancecters" << std::endl;
     return nextHopAddress;
   }
   else
@@ -2172,8 +2179,8 @@ uint32_t
 LrWpanMac::GetAvgDelay(void) const
 {
   float sendDelay = 0;
-  if (m_delayCountPacket ! = 0)
-    sendDelay = m_avgDelay / m_delayCountPacket;
+  if (m_delayCountPacket != 0)
+    sendDelay = m_avgDelay.GetSeconds() / m_delayCountPacket;
   uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
   return *pInt;
 }

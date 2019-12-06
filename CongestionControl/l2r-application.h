@@ -9,15 +9,18 @@
 #include "ns3/traced-callback.h"
 namespace ns3 {
 class NetDevice;
-class l2rapplication
+class l2rapplication : public Application 
 {
 //OnOffApplication
 public:
-  l2rapplication(Ptr<NetDevice> dev);
+  static TypeId GetTypeId (void);
+
+  l2rapplication(Ptr<NetDevice> dev,Ptr<RandomVariableStream> rnd);
   ~l2rapplication();  
   int64_t AssignStreams (int64_t stream); //ToDo
   void Start(Time start);
 void Stop (Time start);
+void totalPacketPrint();
 private:
   /**
    * \brief Cancel all pending events.
@@ -69,6 +72,7 @@ private:
   EventId         m_startStopEvent;     //!< Event id for next start or stop event
   EventId         m_sendEvent;    //!< Event id of pending "send packet" event
   Ptr<NetDevice>  m_netDevice;
+  uint32_t m_totalPacketsSend;
 };
 
 } // namespace ns3

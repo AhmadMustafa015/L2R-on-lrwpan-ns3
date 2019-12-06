@@ -268,7 +268,7 @@ public:
   void SetMSN (uint16_t msn);
   void SetTCIEInterval(uint8_t tcieinterval);
   void SetMsgType (enum L2R_MsgType msgType);
-  void SetLQT(uint8_t lqt);
+  void SetLQT(uint16_t lqt);
   void SetQueueSize(uint16_t queue);
   void SetDelay(uint32_t delay);
   void SetArrivalRate(uint32_t arrivalRate);
@@ -283,7 +283,7 @@ public:
   uint16_t GetMSN (void) const;
   uint8_t GetTCIEInterval(void) const;
   enum L2R_MsgType GetMsgType(void) const;
-  uint8_t GetLQT(void) const;
+  uint16_t GetLQT(void) const;
   uint16_t GetQueueSize(void) const;
   uint32_t GetDelay(void) const;
   uint32_t GetArrivalRate(void) const;
@@ -304,7 +304,7 @@ private:
   uint16_t m_PQM;
   uint8_t m_TCIEInterval;
   uint16_t m_MSN;
-  uint8_t m_LQT;
+  uint16_t m_LQT;
   uint8_t m_msgType;
   uint16_t m_queueSize;
   uint32_t m_arrivalRate;
@@ -1084,7 +1084,7 @@ public:
   //AM: modified at 7/11
   //void AddedL2RoutingProtocol(Ptr<L2R_RoutingProtocol> routingProtocol);
   //L2R Protocol
-  void L2R_AssignL2RProtocolForSink(bool isSink, uint8_t lqt, uint8_t tcieInterval);
+  void L2R_AssignL2RProtocolForSink(bool isSink, uint16_t lqt, uint8_t tcieInterval);
   void RecieveL2RPacket (McpsDataIndicationParams params, Ptr<Packet> p);
   void L2R_SendPeriodicUpdate();
   void L2R_SendTopologyDiscovery();
@@ -1112,7 +1112,7 @@ protected:
 private:
   //AM: modified at 15/11
   bool m_isSink;
-  uint8_t m_lqt;
+  uint16_t m_lqt;
   uint16_t m_msn;
   uint16_t m_depth;
   uint8_t m_tcieInterval;
