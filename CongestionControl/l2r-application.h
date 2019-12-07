@@ -18,8 +18,6 @@ public:
   l2rapplication();
   virtual ~l2rapplication();  
   int64_t AssignStreams (int64_t stream); //ToDo
-  void Start(Time start);
-  void Stop (Time start);
   void TotalPacketPrint();
   void Setup(Ptr<NetDevice> dev,Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off);
   void SetMaxBytes (uint64_t maxBytes); //ToDo

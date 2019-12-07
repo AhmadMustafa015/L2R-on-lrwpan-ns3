@@ -23,7 +23,6 @@ bool verbose = false;
 AnimationInterface * pAnim = 0;
 NetDeviceContainer devContainer;
 LrWpanHelper lrWpanHelper;
-Ptr<ConstantRandomVariable> rvg = CreateObject<ConstantRandomVariable> ();
 std::string CSVfileName = "CongestionControl.csv";
 void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &pqm,const Mac16Address &receiver);
 /// RGB structure
@@ -106,6 +105,7 @@ private:
   uint32_t m_packetSize;
   uint64_t m_maxTxBytePerNode;
   uint16_t m_maxQueueSize;
+  double m_sensingPeriod;
   //l2rapplication m_applicationContainer;
 
 private:
@@ -138,7 +138,7 @@ int main (int argc, char *argv[])
   uint32_t nNodes = 20;
   uint32_t nSinks = 1;
   double totalTime = 30;
-  uint8_t periodicUpdateInterval = 30;
+  uint8_t periodicUpdateInterval = 10;
   double dataStart = 2.0;
   bool printRoutingTable = true;
   uint32_t meshNodeId = 0;
@@ -206,8 +206,10 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_meshNodeId = meshNodeId;
   m_distanceBtwNodes = distanceBtwNodes;
   m_packetSize = 80;
-  m_maxTxBytePerNode = 5600;
+  m_maxTxBytePerNode = 0;
   m_maxQueueSize = 30;
+  m_sensingPeriod = .1;
+
   std::stringstream ss;
   ss << m_nNodes;
   std::string t_nodes = ss.str ();
@@ -394,23 +396,23 @@ CongestionControl::InstallApplications()
   for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
   {
     Ptr<NetDevice> d = *i;
-    
     if(d->GetNode()->GetId () == m_meshNodeId)
       continue;
+    Ptr<ConstantRandomVariable> rvg = CreateObject<ConstantRandomVariable> ();
     Ptr<UniformRandomVariable> on = CreateObject<UniformRandomVariable> ();
-    on->SetAttribute ("Min", DoubleValue (0));
-    on->SetAttribute ("Max", DoubleValue (1));
     Ptr<UniformRandomVariable> off = CreateObject<UniformRandomVariable> ();
-    off->SetAttribute ("Min", DoubleValue (0));
-    off->SetAttribute ("Max", DoubleValue (1));
-    Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
     Ptr<l2rapplication> app = CreateObject<l2rapplication> ();
     ch.Get (d->GetNode()->GetId ())->AddApplication (app);
+    on->SetAttribute ("Min", DoubleValue (0));
+    on->SetAttribute ("Max", DoubleValue (m_sensingPeriod));
+    off->SetAttribute ("Min", DoubleValue (0));
+    off->SetAttribute ("Max", DoubleValue (0));
     app->Setup(d,on, off);
-    app->Start(Seconds (on->GetValue (m_dataStart, m_dataStart +1)));
-    app->Stop (Seconds (m_totalTime));
+    Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
+    app->SetStartTime (Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
+    app->SetStopTime (Seconds (m_totalTime));
     app->SetPacketSize(m_packetSize);
-    app->SetMaxBytes(m_maxTxBytePerNode);
+    app->SetMaxBytes(0);
     ++temp;
   }
 }

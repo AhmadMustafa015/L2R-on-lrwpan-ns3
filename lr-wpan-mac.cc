@@ -165,7 +165,7 @@ LrWpanMac::LrWpanMac ()
   m_arrivalRate = Seconds(0);
   m_maxQueueSize = 100;
   m_delayCountPacket = 0;
-  m_avgDelay = Seconds(0);
+  m_avgDelay = 0;
   m_totalPacketRxByMesh = 0;
   m_totalPacketSentByNode = 0;
   m_totalPacketDroppedByNode = 0;
@@ -478,11 +478,15 @@ LrWpanMac::CheckQueue ()
       m_txPkt->PeekHeader(l2rHeader);
       if(!m_isSink && l2rHeader.GetMsgType() == DataHeader)
       {
-        Time now = Simulator::Now ();
-        m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(), now));
+        //Time now = Simulator::Now ();
+        //m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(), now));
         std::map<uint64_t, Time>::const_iterator i = m_delayForEachPacket.find (m_txPkt->GetUid());
-        m_avgDelay += m_avgDelay + (now - i->second);
-        ++m_delayCountPacket;
+        if(i != m_delayForEachPacket.end())
+        {
+          m_delayForEachPacket.erase(i);
+          //m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
+          //++m_delayCountPacket;
+        }
       }
       //end
       m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_CSMA);
@@ -1913,7 +1917,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             arrivalRateMovingAvg = arrivalRateMovingAvg / m_arrivalRateMovingAvg.size();
           uint16_t tempLqm = tableEntry.GetQueuePar() * m_txQueue.size() / m_maxQueueSize +
                               tableEntry.GetArrivalPar() * arrivalRateMovingAvg +
-                              tableEntry.GetDelayPar() * m_avgDelay.GetSeconds() / m_delayCountPacket;
+                              tableEntry.GetDelayPar() * m_avgDelay / m_delayCountPacket;
 
           tempPqm += tempLqm;
           tableEntry.SetDepth(tempDepth);
@@ -1994,7 +1998,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   {
     if(m_isSink)
     {
-      std::cout<<"Mesh Successfully Received a packet with: " << std::endl;
+      //std::cout<<"Mesh Successfully Received a packet with: " << std::endl;
       L2R_Header dataHeader;
       originalPkt->RemoveHeader(dataHeader);
 
@@ -2003,9 +2007,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       uint32_t avdelay = dataHeader.GetDelay();
       float *ent2 = reinterpret_cast<float*>(&arrivalRate);
       float *ent3 = reinterpret_cast<float*>(&avdelay);
-      std::cout <<"Queue Size: " << ent1 << std::endl;
+      /*std::cout <<"Queue Size: " << ent1 << std::endl;
       std::cout <<"Arrival Rate: " << *ent2 << std::endl;
-      std::cout <<"AvgDelay: " << *ent3 << std::endl;
+      std::cout <<"AvgDelay: " << *ent3 << std::endl;*/
 
       Mac16Address srcAddress = dataHeader.GetSrcAddress();
       MeshRootData newEntry = {ent1, //number of element in the queue / queue size
@@ -2017,10 +2021,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       m_meshRxMsgCallback(newEntry,srcAddress);
       return;
     }
-    std::cout << "New Data Received: " << std::endl;
-    std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
+    //std::cout << "New Data Received: " << std::endl;
+    //std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
     Time now = Simulator::Now ();
-    if (m_arrivalRateMovingAvg.size() >= 20)
+    if (m_arrivalRateMovingAvg.size() > 20) //taking arrival rate for 20 reading
       m_arrivalRateMovingAvg.pop();
     
     if(m_arrivalRateComplement == 0)
@@ -2042,7 +2046,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     paramsSend.m_dstAddr = this->OutputRoute ();
     paramsSend.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     paramsSend.m_txOptions = TX_OPTION_ACK;  
-    std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
+    //std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
   break;
@@ -2176,12 +2180,17 @@ LrWpanMac::GetArrivalRate(void) const
   return *pInt;
 }
 uint32_t
-LrWpanMac::GetAvgDelay(void) const
+LrWpanMac::GetAvgDelay(void)
 {
   float sendDelay = 0;
-  if (m_delayCountPacket != 0)
-    sendDelay = m_avgDelay.GetSeconds() / m_delayCountPacket;
+  Time now = Simulator::Now ();
+  for (std::map<uint64_t, Time>::iterator i = m_delayForEachPacket.begin (); i != m_delayForEachPacket.end (); ++i)
+    m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
+  m_avgDelay = m_avgDelay/ m_delayForEachPacket.size();
+  /*if (m_delayCountPacket != 0)
+    sendDelay = m_avgDelay / m_delayCountPacket;*/
   uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
+  m_avgDelay = 0;
   return *pInt;
 }
 uint16_t 
@@ -2210,14 +2219,19 @@ LrWpanMac::GetTotalPacketRxByMeshRoot(void) const
   return m_totalPacketRxByMesh;
 }
 void 
-LrWpanMac::SetMaxQueueSize (uint32_t maxQueue)
+LrWpanMac::SetMaxQueueSize (uint16_t maxQueue)
 {
   m_maxQueueSize = maxQueue;
 }
-uint32_t 
+uint16_t 
 LrWpanMac::GetMaxQueueSize(void) const
 {
   return m_maxQueueSize;
+}
+void 
+LrWpanMac::UpdateDelay(uint64_t pId, Time t)
+{
+  m_delayForEachPacket.insert(std::make_pair (pId, t));
 }
 
 } // namespace ns3

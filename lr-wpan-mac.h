@@ -1089,7 +1089,7 @@ public:
   void L2R_SendPeriodicUpdate();
   void L2R_SendTopologyDiscovery();
   void L2R_MaxMissedTcIeMsg (uint8_t maxMissed);  
-  void SetMaxQueueSize(uint32_t maxQueue);
+  void SetMaxQueueSize(uint16_t maxQueue);
   //AB: modified on 19/11
   Mac16Address OutputRoute();
   void L2R_Start (); 
@@ -1103,8 +1103,9 @@ public:
   uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;
   uint32_t GetArrivalRate(void) const;
-  uint32_t GetAvgDelay (void) const;
-  uint32_t GetMaxQueueSize(void) const;
+  uint32_t GetAvgDelay (void);
+  uint16_t GetMaxQueueSize(void) const;
+  void UpdateDelay(uint64_t pId, Time t);
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1128,12 +1129,12 @@ private:
   uint32_t m_totalPacketRxByMesh;
   uint32_t m_totalPacketDroppedByNode;
   uint32_t m_totalPacketSentByNode;
-  uint32_t m_maxQueueSize;
+  uint16_t m_maxQueueSize;
   uint32_t m_delayCountPacket;
   std::multimap<Mac16Address, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
   std::map<uint64_t, Time> m_delayForEachPacket;
-  Time m_avgDelay;
+  double m_avgDelay;
   Time m_arrivalRate;
   std::queue<Time> m_arrivalRateMovingAvg;
   uint8_t m_arrivalRateComplement;

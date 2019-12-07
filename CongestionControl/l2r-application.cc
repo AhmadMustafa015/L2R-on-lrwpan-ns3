@@ -25,6 +25,14 @@ TypeId l2rapplication::GetTypeId (void)
     .SetParent<Application> ()
     .SetGroupName ("Applications")
     .AddConstructor<l2rapplication> ()
+    .AddAttribute ("OnTime", "A RandomVariableStream used to pick the duration of the 'On' state.",
+                   StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
+                   MakePointerAccessor (&l2rapplication::m_onTime),
+                   MakePointerChecker <RandomVariableStream>())
+    .AddAttribute ("OffTime", "A RandomVariableStream used to pick the duration of the 'Off' state.",
+                   StringValue ("ns3::ConstantRandomVariable[Constant=10.0]"),
+                   MakePointerAccessor (&l2rapplication::m_offTime),
+                   MakePointerChecker <RandomVariableStream>())
     ;
   return tid;
 }
@@ -36,7 +44,6 @@ l2rapplication::l2rapplication()
   m_cbrRate = 250000;
   m_pktSize = 80;
   m_maxBytes = 0; 
-  m_totBytes = 0;
   m_totalPacketsSend = 0;
 }
 void
@@ -48,14 +55,6 @@ l2rapplication::Setup(Ptr<NetDevice> dev, Ptr<RandomVariableStream> on,Ptr<Rando
 }
 l2rapplication::~l2rapplication()
 {
-}
-void l2rapplication::Start(Time start)
-{
-  Simulator::Schedule (start, &l2rapplication::StartApplication,this);
-}
-void l2rapplication::Stop(Time start)
-{
-  Simulator::Schedule (start, &l2rapplication::StopApplication,this);
 }
 void
 l2rapplication::CancelEvents()
@@ -85,10 +84,10 @@ void
 l2rapplication::SendPacket () //ToDo
 {
   Ptr<LrWpanNetDevice> device = m_netDevice->GetObject<LrWpanNetDevice> ();  
-  Ptr<Packet> packet = Create<Packet> (m_pktSize);
-  m_totBytes += m_pktSize;
-  if(device->GetMac ()->GetQueueSize() < device->GetMac ()->GetMaxQueueSize ())
+  if(device->GetMac ()->GetQueueSize() < device->GetMac ()->GetMaxQueueSize ()) //issue when queue is full no packet is sent so sink will not rx my update
   {
+    Ptr<Packet> packet = Create<Packet> (m_pktSize);
+    m_totBytes += m_pktSize;
     L2R_Header L2R_DataHeader;
     L2R_DataHeader.SetSrcMacAddress(device->GetMac ()->GetShortAddress());
     L2R_DataHeader.SetMsgType(DataHeader);
@@ -106,18 +105,19 @@ l2rapplication::SendPacket () //ToDo
     params.m_dstAddr = device->GetMac ()->OutputRoute();
     params.m_msduHandle = 0;
     params.m_txOptions = TX_OPTION_ACK;
+    device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
                                params, packet);
-    m_lastStartTime = Simulator::Now ();
-    m_residualBits = 0;
+    //m_residualBits = 0;
   }
   else
   {
     ++m_totalPacketsDroped;
-    m_residualBits += m_pktSize;
+    //m_residualBits += m_pktSize;
   }
-  
-  ScheduleNextTx ();
+  m_lastStartTime = Simulator::Now ();
+  m_residualBits = 0;
+  //ScheduleNextTx ();
 }
 void 
 l2rapplication::StopApplication () // Called at time specified by Stop
@@ -138,13 +138,13 @@ l2rapplication::StopSending ()
   ScheduleStartEvent ();
 }
 void 
-l2rapplication::SetMaxBytes (uint64_t maxBytes) //ToDo
+l2rapplication::SetMaxBytes (uint64_t maxBytes)
 {
   //NS_LOG_FUNCTION (this << maxBytes);
   m_maxBytes = maxBytes;
 }
 int64_t 
-l2rapplication::AssignStreams (int64_t stream) //ToDo
+l2rapplication::AssignStreams (int64_t stream)
 {
   //NS_LOG_FUNCTION (this << stream);
   m_onTime->SetStream (stream);
