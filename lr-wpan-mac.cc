@@ -552,7 +552,8 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
   // if only srcAddr field in Data or Command frame,accept frame if srcPanId=m_macPanId
 
   Ptr<Packet> originalPkt = p->Copy (); // because we will strip headers
-
+  L2R_Header l2rHeader;
+  p->PeekHeader(l2rHeader);
   m_promiscSnifferTrace (originalPkt);
 
   m_macPromiscRxTrace (originalPkt);
@@ -674,8 +675,10 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_isSink || (m_txQueue.size () <= m_maxQueueSize)) ) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_txQueue.size () <=(m_maxQueueSize*.85)))) //AM: Modified at 3/12
             {
+              /*std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet Rx By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
+                        <<"LQI " << (uint16_t)lqi <<std::endl;*/
               m_macRxTrace (originalPkt);
               // \todo: What should we do if we receive a frame while waiting for an ACK?
               //        Especially if this frame has the ACK request bit set, should we reply with an ACK, possibly missing the pending ACK?
@@ -768,12 +771,15 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
             }
           else
             {
-              if(m_txQueue.size () >= m_maxQueueSize)
-              { 
-                std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped: " << "Queue Size = " << m_txQueue.size () 
-                          <<" exceeds the limit: " << m_maxQueueSize << std::endl;
-                ++m_totalPacketDroppedByNode;
-              }
+              if(acceptFrame)
+                { 
+                  if((l2rHeader.GetMsgType() == DataHeader))
+                  { 
+                    //std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
+                    //         <<" exceeds the limit: " << m_maxQueueSize << std::endl;
+                    ++m_totalPacketDroppedByNode;
+                  }
+                }
               m_macRxDropTrace (originalPkt);
               
             }
@@ -1915,9 +1921,11 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
 	        }
           if(m_arrivalRateMovingAvg.size() != 0)
             arrivalRateMovingAvg = arrivalRateMovingAvg / m_arrivalRateMovingAvg.size();
-          uint16_t tempLqm = tableEntry.GetQueuePar() * m_txQueue.size() / m_maxQueueSize +
+         /* uint16_t tempLqm = tableEntry.GetQueuePar() * m_txQueue.size() / m_maxQueueSize +
                               tableEntry.GetArrivalPar() * arrivalRateMovingAvg +
-                              tableEntry.GetDelayPar() * m_avgDelay / m_delayCountPacket;
+                              tableEntry.GetDelayPar() * m_avgDelay / m_delayCountPacket;*/
+                              
+          uint16_t tempLqm = 1;
 
           tempPqm += tempLqm;
           tableEntry.SetDepth(tempDepth);
@@ -2002,7 +2010,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       L2R_Header dataHeader;
       originalPkt->RemoveHeader(dataHeader);
 
-      float ent1 = dataHeader.GetQueueSize()/float(m_maxQueueSize);
+      float ent1 = float(dataHeader.GetQueueSize())/float(m_maxQueueSize);
       uint32_t arrivalRate  = dataHeader.GetArrivalRate();
       uint32_t avdelay = dataHeader.GetDelay();
       float *ent2 = reinterpret_cast<float*>(&arrivalRate);
@@ -2019,6 +2027,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       m_meshRootData.insert (std::make_pair(srcAddress, newEntry));
       ++m_totalPacketRxByMesh;
       m_meshRxMsgCallback(newEntry,srcAddress);
+      *m_stream->GetStream () << Simulator::Now ().GetSeconds () <<" Sink Receive Packet number: " << originalPkt->GetUid() 
+                            <<" Received From node: " << sender << " To Me: "<< m_shortAddress 
+                            <<" Node Queue Size: " << m_txQueue.size()
+                            <<std::endl;
       return;
     }
     //std::cout << "New Data Received: " << std::endl;
@@ -2046,6 +2058,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     paramsSend.m_dstAddr = this->OutputRoute ();
     paramsSend.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
     paramsSend.m_txOptions = TX_OPTION_ACK;  
+    *m_stream->GetStream () << now.GetSeconds () <<" Forward Packet number: " << originalPkt->GetUid() 
+                            <<" Received From node: " << sender << " To Me: "<< m_shortAddress 
+                            <<"Forword it to node: " << paramsSend.m_dstAddr << std::endl;
     //std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
@@ -2186,9 +2201,9 @@ LrWpanMac::GetAvgDelay(void)
   Time now = Simulator::Now ();
   for (std::map<uint64_t, Time>::iterator i = m_delayForEachPacket.begin (); i != m_delayForEachPacket.end (); ++i)
     m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
-  m_avgDelay = m_avgDelay/ m_delayForEachPacket.size();
-  /*if (m_delayCountPacket != 0)
-    sendDelay = m_avgDelay / m_delayCountPacket;*/
+  //m_avgDelay = m_avgDelay/ m_delayForEachPacket.size();
+  if (m_delayForEachPacket.size() != 0)
+    sendDelay = m_avgDelay / m_delayForEachPacket.size();
   uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
   m_avgDelay = 0;
   return *pInt;
@@ -2233,5 +2248,17 @@ LrWpanMac::UpdateDelay(uint64_t pId, Time t)
 {
   m_delayForEachPacket.insert(std::make_pair (pId, t));
 }
+void
+LrWpanMac::outputRoutesTree(Ptr<OutputStreamWrapper> stream)
+{
+  m_stream = stream;
+}
+void 
+LrWpanMac::OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params)
+{
+  *m_stream->GetStream () << t.GetSeconds () <<" Node Generate Packet number: " << p->GetUid() 
+                            <<" Sending From: " << m_shortAddress << " To: "<< params.m_dstAddr 
+                            <<" Node Queue Size: " << m_txQueue.size() << std::endl;
+} 
 
 } // namespace ns3

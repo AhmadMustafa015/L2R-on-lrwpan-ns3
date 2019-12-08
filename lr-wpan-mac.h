@@ -1106,6 +1106,9 @@ public:
   uint32_t GetAvgDelay (void);
   uint16_t GetMaxQueueSize(void) const;
   void UpdateDelay(uint64_t pId, Time t);
+  uint32_t m_totalPacketSentByNode;
+  void outputRoutesTree(Ptr<OutputStreamWrapper> stream);
+  void OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params);
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1121,6 +1124,7 @@ private:
   uint16_t m_pqm;
   uint32_t m_tcieIncr;
   Mac16Address m_rootAddress;
+  Ptr<OutputStreamWrapper> m_stream;
   /// Timer to trigger periodic updates from a node
   Timer m_periodicUpdateTimer;
   L2R_RoutingTable m_routingTable;
@@ -1128,16 +1132,16 @@ private:
   Ptr<UniformRandomVariable> m_uniformRandomVariable;
   uint32_t m_totalPacketRxByMesh;
   uint32_t m_totalPacketDroppedByNode;
-  uint32_t m_totalPacketSentByNode;
   uint16_t m_maxQueueSize;
   uint32_t m_delayCountPacket;
   std::multimap<Mac16Address, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
   std::map<uint64_t, Time> m_delayForEachPacket;
-  double m_avgDelay;
+  float m_avgDelay;
   Time m_arrivalRate;
   std::queue<Time> m_arrivalRateMovingAvg;
   uint8_t m_arrivalRateComplement;
+  
   //uint32_t m_nodeID;
   //void SetMac16();
   /**

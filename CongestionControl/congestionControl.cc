@@ -44,6 +44,26 @@ static void L2rUpdateTcie(McpsDataIndicationParams params, uint16_t depth, uint1
   Mac16Address senderAdd = params.m_srcAddr;
   modify(senderAdd,depth,pqm,receiver);
 }
+static void congestionVsTime ()
+{
+  uint32_t avgDroppedPacket = 0;
+  double timeNow = Simulator::Now ().GetSeconds ();
+  for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
+  {
+    Ptr<NetDevice> d = *i;
+    if(d->GetNode()->GetId () == 0)
+      continue;
+    Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    avgDroppedPacket += device->GetMac ()->GetTotalPacketDroppedByQueue();
+    
+  }
+  //avgDroppedPacket /= (50-1);
+  std::ofstream out2 ("congestionVsTime_total.csv", std::ios::app);
+  out2 << timeNow << "," << avgDroppedPacket
+      << std::endl; 
+  out2.close ();
+  Simulator::Schedule(Seconds(.1),congestionVsTime);
+}
 
 /*static void DataConfirm (McpsDataConfirmParams params)
 {
@@ -135,7 +155,7 @@ private:
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
-  uint32_t nNodes = 20;
+  uint32_t nNodes = 50;
   uint32_t nSinks = 1;
   double totalTime = 30;
   uint8_t periodicUpdateInterval = 10;
@@ -143,7 +163,7 @@ int main (int argc, char *argv[])
   bool printRoutingTable = true;
   uint32_t meshNodeId = 0;
   bool enableTracing = false;
-  bool enablePcap = true;
+  bool enablePcap = false;
   uint32_t distanceBtwNodes = 80; 
   //double onTime = 1;
   //double offTime = 1;
@@ -162,6 +182,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("distanceBtwNodes", "Distance Between Nodes[Default:80]", distanceBtwNodes);
   cmd.Parse (argc, argv);
   //LogComponentEnable ("LrWpanMac", LOG_LEVEL_ALL);
+  //LogComponentEnable ("LrWpanPhy", LOG_LEVEL_ALL);
   std::ofstream out (CSVfileName.c_str ());
   out << "SimulationSecond," <<
   "Sender Mac Addr," <<
@@ -170,6 +191,8 @@ int main (int argc, char *argv[])
   "Avg Delay," <<
   std::endl;
   out.close ();
+  std::ofstream out2 ("congestionVsTime_Total.csv");
+  out2.close();
   SeedManager::SetSeed (167);
 
   congestionControl = CongestionControl();
@@ -207,8 +230,8 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_distanceBtwNodes = distanceBtwNodes;
   m_packetSize = 80;
   m_maxTxBytePerNode = 0;
-  m_maxQueueSize = 30;
-  m_sensingPeriod = .1;
+  m_maxQueueSize = 25;
+  m_sensingPeriod = .03;
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -255,18 +278,37 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
     }
     std::cout << "Data Rate: " << d->GetObject<LrWpanNetDevice> ()->GetPhy ()->GetDataOrSymbolRate(true) <<std::endl;*/
   InstallApplications ();
-  
+  Ptr<OutputStreamWrapper> routeTree = Create<OutputStreamWrapper> ((tr_name + "_routeTree" + ".routes"), std::ios::out);
+  for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
+  {
+    Ptr<NetDevice> d = *i;
+    Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
+    device->GetMac ()->outputRoutesTree(routeTree);
+  }
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
   Simulator::Stop (Seconds (m_totalTime));
+  Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();
+  uint32_t totalPacketSent = 0;
+  uint32_t totalPacketDroped = 0;
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   for(uint32_t i = 1; i < m_nNodes; i++)
   {
     Ptr<l2rapplication> app = ch.Get (i)->GetApplication(0)->GetObject<l2rapplication> ();
     app->TotalPacketPrint();
+    totalPacketSent += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketSentByNode ();
+    std::cout << "Total Packet Sent by Node: " << i << " = "
+              << ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketSentByNode ()
+              <<"\tTotal Packet Droped: " <<ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketDroppedByQueue()
+              << std::endl;
+    totalPacketDroped += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketDroppedByQueue();
   }
+  std::cout << "Total Packet Sent By All Nodes = " << totalPacketSent 
+            << "\tTotal Packet Dropped By All Nodes (Congestion) = " << totalPacketDroped <<std::endl;
+  std::cout << "Total Packet Received by Sink = " 
+            << ch.Get(m_meshNodeId)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketRxByMeshRoot() << std::endl;
   Simulator::Destroy ();
   //m_applicationContainer->TotalPacketPrint();
   delete pAnim;
@@ -298,9 +340,9 @@ CongestionControl::SetupMobility ()
 
   for (nodeCount = 1; nodeCount < m_nNodes; nodeCount++)
   {
-    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.3);
-    xPos = radius * sin(thetaRad) + x->GetValue()*30; 
-    yPos = radius * cos(thetaRad) + x->GetValue()*30;
+    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.15);
+    xPos = radius * sin(thetaRad) + x->GetValue()*15; 
+    yPos = radius * cos(thetaRad) + x->GetValue()*15;
 
     std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" <<std::endl;
     taPositionAlloc->Add (Vector (xPos, yPos, 0.0));
@@ -321,9 +363,9 @@ CongestionControl::CreateDevices (std::string tr_name)
 {
   channel = CreateObject<SingleModelSpectrumChannel> ();
   Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
-  Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
+  //Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
   channel->AddPropagationLossModel (propModel);
-  channel->SetPropagationDelayModel (delayModel);
+  //channel->SetPropagationDelayModel (delayModel);
 
   lrWpanHelper.SetChannel(channel);
   // Add and install the LrWpanNetDevice for each node
@@ -446,7 +488,7 @@ void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &p
     pAnim->UpdateNodeSize(nodeID, 15,15);
     if(receiver == device->GetAddress ())
     {
-      node0Oss << "N:" << nodeID <<" D:" << depth <<" PQM: " << pqm <<" MAC:" << receiver;
+      node0Oss << nodeID <<"," << depth <<"," << pqm <<"," << receiver;
       // Every update change the node description for nodes
       pAnim->UpdateNodeDescription (nodeID, node0Oss.str ());
       // Every update change the color for nodes if receive update from mesh Root

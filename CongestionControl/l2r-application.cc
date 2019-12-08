@@ -26,11 +26,11 @@ TypeId l2rapplication::GetTypeId (void)
     .SetGroupName ("Applications")
     .AddConstructor<l2rapplication> ()
     .AddAttribute ("OnTime", "A RandomVariableStream used to pick the duration of the 'On' state.",
-                   StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
+                   StringValue ("ns3::ConstantRandomVariable[Constant=.08]"),
                    MakePointerAccessor (&l2rapplication::m_onTime),
                    MakePointerChecker <RandomVariableStream>())
     .AddAttribute ("OffTime", "A RandomVariableStream used to pick the duration of the 'Off' state.",
-                   StringValue ("ns3::ConstantRandomVariable[Constant=10.0]"),
+                   StringValue ("ns3::ConstantRandomVariable[Constant=0]"),
                    MakePointerAccessor (&l2rapplication::m_offTime),
                    MakePointerChecker <RandomVariableStream>())
     ;
@@ -45,13 +45,14 @@ l2rapplication::l2rapplication()
   m_pktSize = 80;
   m_maxBytes = 0; 
   m_totalPacketsSend = 0;
+  m_totalPacketsDroped = 0;
 }
 void
 l2rapplication::Setup(Ptr<NetDevice> dev, Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off)
 {
   m_netDevice = dev;
-  m_onTime = on;
-  m_offTime = off;
+  //m_onTime = on;
+  //m_offTime = off;
 }
 l2rapplication::~l2rapplication()
 {
@@ -96,6 +97,7 @@ l2rapplication::SendPacket () //ToDo
     L2R_DataHeader.SetQueueSize(device->GetMac ()->GetQueueSize());
     L2R_DataHeader.SetDelay(device->GetMac ()->GetAvgDelay());
     L2R_DataHeader.SetArrivalRate(device->GetMac ()->GetArrivalRate());
+    ++device->GetMac ()-> m_totalPacketSentByNode;
     ++m_totalPacketsSend;
     packet->AddHeader (L2R_DataHeader); //serialize is called here
     McpsDataRequestParams params;
@@ -106,9 +108,10 @@ l2rapplication::SendPacket () //ToDo
     params.m_msduHandle = 0;
     params.m_txOptions = TX_OPTION_ACK;
     device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
+    device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
     Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
                                params, packet);
-    //m_residualBits = 0;
+    m_residualBits = 0;
   }
   else
   {
