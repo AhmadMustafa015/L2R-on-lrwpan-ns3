@@ -27,7 +27,7 @@ model.compile(optimizer=tf.compat.v1.train.AdamOptimizer(0.001),    # 'adam'?
               metrics=['accuracy'])
 model.summary()
 
-total_episodes = 1    # env resets after episode
+total_episodes = 100    # env resets after episode
 max_env_steps = 100     # max steps inside an episode
 env._max_episode_steps = max_env_steps
 

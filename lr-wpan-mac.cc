@@ -2072,7 +2072,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
                                *ent2,//avg of the msg received / time ToDo make it normalized
                                *ent3,}; //The time that the packet stay in the queue 
       
-      m_meshRootData.insert (std::make_pair(srcAddress, newEntry));
+      m_meshRootData.insert (std::make_pair(dataHeader.GetDepth(), newEntry));
       ++m_totalPacketRxByMesh;
       m_meshRxMsgCallback(newEntry,srcAddress);
       *m_stream->GetStream () << Simulator::Now ().GetSeconds () <<" Sink Receive Packet number: " << originalPkt->GetUid() 

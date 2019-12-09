@@ -171,7 +171,7 @@ int main (int argc, char *argv[])
   uint32_t meshNodeId = 0;
   bool enableTracing = false;
   bool enablePcap = false;
-  uint32_t distanceBtwNodes = 80; 
+  uint32_t distanceBtwNodes = 90; 
   //double onTime = 1;
   //double offTime = 1;
 
@@ -241,7 +241,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_sensingPeriod = .03;
   m_sensingPeriod = .1;
   uint32_t openGymPort = 5555;
-  double envStepTime = 0.0; // ??seconds, ns3gym env step time interval
+  double envStepTime = 0.1; // ??seconds, ns3gym env step time interval
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -267,7 +267,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
-  myWSNGym->SetDeviceContainer(devContainer);
+  //myWSNGym->SetDeviceContainer(devContainer);
 
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
@@ -307,11 +307,16 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
     Ptr<NetDevice> d = *i;
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     device->GetMac ()->outputRoutesTree(routeTree);
+    uint32_t nodeID = d->GetNode ()->GetId ();
+    if(nodeID == meshNodeId)
+    {
+      myWSNGym->GetCongestionParams(device->GetMac()->m_meshRootData);
+    }
   }
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
-  Simulator::Schedule(Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
+  Simulator::Schedule(Seconds(15.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();
