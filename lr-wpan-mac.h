@@ -246,7 +246,8 @@ enum L2R_MsgType
 {
   TC_IE = 0,
   L2R_D_IE = 1,
-  DataHeader = 2
+  DataHeader = 2,
+  NLM_IE = 3
 };
 class L2R_Header : public Header 
 {
@@ -1141,7 +1142,7 @@ private:
   Time m_arrivalRate;
   std::queue<Time> m_arrivalRateMovingAvg;
   uint8_t m_arrivalRateComplement;
-  
+  void SendNlmMsg();
   //uint32_t m_nodeID;
   //void SetMac16();
   /**

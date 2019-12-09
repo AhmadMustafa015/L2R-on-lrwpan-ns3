@@ -675,8 +675,12 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_txQueue.size () <=(m_maxQueueSize*.85)))) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_txQueue.size () <=(m_maxQueueSize*0.85)))) //AM: Modified at 3/12
             {
+             /* if(m_txQueue.size () >= m_maxQueueSize * 0.5)
+              {
+                //SendNlmMsg();
+              }*/
               /*std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet Rx By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
                         <<"LQI " << (uint16_t)lqi <<std::endl;*/
               m_macRxTrace (originalPkt);
@@ -1220,12 +1224,15 @@ L2R_Header::GetSerializedSize (void) const
   switch (m_msgType)
   {
   case TC_IE:
-    size += 10;
+    size += 20;
     break;
   case L2R_D_IE:
     break;
   case DataHeader:
     size += 14;
+    break;
+  case NLM_IE:
+    size +=10;
     break;
   }
   return size;
@@ -1245,6 +1252,9 @@ L2R_Header::Serialize (Buffer::Iterator start) const
     start.WriteU8 (m_TCIEInterval);
     start.WriteHtonU16 (m_MSN);
     start.WriteHtonU16 (m_depth);
+    start.WriteHtonU16 (m_queueSize);
+    start.WriteHtonU32 (m_avgDelay);
+    start.WriteHtonU32 (m_arrivalRate);
     break;
   case L2R_D_IE:
     WriteTo(start,m_meshRootAddress);
@@ -1253,6 +1263,11 @@ L2R_Header::Serialize (Buffer::Iterator start) const
     WriteTo(start,m_srcAddress);
     start.WriteHtonU16 (m_depth);
     start.WriteHtonU16 (m_PQM);
+    start.WriteHtonU16 (m_queueSize);
+    start.WriteHtonU32 (m_avgDelay);
+    start.WriteHtonU32 (m_arrivalRate);
+    break;
+  case NLM_IE:
     start.WriteHtonU16 (m_queueSize);
     start.WriteHtonU32 (m_avgDelay);
     start.WriteHtonU32 (m_arrivalRate);
@@ -1276,6 +1291,9 @@ L2R_Header::Deserialize (Buffer::Iterator start)
     m_TCIEInterval = i.ReadU8 ();
     m_MSN = i.ReadNtohU16 ();
     m_depth = i.ReadNtohU16 ();
+    m_queueSize = i.ReadNtohU16 ();
+    m_avgDelay = i.ReadNtohU32 ();
+    m_arrivalRate = i.ReadNtohU32 ();
     break;
   case 1:
     ReadFrom (i, m_meshRootAddress);
@@ -1284,6 +1302,11 @@ L2R_Header::Deserialize (Buffer::Iterator start)
     ReadFrom (i, m_srcAddress);
     m_depth = i.ReadNtohU16 ();
     m_PQM = i.ReadNtohU16 ();
+    m_queueSize = i.ReadNtohU16 ();
+    m_avgDelay = i.ReadNtohU32 ();
+    m_arrivalRate = i.ReadNtohU32 ();
+    break;
+  case 3:
     m_queueSize = i.ReadNtohU16 ();
     m_avgDelay = i.ReadNtohU32 ();
     m_arrivalRate = i.ReadNtohU32 ();
@@ -1446,7 +1469,8 @@ L2R_RoutingTableEntry::Print (Ptr<OutputStreamWrapper> stream) const
                         << std::setiosflags (std::ios::left)
                         << std::setw (20) << m_depth << "\t" << std::setw (20) << m_pqm << "\t"
                         << std::setprecision (3) << m_lifeTime.GetSeconds ()
-                        << "s\t\t" <<std::setprecision (3)<< m_tcieInterval.GetSeconds () << "s\n";
+                        << "s\t\t" <<std::setprecision (3)<< m_tcieInterval.GetSeconds () << "s\t\t\t"
+                        << m_queuePar << "\t\t\t" << m_arrivalPar <<"\t\t\t" << m_delayPar <<"\n";
 }
 bool
 L2R_RoutingTable::AddRoute (L2R_RoutingTableEntry & rt)
@@ -1579,7 +1603,7 @@ L2R_RoutingTable::Purge (std::map<Mac16Address, L2R_RoutingTableEntry> & removed
 void
 L2R_RoutingTable::Print (Ptr<OutputStreamWrapper> stream) const
 {
-  *stream->GetStream () << "\nL2R Routing table\n" << "Destination\t\tdepth\t\tPQM\t\tLifeTime\t\tTCIEInterval\n";
+  *stream->GetStream () << "\nL2R Routing table\n" << "Destination\t\tdepth\t\tPQM\t\tLifeTime\t\tTCIEInterval\t\tNormalizedQueue\t\tTimeBtwArrivalRate\t\tAvgDelay\n";
   for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = m_mac16AddressEntry.begin (); i
        != m_mac16AddressEntry.end (); ++i)
     {
@@ -1686,6 +1710,9 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     TC_IE_H.SetLQT(m_lqt);
     TC_IE_H.SetTCIEInterval(m_tcieInterval);
     TC_IE_H.SetDepth(m_depth);
+    TC_IE_H.SetQueueSize(0);
+    TC_IE_H.SetDelay(0);
+    TC_IE_H.SetArrivalRate(0);
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (TC_IE_H);
     McpsDataRequestParams params;
@@ -1715,6 +1742,9 @@ LrWpanMac::L2R_SendPeriodicUpdate()
     TC_IE_H.SetLQT(m_lqt);
     TC_IE_H.SetTCIEInterval(m_tcieInterval);
     TC_IE_H.SetDepth(m_depth);
+    TC_IE_H.SetQueueSize(GetQueueSize());
+    TC_IE_H.SetDelay(GetAvgDelay());
+    TC_IE_H.SetArrivalRate(GetArrivalRate());
     Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
     p0->AddHeader (TC_IE_H);
     McpsDataRequestParams params;
@@ -1791,6 +1821,11 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   uint16_t tempPqm = L2rRxMsg.GetPQM();
   uint16_t tempDepth = L2rRxMsg.GetDepth();
   uint16_t tempMsn  = L2rRxMsg.GetMSN();
+  uint32_t tempArrivalRate = L2rRxMsg.GetArrivalRate();
+  float tempQueueSize = L2rRxMsg.GetQueueSize() / float(m_maxQueueSize);
+  uint32_t tempDelay = L2rRxMsg.GetDelay();
+  float *arrRate = reinterpret_cast<float*>(&tempArrivalRate);
+  float *entavgDelay3 = reinterpret_cast<float*>(&tempDelay);
   m_tcieInterval = L2rRxMsg.GetTCIEInterval();
   NS_LOG_FUNCTION ("Received a TC-IE packet from "
                   << sender << " to " << receiver << ". Details are: Destination: " << L2rRxMsg.GetMeshRootAddress () << ", PQM: "
@@ -1810,11 +1845,15 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
                 sender,
                 false);
               newEntry.SetFlag (VALID);
+              newEntry.SetArrivalRatePar(*arrRate);
+              newEntry.SetQueuePar(tempQueueSize);
+              newEntry.SetDelayPar(*entavgDelay3);
               m_routingTable.AddRoute(newEntry);
               NS_LOG_FUNCTION ("New Route added to routing tables");
               m_depth = tempDepth+1;
               m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
               m_pqm = tempPqm;
+        
       }
       else
       {
@@ -1843,6 +1882,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             sender,
             false);
             newEntry.SetFlag (VALID);
+            newEntry.SetArrivalRatePar(*arrRate);
+            newEntry.SetQueuePar(tempQueueSize);
+            newEntry.SetDelayPar(*entavgDelay3);
             bool returnSuccessful =  m_routingTable.AddRoute (newEntry);
             NS_LOG_FUNCTION ("New Route added to routing tables" << returnSuccessful);
           }
@@ -1886,6 +1928,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
         sender,
         false);
         newEntry.SetFlag (VALID);
+        newEntry.SetArrivalRatePar(*arrRate);
+        newEntry.SetQueuePar(tempQueueSize);
+        newEntry.SetDelayPar(*entavgDelay3);
         bool returnSuccessful =  m_routingTable.AddRoute (newEntry);
             NS_LOG_FUNCTION ("New Route added to routing tables" << returnSuccessful);
         if(m_isSink) //code not completed here all nodes have zero pqm
@@ -1934,6 +1979,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
           tableEntry.SetNextHop(sender);
           tableEntry.SetLifeTime(Simulator::Now ());
           tableEntry.SetPQM(tempPqm);
+          tableEntry.SetArrivalRatePar(*arrRate);
+          tableEntry.SetQueuePar(tempQueueSize);
+          tableEntry.SetDelayPar(*entavgDelay3);
           m_routingTable.Update(tableEntry);
           NS_LOG_FUNCTION ("Received update For TcIE From " << sender);
           if(m_isSink) //code not completed here all nodes have zero pqm
@@ -1941,7 +1989,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
             m_l2rReceiveUpdateCallback(rxParams,m_depth,m_pqm,m_shortAddress);
             return;
           }
-          uint16_t minPqm = 10000;
+          uint16_t minPqm = 0xffff;
           std::map<Mac16Address, L2R_RoutingTableEntry> allRoutes;
           m_routingTable.GetListOfAllRoutes(allRoutes);
           for (std::map<Mac16Address, L2R_RoutingTableEntry>::const_iterator i = allRoutes.begin (); i
@@ -2066,7 +2114,42 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
   
   break;
   }
+  case NLM_IE:
+    if(tableVerifier == true)
+    {
+      float normalizeQueue = float(L2rRxMsg.GetQueueSize())/float(m_maxQueueSize);
+      uint32_t arrivalRate  = L2rRxMsg.GetArrivalRate();
+      uint32_t avdelay = L2rRxMsg.GetDelay();
+      float *arrRate = reinterpret_cast<float*>(&arrivalRate);
+      float *entavgDelay3 = reinterpret_cast<float*>(&avdelay);
+      tableEntry.SetArrivalRatePar(*arrRate);
+      tableEntry.SetDelayPar(*entavgDelay3);
+      tableEntry.SetQueuePar(normalizeQueue);
+      m_routingTable.Update(tableEntry);
+    }
+  break;
   }
+}
+void
+LrWpanMac::SendNlmMsg()
+{
+  L2R_Header L2R_NLM;
+  m_rootAddress = m_shortAddress; //change root name
+  L2R_NLM.SetMsgType(NLM_IE);
+  L2R_NLM.SetArrivalRate(GetArrivalRate());
+  L2R_NLM.SetDelay(GetAvgDelay());
+  L2R_NLM.SetQueueSize(m_txQueue.size());
+  Ptr<Packet> p0 = Create<Packet> (); //Zero payload packet
+  p0->AddHeader (L2R_NLM); //serialize is called here
+  McpsDataRequestParams params;
+  params.m_dstPanId = this->GetPanId();
+  params.m_srcAddrMode = SHORT_ADDR;
+  params.m_dstAddrMode = SHORT_ADDR;
+  params.m_dstAddr = Mac16Address("ff:ff");
+  params.m_msduHandle = 0; //ToDo underStand the msduhandle from standard
+  params.m_txOptions = TX_OPTION_NONE;
+  Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,this,
+                          params, p0);
 }
 void
 LrWpanMac::L2R_MaxMissedTcIeMsg (uint8_t maxMissed)
@@ -2102,6 +2185,7 @@ LrWpanMac::OutputRoute()
     }
     j = PQMValues.begin();
     uint16_t minLQM = j->second.GetLQM();
+    nextHopAddress = j->second.GetNextHop();
     for(;j != PQMValues.end(); ++j)   // send to lowest LQM
     {
       if(j->second.GetLQM() < minLQM)
