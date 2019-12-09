@@ -16,6 +16,8 @@
 #include "ns3/node-list.h"
 #include <math.h>
 #include "l2r-application.h"
+#include "ns3/opengym-module.h"
+#include "wsngym.h"
 using namespace ns3;
 
 #define PI 3.14159265
@@ -79,6 +81,11 @@ static void ReceivePacket (MeshRootData para,Mac16Address srcAddress)
 }
 static void StateChangeNotification (std::string context, Time now, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState)
 {
+}
+void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGymInterface)
+{
+  Simulator::Schedule (Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
+  openGymInterface->NotifyCurrentState();
 }
 class CongestionControl
 {
@@ -232,6 +239,9 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_maxTxBytePerNode = 0;
   m_maxQueueSize = 25;
   m_sensingPeriod = .03;
+  m_sensingPeriod = .1;
+  uint32_t openGymPort = 5555;
+  double envStepTime = 0.0; // ??seconds, ns3gym env step time interval
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -242,9 +252,22 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   std::cout << "Trace file generated is " << tr_name << ".tr\n";
 
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface>(openGymPort);
+  Ptr<WSNGym> myWSNGym = CreateObject<WSNGym>();
+  myWSNGym->SetOpenGymInterface(openGymInterface);
+
+  openGymInterface->SetGetActionSpaceCb( MakeCallback (&WSNGym::GetActionSpace, myWSNGym));
+  openGymInterface->SetGetObservationSpaceCb( MakeCallback (&WSNGym::GetObservationSpace, myWSNGym));
+  openGymInterface->SetGetGameOverCb( MakeCallback (&WSNGym::GetGameOver, myWSNGym));
+  openGymInterface->SetGetObservationCb( MakeCallback (&WSNGym::GetObservation, myWSNGym));
+  openGymInterface->SetGetRewardCb( MakeCallback (&WSNGym::GetReward, myWSNGym));
+  openGymInterface->SetGetExtraInfoCb( MakeCallback (&WSNGym::GetExtraInfo, myWSNGym));
+  openGymInterface->SetExecuteActionsCb( MakeCallback (&WSNGym::ExecuteActions, myWSNGym));
+
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
+  myWSNGym->SetDeviceContainer(devContainer);
 
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
@@ -288,6 +311,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
+  Simulator::Schedule(Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();
@@ -309,6 +333,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
             << "\tTotal Packet Dropped By All Nodes (Congestion) = " << totalPacketDroped <<std::endl;
   std::cout << "Total Packet Received by Sink = " 
             << ch.Get(m_meshNodeId)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketRxByMeshRoot() << std::endl;
+  myWSNGym->NotifySimulationEnd();
   Simulator::Destroy ();
   //m_applicationContainer->TotalPacketPrint();
   delete pAnim;
