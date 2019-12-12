@@ -16,8 +16,7 @@
 #include "ns3/node-list.h"
 #include <math.h>
 #include "l2r-application.h"
-#include "ns3/opengym-module.h"
-#include "wsngym.h"
+#include <iomanip>
 using namespace ns3;
 
 #define PI 3.14159265
@@ -25,6 +24,7 @@ bool verbose = false;
 AnimationInterface * pAnim = 0;
 NetDeviceContainer devContainer;
 LrWpanHelper lrWpanHelper;
+//Ptr<LrWpanCsmaCa> csmaCa = CreateObject<LrWpanCsmaCa> ();
 std::string CSVfileName = "CongestionControl.csv";
 void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &pqm,const Mac16Address &receiver);
 /// RGB structure
@@ -66,12 +66,6 @@ static void congestionVsTime ()
   out2.close ();
   Simulator::Schedule(Seconds(.1),congestionVsTime);
 }
-
-/*static void DataConfirm (McpsDataConfirmParams params)
-{
-  std::cout << "LrWpanMcpsDataConfirmStatus = " << params.m_status << std::endl;
-}
-*/
 static void ReceivePacket (MeshRootData para,Mac16Address srcAddress)
 {
   std::ofstream out (CSVfileName.c_str (), std::ios::app);
@@ -79,14 +73,10 @@ static void ReceivePacket (MeshRootData para,Mac16Address srcAddress)
       << "," << para.m_arrivalRate << "," << para.m_avgDelay << std::endl;
   out.close ();
 }
-static void StateChangeNotification (std::string context, Time now, LrWpanPhyEnumeration oldState, LrWpanPhyEnumeration newState)
+/*static void StateChangeNotification (std::string context, Ptr<Packet> p)
 {
-}
-void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGymInterface)
-{
-  Simulator::Schedule (Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
-  openGymInterface->NotifyCurrentState();
-}
+  std::cout << "drop Packet number: " << p->GetUid() << std::endl;
+}*/
 class CongestionControl
 {
 public:
@@ -133,6 +123,7 @@ private:
   uint64_t m_maxTxBytePerNode;
   uint16_t m_maxQueueSize;
   double m_sensingPeriod;
+  static uint64_t m_totalPhyDrop;
   //l2rapplication m_applicationContainer;
 
 private:
@@ -158,20 +149,22 @@ private:
    */
   ///check Throughput
   void CheckThroughput ();
+  static void PhyRxDrop (CongestionControl *cc,Ptr<LrWpanNetDevice> device, Ptr<const Packet> packet);
+
 };
 int main (int argc, char *argv[])
 {
   CongestionControl congestionControl;
   uint32_t nNodes = 50;
   uint32_t nSinks = 1;
-  double totalTime = 30;
-  uint8_t periodicUpdateInterval = 10;
+  double totalTime = 100;
+  uint8_t periodicUpdateInterval = 25;
   double dataStart = 2.0;
   bool printRoutingTable = true;
   uint32_t meshNodeId = 0;
-  bool enableTracing = false;
+  bool enableTracing = true;
   bool enablePcap = false;
-  uint32_t distanceBtwNodes = 80; 
+  uint32_t distanceBtwNodes = 90; 
   //double onTime = 1;
   //double offTime = 1;
 
@@ -235,13 +228,11 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_enablePcap = enablePcap;
   m_meshNodeId = meshNodeId;
   m_distanceBtwNodes = distanceBtwNodes;
-  m_packetSize = 80;
+  m_packetSize = 95;
   m_maxTxBytePerNode = 0;
-  m_maxQueueSize = 25;
-  m_sensingPeriod = .03;
-  m_sensingPeriod = .1;
-  uint32_t openGymPort = 5555;
-  double envStepTime = 0.0; // ??seconds, ns3gym env step time interval
+  m_maxQueueSize = 30;
+  m_sensingPeriod = 2;
+  m_totalPhyDrop = 0;
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -252,22 +243,9 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   std::cout << "Trace file generated is " << tr_name << ".tr\n";
 
-  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface>(openGymPort);
-  Ptr<WSNGym> myWSNGym = CreateObject<WSNGym>();
-  myWSNGym->SetOpenGymInterface(openGymInterface);
-
-  openGymInterface->SetGetActionSpaceCb( MakeCallback (&WSNGym::GetActionSpace, myWSNGym));
-  openGymInterface->SetGetObservationSpaceCb( MakeCallback (&WSNGym::GetObservationSpace, myWSNGym));
-  openGymInterface->SetGetGameOverCb( MakeCallback (&WSNGym::GetGameOver, myWSNGym));
-  openGymInterface->SetGetObservationCb( MakeCallback (&WSNGym::GetObservation, myWSNGym));
-  openGymInterface->SetGetRewardCb( MakeCallback (&WSNGym::GetReward, myWSNGym));
-  openGymInterface->SetGetExtraInfoCb( MakeCallback (&WSNGym::GetExtraInfo, myWSNGym));
-  openGymInterface->SetExecuteActionsCb( MakeCallback (&WSNGym::ExecuteActions, myWSNGym));
-
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
-  myWSNGym->SetDeviceContainer(devContainer);
 
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
@@ -311,29 +289,31 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
-  Simulator::Schedule(Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();
   uint32_t totalPacketSent = 0;
   uint32_t totalPacketDroped = 0;
+  uint32_t internalLoad = 0;
   std::cout << "Animation Trace file created:" << animFile.c_str ()<< std::endl;
   for(uint32_t i = 1; i < m_nNodes; i++)
   {
-    Ptr<l2rapplication> app = ch.Get (i)->GetApplication(0)->GetObject<l2rapplication> ();
-    app->TotalPacketPrint();
+    //Ptr<l2rapplication> app = ch.Get (i)->GetApplication(0)->GetObject<l2rapplication> ();
+    //app->TotalPacketPrint();
+
     totalPacketSent += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketSentByNode ();
     std::cout << "Total Packet Sent by Node: " << i << " = "
               << ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketSentByNode ()
               <<"\tTotal Packet Droped: " <<ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketDroppedByQueue()
               << std::endl;
-    totalPacketDroped += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketDroppedByQueue();
+    totalPacketDroped += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()-> GetTotalPacketDroppedByQueue();
+    internalLoad += ch.Get (i)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()-> GetInternalLoad();
   }
-  std::cout << "Total Packet Sent By All Nodes = " << totalPacketSent 
-            << "\tTotal Packet Dropped By All Nodes (Congestion) = " << totalPacketDroped <<std::endl;
+  std::cout << "Total Packet Sent By All Nodes = " << totalPacketSent  <<std::endl
+            << "Total Packet Dropped By All Nodes (Congestion) = " << totalPacketDroped <<std::endl
+            << "Total Internal Load: " << internalLoad << std::endl;
   std::cout << "Total Packet Received by Sink = " 
             << ch.Get(m_meshNodeId)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketRxByMeshRoot() << std::endl;
-  myWSNGym->NotifySimulationEnd();
   Simulator::Destroy ();
   //m_applicationContainer->TotalPacketPrint();
   delete pAnim;
@@ -365,9 +345,9 @@ CongestionControl::SetupMobility ()
 
   for (nodeCount = 1; nodeCount < m_nNodes; nodeCount++)
   {
-    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.15);
-    xPos = radius * sin(thetaRad) + x->GetValue()*15; 
-    yPos = radius * cos(thetaRad) + x->GetValue()*15;
+    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.3);
+    xPos = radius * sin(thetaRad) + x->GetValue()*30; 
+    yPos = radius * cos(thetaRad) + x->GetValue()*30;
 
     std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" <<std::endl;
     taPositionAlloc->Add (Vector (xPos, yPos, 0.0));
@@ -405,10 +385,13 @@ CongestionControl::CreateDevices (std::string tr_name)
   {
     Ptr<NetDevice> d = *i;
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
-    device->GetPhy ()->TraceConnect ("TrxState", std::string ("phy" + temp), MakeCallback (&StateChangeNotification));
-    temp++; 
     uint32_t nodeID = d->GetNode ()->GetId ();
+    device->GetPhy ()->TraceConnectWithoutContext ("PhyRxDrop", MakeBoundCallback (&CongestionControl::PhyRxDrop, this, device));
+    temp++; 
     device->GetMac ()->SetMaxQueueSize(m_maxQueueSize);
+    //csmaCa->SetUnSlottedCsmaCa ();
+    //csmaCa->SetMac(device->GetMac ());
+    //device->GetMac ()->SetCsmaCa (csmaCa);
     //McpsDataConfirmCallback cb0;
     //cb0 = MakeCallback (&DataConfirm);
     //device->GetMac ()->SetMcpsDataConfirmCallback (cb0);
@@ -426,6 +409,7 @@ CongestionControl::CreateDevices (std::string tr_name)
         device->GetMac ()->SetMeshRootRxMsgUpdateCallback(cb2);
       }
   }
+  //lrWpanHelper.EnableAsciiInternal(stram, "")
   if(m_enableTracing == true)
   {
     // Tracing
@@ -470,16 +454,17 @@ CongestionControl::InstallApplications()
     Ptr<UniformRandomVariable> off = CreateObject<UniformRandomVariable> ();
     Ptr<l2rapplication> app = CreateObject<l2rapplication> ();
     ch.Get (d->GetNode()->GetId ())->AddApplication (app);
-    on->SetAttribute ("Min", DoubleValue (0));
-    on->SetAttribute ("Max", DoubleValue (m_sensingPeriod));
-    off->SetAttribute ("Min", DoubleValue (0));
-    off->SetAttribute ("Max", DoubleValue (0));
+    on->SetAttribute ("Min", DoubleValue (0.2));
+    on->SetAttribute ("Max", DoubleValue (1.2));
+    off->SetAttribute ("Min", DoubleValue (0.2));
+    off->SetAttribute ("Max", DoubleValue (1.2));
     app->Setup(d,on, off);
     Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
-    app->SetStartTime (Seconds (var->GetValue (m_dataStart, m_dataStart +1)));
+    app->SetStartTime (Seconds (var->GetValue (m_dataStart, m_dataStart +2)));
     app->SetStopTime (Seconds (m_totalTime));
     app->SetPacketSize(m_packetSize);
     app->SetMaxBytes(0);
+    app->AssignStreams(var->GetValue (1, m_nNodes));
     ++temp;
   }
 }
@@ -521,4 +506,13 @@ void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &p
     }
   } 
 }
+void CongestionControl::PhyRxDrop (CongestionControl *cc,Ptr<LrWpanNetDevice> device, Ptr<const Packet> packet)
+{
+  /*std::ostringstream os;
+  packet->Print (os);
+  std::cout << std::setiosflags (std::ios::fixed) << std::setprecision (9) << "[" << Simulator::Now ().GetSeconds () << "] " << device->GetMac ()->GetShortAddress () << " PhyRxDrop: " << os.str () << std::endl;
+*/
+++m_totalPhyDrop;
+}
 
+uint64_t CongestionControl::m_totalPhyDrop = 0;

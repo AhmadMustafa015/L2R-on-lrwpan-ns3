@@ -145,7 +145,7 @@ LrWpanMac::LrWpanMac ()
   m_associationStatus = ASSOCIATED;
   m_selfExt = Mac64Address::Allocate ();
   m_macPromiscuousMode = false;
-  m_macMaxFrameRetries = 3;
+  m_macMaxFrameRetries = 10;
   m_retransmission = 0;
   m_numCsmacaRetry = 0;
   m_txPkt = 0;
@@ -170,6 +170,7 @@ LrWpanMac::LrWpanMac ()
   m_totalPacketSentByNode = 0;
   m_totalPacketDroppedByNode = 0;
   m_arrivalRateComplement = 0;
+  m_internalLoad = 0;
 }
 
 LrWpanMac::~LrWpanMac ()
@@ -304,6 +305,14 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
         {
           m_mcpsDataConfirmCallback (confirmParams);
         }
+      return;
+    }
+
+    //AM: modified on 12/12
+    if(m_txQueue.size() >= m_maxQueueSize)
+    {
+      NS_LOG_LOGIC(this << " can't send packet queue is full: ");
+      ++m_totalPacketDroppedByNode;
       return;
     }
   switch (params.m_srcAddrMode)
@@ -886,6 +895,8 @@ LrWpanMac::PrepareRetransmission (void)
   else
     {
       m_retransmission++;
+      //AM:Modified 
+      ++m_internalLoad;
       m_numCsmacaRetry += m_csmaCa->GetNB () + 1;
       // Start next CCA process for this packet.
       return true;
@@ -1201,11 +1212,13 @@ L2R_Header::Print (std::ostream &os) const
   // routines to print the content of my header.
   //os << "data=" << m_data << std::endl;
   //ToDo print header debends on the msg type
+
   os << "DestinationRootMacAddress: " << m_meshRootAddress
      << " depth: " << m_depth
      << " PQM: " << m_PQM
-     << " TCIEInterval: " << m_TCIEInterval
-     << " MSN: " << m_MSN;
+     << " Arrival Rate: " << m_arrivalRate
+     << " NQueue Size: " << m_queueSize
+     << " Delay: " << m_avgDelay;
 }
 uint32_t
 L2R_Header::GetSerializedSize (void) const
@@ -2108,8 +2121,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     paramsSend.m_txOptions = TX_OPTION_ACK;  
     *m_stream->GetStream () << now.GetSeconds () <<" Forward Packet number: " << originalPkt->GetUid() 
                             <<" Received From node: " << sender << " To Me: "<< m_shortAddress 
-                            <<"Forword it to node: " << paramsSend.m_dstAddr << std::endl;
+                            <<" Forword it to node: " << paramsSend.m_dstAddr << std::endl;
     //std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
+    ++m_internalLoad;
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
   break;
@@ -2194,7 +2208,7 @@ LrWpanMac::OutputRoute()
         nextHopAddress = j->second.GetNextHop();
       }
     }
-    if (nextHopAddress == "00:00")
+    if (nextHopAddress == Mac16Address("00:00"))
       std::cout << "Node Doesn't send any thing no Ancecters" << std::endl;
     return nextHopAddress;
   }
@@ -2344,5 +2358,9 @@ LrWpanMac::OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params)
                             <<" Sending From: " << m_shortAddress << " To: "<< params.m_dstAddr 
                             <<" Node Queue Size: " << m_txQueue.size() << std::endl;
 } 
-
+uint32_t 
+LrWpanMac::GetInternalLoad() const
+{
+  return m_internalLoad;
+}
 } // namespace ns3

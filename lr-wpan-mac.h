@@ -1110,6 +1110,7 @@ public:
   uint32_t m_totalPacketSentByNode;
   void outputRoutesTree(Ptr<OutputStreamWrapper> stream);
   void OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params);
+  uint32_t GetInternalLoad() const;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1143,6 +1144,7 @@ private:
   std::queue<Time> m_arrivalRateMovingAvg;
   uint8_t m_arrivalRateComplement;
   void SendNlmMsg();
+  uint32_t m_internalLoad;
   //uint32_t m_nodeID;
   //void SetMac16();
   /**
