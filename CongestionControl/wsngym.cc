@@ -103,6 +103,27 @@ WSNGym::GetObservation()
     /*std::cout << m_congestionData[0] << std::endl;
     std::cout << m_congestionData[1] << std::endl;
     std::cout << m_congestionData[2] << std::endl;*/
+    float avgQueue = 0;
+    float avgArrivalRate = 0;
+    float avgDelay = 0;
+    uint32_t count = 0;
+    std::multimap<uint16_t, MeshRootData>::const_iterator i = meshPtr->begin();
+    for (;i != meshPtr->end(); ++i)
+    {
+        if(i->first <= 3)
+        {
+            avgQueue += i->second.m_queueSize;
+            avgArrivalRate += i->second.m_arrivalRate;
+            avgDelay += i->second.m_avgDelay;
+            count++;
+        }
+        //std::cout << "-" <<avgQueue << "-" << avgArrivalRate << "-" << avgDelay;
+        
+    }
+    m_queueLength = avgQueue / float(count);
+    m_pktArrivalRate = avgArrivalRate / float(count);
+    m_delay = avgDelay / float(count);
+    std::cout << "-" <<m_queueLength << "-" << m_pktArrivalRate << "-" << m_delay;
     box->AddValue(m_queueLength);
     box->AddValue(m_pktArrivalRate);
     box->AddValue(m_delay);
@@ -143,29 +164,29 @@ WSNGym::GetReward()
 {
     float totReward = 0;
     NS_LOG_INFO("MyGetReward: " << m_reward);
-    if(m_queueLength > 90.0)
+    if(m_queueLength > 0.9)
         totReward += -80.0;
-    else if(m_queueLength > 50.0)
+    else if(m_queueLength > 0.5)
         totReward += -40.0;
-    else if(m_queueLength > 20.0)
+    else if(m_queueLength > 0.2)
         totReward += 10.0;
     else
         totReward += 30.0;
 
-    if(m_pktArrivalRate > 90.0)
+    if(m_pktArrivalRate > 0.9)
         totReward += -80.0;
-    else if(m_pktArrivalRate > 50.0)
+    else if(m_pktArrivalRate > 0.5)
         totReward += -40.0;
-    else if(m_pktArrivalRate > 20.0)
+    else if(m_pktArrivalRate > 0.2)
         totReward += 10.0;
     else
         totReward += 30.0;
     
-    if(m_delay > 90.0)
+    if(m_delay > 0.9)
         totReward += -80.0;
-    else if(m_delay > 50.0)
+    else if(m_delay > 0.5)
         totReward += -40.0;
-    else if(m_delay > 20.0)
+    else if(m_delay > 0.2)
         totReward += 10.0;
     else
         totReward += 30.0;
@@ -189,7 +210,7 @@ bool
 WSNGym::GetGameOver()
 {
     m_isGameOver = false;
-    if(m_queueLength > 90.0 && m_pktArrivalRate > 90.0 && m_delay > 90.0)
+    if(m_queueLength > 0.9 && m_pktArrivalRate > 0.9 && m_delay > 0.9)
         m_isGameOver = true;
 
     return m_isGameOver;
@@ -203,13 +224,14 @@ WSNGym::ScheduleNextStateRead(double envStepTime)
 }
 */
 void
-WSNGym::GetCongestionParams(std::map<uint16_t, MeshRootData> &congestionParams)
+WSNGym::GetCongestionParams(std::multimap<uint16_t, MeshRootData> &congestionParams)
 {
-    float avgQueue = 0;
+    meshPtr = &congestionParams;
+    /*float avgQueue = 0;
     float avgArrivalRate = 0;
     float avgDelay = 0;
     uint32_t count = 0;
-    std::map<uint16_t, MeshRootData>::const_iterator i = congestionParams.begin();
+    std::multimap<uint16_t, MeshRootData>::const_iterator i = congestionParams.begin();
     for (;i != congestionParams.end(); ++i)
     {
         if(i->first <= 3)
@@ -219,15 +241,17 @@ WSNGym::GetCongestionParams(std::map<uint16_t, MeshRootData> &congestionParams)
             avgDelay += i->second.m_avgDelay;
             count++;
         }
+        std::cout << "-" <<avgQueue << "-" << avgArrivalRate << "-" << avgDelay;
+        getchar();
         
     }
     m_queueLength = avgQueue / float(count);
     m_queueLength = avgQueue / float(count);
-    m_queueLength = avgQueue / float(count);
+    m_queueLength = avgQueue / float(count);*/
 }
-void
+/*void
 WSNGym::SetDeviceContainer(NetDeviceContainer &device)
 {
     m_deviceContainer = &device;   
-}
+}*/
 }

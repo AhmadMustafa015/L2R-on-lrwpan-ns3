@@ -1982,8 +1982,10 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
          /* uint16_t tempLqm = tableEntry.GetQueuePar() * m_txQueue.size() / m_maxQueueSize +
                               tableEntry.GetArrivalPar() * arrivalRateMovingAvg +
                               tableEntry.GetDelayPar() * m_avgDelay / m_delayCountPacket;*/
-                              
-          uint16_t tempLqm = 1;
+          uint16_t tempLqm =  tempQueueSize * 10 +
+                              1/(tempArrivalRate+1) * 10 +
+                              tempDelay;                    
+          //uint16_t tempLqm = 1;
 
           tempPqm += tempLqm;
           tableEntry.SetDepth(tempDepth);
@@ -2085,7 +2087,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
                                *ent2,//avg of the msg received / time ToDo make it normalized
                                *ent3,}; //The time that the packet stay in the queue 
       
-      m_meshRootData.insert (std::make_pair(srcAddress, newEntry));
+      m_meshRootData.insert (std::make_pair(dataHeader.GetDepth(), newEntry));
       ++m_totalPacketRxByMesh;
       m_meshRxMsgCallback(newEntry,srcAddress);
       *m_stream->GetStream () << Simulator::Now ().GetSeconds () <<" Sink Receive Packet number: " << originalPkt->GetUid() 

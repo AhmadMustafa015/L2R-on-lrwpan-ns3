@@ -1111,6 +1111,11 @@ public:
   void outputRoutesTree(Ptr<OutputStreamWrapper> stream);
   void OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params);
   uint32_t GetInternalLoad() const;
+  std::multimap<uint16_t, MeshRootData> m_meshRootData;
+  void SetLQT(uint16_t lqt)
+  {
+    m_lqt = lqt;
+  }
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1136,7 +1141,7 @@ private:
   uint32_t m_totalPacketDroppedByNode;
   uint16_t m_maxQueueSize;
   uint32_t m_delayCountPacket;
-  std::multimap<Mac16Address, MeshRootData> m_meshRootData;
+  //std::multimap<Mac16Address, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
   std::map<uint64_t, Time> m_delayForEachPacket;
   float m_avgDelay;
@@ -1145,6 +1150,11 @@ private:
   uint8_t m_arrivalRateComplement;
   void SendNlmMsg();
   uint32_t m_internalLoad;
+  //std::multimap<uint16_t, MeshRootData> m_meshRootData;
+  /*void SetLQT(uint16_t lqt)
+  {
+    m_lqt = lqt;
+  } */ 
   //uint32_t m_nodeID;
   //void SetMac16();
   /**

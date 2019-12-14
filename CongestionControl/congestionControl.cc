@@ -230,9 +230,17 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_distanceBtwNodes = distanceBtwNodes;
   m_packetSize = 95;
   m_maxTxBytePerNode = 0;
+<<<<<<< HEAD
   m_maxQueueSize = 30;
   m_sensingPeriod = 2;
   m_totalPhyDrop = 0;
+=======
+  m_maxQueueSize = 25;
+  m_sensingPeriod = .03;
+  m_sensingPeriod = .1;
+  uint32_t openGymPort = 5555;
+  double envStepTime = 0.1; // ??seconds, ns3gym env step time interval
+>>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -246,6 +254,10 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
+<<<<<<< HEAD
+=======
+  //myWSNGym->SetDeviceContainer(devContainer);
+>>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
 
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
@@ -285,10 +297,19 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
     Ptr<NetDevice> d = *i;
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     device->GetMac ()->outputRoutesTree(routeTree);
+    uint32_t nodeID = d->GetNode ()->GetId ();
+    if(nodeID == meshNodeId)
+    {
+      myWSNGym->GetCongestionParams(device->GetMac()->m_meshRootData);
+    }
   }
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
+<<<<<<< HEAD
+=======
+  Simulator::Schedule(Seconds(15.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
+>>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();

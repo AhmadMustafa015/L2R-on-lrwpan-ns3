@@ -26,15 +26,15 @@ public:
     virtual bool ExecuteActions(Ptr<OpenGymDataContainer> action);
 
     //static void ScheduleNextStateRead(double envStepTime);
-    void GetCongestionParams(std::map<uint16_t, MeshRootData>&);
-    void SetDeviceContainer(NetDeviceContainer &device);
+    void GetCongestionParams(std::multimap<uint16_t, MeshRootData>&);
+    //void SetDeviceContainer(NetDeviceContainer &device);
 protected:
     uint32_t m_nodeId;
     uint32_t m_numActions;
 
 private:
     uint32_t m_lqt;
-    Ptr<NetDeviceContainer> m_deviceContainer;
+    std::multimap<uint16_t, MeshRootData> *meshPtr;
     //float m_congestionData[3];
     float m_queueLength;
     float m_pktArrivalRate;
