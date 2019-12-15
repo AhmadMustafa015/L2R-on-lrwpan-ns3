@@ -147,6 +147,9 @@ WSNGym::ExecuteActions(Ptr<OpenGymDataContainer> action)
     {
         Ptr<Node> node = NodeList::GetNode(i);
         Ptr<LrWpanNetDevice> device = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
+        Ptr<LrWpanCsmaCa> csma = device->GetCsmaCa();
+        csma->SetMacMaxBE(/*uint8_t maxBE*/); 
+        csma->SetMacMinBE(/*uint8_t minBE*/);
         device->GetMac()->SetLQT(m_lqt);
     }
     /*for (NetDeviceContainer::Iterator i= m_deviceContainer.Begin(); i != m_deviceContainer.End (); i++)
