@@ -35,6 +35,9 @@ protected:
 private:
     uint32_t m_lqt;
     std::multimap<uint16_t, MeshRootData> *meshPtr;
+    bool firstTime = true;
+    uint32_t j = 0;
+    uint32_t low = 0;
     //float m_congestionData[3];
     float m_queueLength;
     float m_pktArrivalRate;
