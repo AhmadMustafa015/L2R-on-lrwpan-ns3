@@ -17,6 +17,8 @@
 #include <math.h>
 #include "l2r-application.h"
 #include <iomanip>
+#include "ns3/opengym-module.h"
+#include "wsngym.h"
 using namespace ns3;
 
 #define PI 3.14159265
@@ -34,9 +36,14 @@ struct rgb {
   uint8_t b; ///< blue
 };
 struct rgb colors [] = {
-                        {31, 40 , 8}, // Red
-                        { 2, 71, 93 }, // Blue
-                        { 89, 3, 80 }  // Green
+                        {255, 0 , 0}, // Red
+                        { 0, 255, 0}, // Blue
+                        { 0, 0, 255 },  // Green
+                        {255, 125, 0},
+                        {255, 0, 127},
+                        {255, 255, 0},
+                        {0, 255, 255},
+                        {255, 0, 255}
                         };
 static void DataIndication (McpsDataIndicationParams params, Ptr<Packet> p)
 {
@@ -56,7 +63,7 @@ static void congestionVsTime ()
     if(d->GetNode()->GetId () == 0)
       continue;
     Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
-    avgDroppedPacket += device->GetMac ()->GetTotalPacketDroppedByQueue();
+    avgDroppedPacket += device->GetMac ()->GetPacketDroppedByQueue();
     
   }
   //avgDroppedPacket /= (50-1);
@@ -64,14 +71,25 @@ static void congestionVsTime ()
   out2 << timeNow << "," << avgDroppedPacket
       << std::endl; 
   out2.close ();
-  Simulator::Schedule(Seconds(.1),congestionVsTime);
+  Simulator::Schedule(Seconds(1),congestionVsTime);
 }
+
+/*static void DataConfirm (McpsDataConfirmParams params)
+{
+  std::cout << "LrWpanMcpsDataConfirmStatus = " << params.m_status << std::endl;
+}
+*/
 static void ReceivePacket (MeshRootData para,Mac16Address srcAddress)
 {
   std::ofstream out (CSVfileName.c_str (), std::ios::app);
   out << (Simulator::Now ()).GetSeconds ()<< "," << srcAddress << "," << para.m_queueSize 
       << "," << para.m_arrivalRate << "," << para.m_avgDelay << std::endl;
   out.close ();
+}
+void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGymInterface)
+{
+  Simulator::Schedule (Seconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGymInterface);
+  openGymInterface->NotifyCurrentState();
 }
 /*static void StateChangeNotification (std::string context, Ptr<Packet> p)
 {
@@ -158,13 +176,13 @@ int main (int argc, char *argv[])
   uint32_t nNodes = 50;
   uint32_t nSinks = 1;
   double totalTime = 100;
-  uint8_t periodicUpdateInterval = 25;
+  uint8_t periodicUpdateInterval = 101;
   double dataStart = 2.0;
   bool printRoutingTable = true;
   uint32_t meshNodeId = 0;
   bool enableTracing = true;
   bool enablePcap = false;
-  uint32_t distanceBtwNodes = 90; 
+  uint32_t distanceBtwNodes = 79; 
   //double onTime = 1;
   //double offTime = 1;
 
@@ -228,19 +246,13 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   m_enablePcap = enablePcap;
   m_meshNodeId = meshNodeId;
   m_distanceBtwNodes = distanceBtwNodes;
-  m_packetSize = 95;
+  m_packetSize = 20;
   m_maxTxBytePerNode = 0;
-<<<<<<< HEAD
-  m_maxQueueSize = 30;
+  m_maxQueueSize = 15;
   m_sensingPeriod = 2;
   m_totalPhyDrop = 0;
-=======
-  m_maxQueueSize = 25;
-  m_sensingPeriod = .03;
-  m_sensingPeriod = .1;
   uint32_t openGymPort = 5555;
-  double envStepTime = 0.1; // ??seconds, ns3gym env step time interval
->>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
+  //double envStepTime = 0.5;
 
   std::stringstream ss;
   ss << m_nNodes;
@@ -251,13 +263,21 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string tr_name = "L2R_" + t_nodes + "Nodes_" + m_TotalTime + "SimTime";
   std::cout << "Trace file generated is " << tr_name << ".tr\n";
 
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface>(openGymPort);
+  Ptr<WSNGym> myWSNGym = CreateObject<WSNGym>();
+  myWSNGym->SetOpenGymInterface(openGymInterface);
+
+  openGymInterface->SetGetActionSpaceCb( MakeCallback (&WSNGym::GetActionSpace, myWSNGym));
+  openGymInterface->SetGetObservationSpaceCb( MakeCallback (&WSNGym::GetObservationSpace, myWSNGym));
+  openGymInterface->SetGetGameOverCb( MakeCallback (&WSNGym::GetGameOver, myWSNGym));
+  openGymInterface->SetGetObservationCb( MakeCallback (&WSNGym::GetObservation, myWSNGym));
+  openGymInterface->SetGetRewardCb( MakeCallback (&WSNGym::GetReward, myWSNGym));
+  openGymInterface->SetGetExtraInfoCb( MakeCallback (&WSNGym::GetExtraInfo, myWSNGym));
+  openGymInterface->SetExecuteActionsCb( MakeCallback (&WSNGym::ExecuteActions, myWSNGym));
+
   CreateNodes ();
   SetupMobility ();
   CreateDevices (tr_name);
-<<<<<<< HEAD
-=======
-  //myWSNGym->SetDeviceContainer(devContainer);
->>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
 
     /*Ptr<LrWpanNetDevice> device = d->GetObject<LrWpanNetDevice> ();
     //std::cout << "Node: " << nodeID << "Send data packet to: ";
@@ -306,10 +326,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
   std::string animFile = tr_name + ".xml";
   pAnim = new AnimationInterface (animFile); //Mandatory
   //pAnim->EnablePacketMetadata (); //Optional
-<<<<<<< HEAD
-=======
-  Simulator::Schedule(Seconds(15.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
->>>>>>> f8ddfcf7eb9918dfec29440cd2ef71d86b90c5d5
+  //Simulator::Schedule(Seconds(5.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
   Simulator::Stop (Seconds (m_totalTime));
   Simulator::Schedule(Seconds(m_dataStart + 1),congestionVsTime);
   Simulator::Run ();
@@ -335,6 +352,7 @@ CongestionControl::CaseRun(uint32_t nNodes, uint32_t nSinks,
             << "Total Internal Load: " << internalLoad << std::endl;
   std::cout << "Total Packet Received by Sink = " 
             << ch.Get(m_meshNodeId)->GetDevice (0)->GetObject<LrWpanNetDevice> ()->GetMac ()->GetTotalPacketRxByMeshRoot() << std::endl;
+  myWSNGym->NotifySimulationEnd();
   Simulator::Destroy ();
   //m_applicationContainer->TotalPacketPrint();
   delete pAnim;
@@ -366,9 +384,9 @@ CongestionControl::SetupMobility ()
 
   for (nodeCount = 1; nodeCount < m_nNodes; nodeCount++)
   {
-    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.3);
-    xPos = radius * sin(thetaRad) + x->GetValue()*30; 
-    yPos = radius * cos(thetaRad) + x->GetValue()*30;
+    thetaRad += (m_distanceBtwNodes / radius)* (1 + x->GetValue()*0.1);
+    xPos = radius * sin(thetaRad) + x->GetValue()*10; 
+    yPos = radius * cos(thetaRad) + x->GetValue()*10;
 
     std::cout << "Adding node at position (" << xPos << ", " << yPos << ")" <<std::endl;
     taPositionAlloc->Add (Vector (xPos, yPos, 0.0));
@@ -388,7 +406,9 @@ void
 CongestionControl::CreateDevices (std::string tr_name)
 {
   channel = CreateObject<SingleModelSpectrumChannel> ();
-  Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
+  //Ptr<LogDistancePropagationLossModel> propModel = CreateObject<LogDistancePropagationLossModel> ();
+  Ptr<RangePropagationLossModel> propModel = CreateObject<RangePropagationLossModel> ();
+
   //Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel> ();
   channel->AddPropagationLossModel (propModel);
   //channel->SetPropagationDelayModel (delayModel);
@@ -409,6 +429,7 @@ CongestionControl::CreateDevices (std::string tr_name)
     uint32_t nodeID = d->GetNode ()->GetId ();
     device->GetPhy ()->TraceConnectWithoutContext ("PhyRxDrop", MakeBoundCallback (&CongestionControl::PhyRxDrop, this, device));
     temp++; 
+    //uint32_t nodeID = d->GetNode ()->GetId ();
     device->GetMac ()->SetMaxQueueSize(m_maxQueueSize);
     //csmaCa->SetUnSlottedCsmaCa ();
     //csmaCa->SetMac(device->GetMac ());
@@ -486,8 +507,37 @@ CongestionControl::InstallApplications()
     app->SetPacketSize(m_packetSize);
     app->SetMaxBytes(0);
     app->AssignStreams(var->GetValue (1, m_nNodes));
+    //app->SendBurst();
+    //Simulator::Schedule(Seconds(20),&l2rapplication::SendBurst,app);
+    //Simulator::Schedule(Seconds(40),&l2rapplication::SendBurst,app);
     ++temp;
+
+  
+    /*L2R_Header L2R_DataHeader;
+    L2R_DataHeader.SetSrcMacAddress(device->GetMac ()->GetShortAddress());
+    L2R_DataHeader.SetMsgType(DataHeader);
+    L2R_DataHeader.SetDepth(device->GetMac ()->GetDepth());
+    L2R_DataHeader.SetPQM(device->GetMac ()->GetPqm());
+    L2R_DataHeader.SetQueueSize(device->GetMac ()->GetQueueSize());
+    L2R_DataHeader.SetDelay(device->GetMac ()->GetAvgDelay());
+    L2R_DataHeader.SetArrivalRate(device->GetMac ()->GetArrivalRate());
+    ++device->GetMac ()-> m_totalPacketSentByNode;
+    packet->AddHeader (L2R_DataHeader); //serialize is called here
+    McpsDataRequestParams params;
+    params.m_dstPanId = device->GetMac ()->GetPanId();
+    params.m_srcAddrMode = SHORT_ADDR;
+    params.m_dstAddrMode = SHORT_ADDR;
+    params.m_dstAddr = device->GetMac ()->OutputRoute();
+    params.m_msduHandle = 0;
+    params.m_txOptions = TX_OPTION_NONE;
+    device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
+    device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
+    Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
+                             params, packet);  
+  m_lastStartTime = Simulator::Now ();
+  m_residualBits = 0;*/
   }
+  
 }
 
 void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &pqm,const Mac16Address &receiver)
@@ -507,9 +557,9 @@ void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &p
   pAnim->UpdateLinkDescription (1, 11, oss.str ());
   */
   std::ostringstream node0Oss;
-  static uint32_t index = 0;
+  /*static uint32_t index = 0;
   index = depth %3;
-  struct rgb color = colors[index];
+  struct rgb color = colors[index];*/
   uint32_t nodeID;
   for (NetDeviceContainer::Iterator i= devContainer.Begin(); i != devContainer.End (); i++)
   {  
@@ -523,7 +573,7 @@ void modify (const Mac16Address &sender,const uint16_t &depth, const uint16_t &p
       // Every update change the node description for nodes
       pAnim->UpdateNodeDescription (nodeID, node0Oss.str ());
       // Every update change the color for nodes if receive update from mesh Root
-      pAnim->UpdateNodeColor (nodeID, (color.r * (depth+1) %255), (color.r * (depth+2) %255),(color.r * (depth+3) %255)); 
+      pAnim->UpdateNodeColor (nodeID, colors[depth].r, colors[depth].g,colors[depth].b); 
     }
   } 
 }

@@ -1100,6 +1100,7 @@ public:
   uint16_t GetDepth(void) const;
   uint16_t GetPqm (void) const;
   uint32_t GetTotalPacketDroppedByQueue(void);
+  uint32_t GetPacketDroppedByQueue(void);
   uint32_t GetTotalPacketSentByNode(void) const;
   uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;

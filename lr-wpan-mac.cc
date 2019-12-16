@@ -792,7 +792,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                 { 
                   if((l2rHeader.GetMsgType() == DataHeader))
                   { 
-                    std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
+                    std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_queueSize 
                             <<" exceeds the limit: " << m_maxQueueSize << std::endl;
                     ++m_totalPacketDroppedByNode;
                   }
@@ -2332,6 +2332,11 @@ LrWpanMac::GetPqm (void) const
 }
 uint32_t 
 LrWpanMac::GetTotalPacketDroppedByQueue(void)
+{
+  return m_totalPacketDroppedByNode;
+}
+uint32_t
+LrWpanMac::GetPacketDroppedByQueue(void)
 {
   uint32_t temp = m_totalPacketDroppedByNode -  m_totalPacketDroppedEverySecond;
   m_totalPacketDroppedEverySecond = m_totalPacketDroppedByNode;

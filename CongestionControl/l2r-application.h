@@ -22,7 +22,7 @@ public:
   void Setup(Ptr<NetDevice> dev,Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off);
   void SetMaxBytes (uint64_t maxBytes); //ToDo
   void SetPacketSize(uint32_t pktSize);
-
+  void SendBurst();
 private:
   /**
    * \brief Cancel all pending events.
