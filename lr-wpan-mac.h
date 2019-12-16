@@ -1099,7 +1099,7 @@ public:
   //AM: modified 1/12
   uint16_t GetDepth(void) const;
   uint16_t GetPqm (void) const;
-  uint32_t GetTotalPacketDroppedByQueue(void) const;
+  uint32_t GetTotalPacketDroppedByQueue(void);
   uint32_t GetTotalPacketSentByNode(void) const;
   uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;
@@ -1115,6 +1115,10 @@ public:
   void SetLQT(uint16_t lqt)
   {
     m_lqt = lqt;
+  }
+  void IncQueue()
+  {
+    ++m_queueSize;
   }
 protected:
   // Inherited from Object.
@@ -1139,6 +1143,7 @@ private:
   Ptr<UniformRandomVariable> m_uniformRandomVariable;
   uint32_t m_totalPacketRxByMesh;
   uint32_t m_totalPacketDroppedByNode;
+  uint32_t m_totalPacketDroppedEverySecond;
   uint16_t m_maxQueueSize;
   uint32_t m_delayCountPacket;
   //std::multimap<Mac16Address, MeshRootData> m_meshRootData;
@@ -1150,6 +1155,7 @@ private:
   uint8_t m_arrivalRateComplement;
   void SendNlmMsg();
   uint32_t m_internalLoad;
+  uint32_t m_queueSize;
   //std::multimap<uint16_t, MeshRootData> m_meshRootData;
   /*void SetLQT(uint16_t lqt)
   {

@@ -145,7 +145,7 @@ LrWpanMac::LrWpanMac ()
   m_associationStatus = ASSOCIATED;
   m_selfExt = Mac64Address::Allocate ();
   m_macPromiscuousMode = false;
-  m_macMaxFrameRetries = 10;
+  m_macMaxFrameRetries = 3;
   m_retransmission = 0;
   m_numCsmacaRetry = 0;
   m_txPkt = 0;
@@ -163,7 +163,7 @@ LrWpanMac::LrWpanMac ()
   m_pqm = 0;
   m_tcieInterval = 0;
   m_arrivalRate = Seconds(0);
-  m_maxQueueSize = 100;
+  m_maxQueueSize = 5;
   m_delayCountPacket = 0;
   m_avgDelay = 0;
   m_totalPacketRxByMesh = 0;
@@ -171,6 +171,8 @@ LrWpanMac::LrWpanMac ()
   m_totalPacketDroppedByNode = 0;
   m_arrivalRateComplement = 0;
   m_internalLoad = 0;
+  m_totalPacketDroppedEverySecond = 0;
+  m_queueSize = 0;
 }
 
 LrWpanMac::~LrWpanMac ()
@@ -274,7 +276,8 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
 
   McpsDataConfirmParams confirmParams;
   confirmParams.m_msduHandle = params.m_msduHandle;
-
+  L2R_Header l2rH;
+  p->PeekHeader(l2rH);
   // TODO: We need a drop trace for the case that the packet is too large or the request parameters are maleformed.
   //       The current tx drop trace is not suitable, because packets dropped using this trace carry the mac header
   //       and footer, while packets being dropped here do not have them.
@@ -309,7 +312,7 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
     }
 
     //AM: modified on 12/12
-    if(m_txQueue.size() >= m_maxQueueSize)
+    if(l2rH.GetMsgType() == DataHeader && m_queueSize >= m_maxQueueSize)
     {
       NS_LOG_LOGIC(this << " can't send packet queue is full: ");
       ++m_totalPacketDroppedByNode;
@@ -467,8 +470,9 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
   TxQueueElement *txQElement = new TxQueueElement;
   txQElement->txQMsduHandle = params.m_msduHandle;
   txQElement->txQPkt = p;
+  if(l2rH.GetMsgType() == DataHeader)
+    ++m_queueSize;
   m_txQueue.push_back (txQElement);
-
   CheckQueue ();
 }
 
@@ -684,7 +688,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_txQueue.size () <=(m_maxQueueSize*0.85)))) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_queueSize < (m_maxQueueSize)))) //AM: Modified at 3/12
             {
              /* if(m_txQueue.size () >= m_maxQueueSize * 0.5)
               {
@@ -788,8 +792,8 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                 { 
                   if((l2rHeader.GetMsgType() == DataHeader))
                   { 
-                    //std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
-                    //         <<" exceeds the limit: " << m_maxQueueSize << std::endl;
+                    std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size () 
+                            <<" exceeds the limit: " << m_maxQueueSize << std::endl;
                     ++m_totalPacketDroppedByNode;
                   }
                 }
@@ -912,6 +916,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
 
   LrWpanMacHeader macHdr;
   m_txPkt->PeekHeader (macHdr);
+  L2R_Header l2rH;
+  m_txPkt->PeekHeader (l2rH);
   if (status == IEEE_802_15_4_PHY_SUCCESS)
     {
       if (!macHdr.IsAcknowledgment ())
@@ -927,6 +933,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
               m_ackWaitTimeout = Simulator::Schedule (waitTime, &LrWpanMac::AckWaitTimeout, this);
               m_setMacState.Cancel ();
               m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_ACK_PENDING);
+              if(l2rH.GetMsgType () == DataHeader)
+                --m_queueSize;
               return;
             }
           else
@@ -942,6 +950,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
                   confirmParams.m_status = IEEE_802_15_4_SUCCESS;
                   m_mcpsDataConfirmCallback (confirmParams);
                 }
+                if(l2rH.GetMsgType () == DataHeader)
+                  --m_queueSize;
               RemoveFirstTxQElement ();
             }
         }
@@ -967,6 +977,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
               m_mcpsDataConfirmCallback (confirmParams);
             }
           RemoveFirstTxQElement ();
+        if(l2rH.GetMsgType () == DataHeader)
+          --m_queueSize;
         }
       else
         {
@@ -2092,7 +2104,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       m_meshRxMsgCallback(newEntry,srcAddress);
       *m_stream->GetStream () << Simulator::Now ().GetSeconds () <<" Sink Receive Packet number: " << originalPkt->GetUid() 
                             <<" Received From node: " << sender << " To Me: "<< m_shortAddress 
-                            <<" Node Queue Size: " << m_txQueue.size()
+                            <<" Node Queue Size: " << m_queueSize
                             <<std::endl;
       return;
     }
@@ -2277,7 +2289,7 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
 uint16_t
 LrWpanMac::GetQueueSize(void) const
 {
-  return m_txQueue.size();
+  return m_queueSize;
 }
 uint32_t 
 LrWpanMac::GetArrivalRate(void) const
@@ -2319,9 +2331,11 @@ LrWpanMac::GetPqm (void) const
   return m_pqm;
 }
 uint32_t 
-LrWpanMac::GetTotalPacketDroppedByQueue(void) const
+LrWpanMac::GetTotalPacketDroppedByQueue(void)
 {
-  return m_totalPacketDroppedByNode;
+  uint32_t temp = m_totalPacketDroppedByNode -  m_totalPacketDroppedEverySecond;
+  m_totalPacketDroppedEverySecond = m_totalPacketDroppedByNode;
+  return temp;
 }
 uint32_t 
 LrWpanMac::GetTotalPacketSentByNode(void) const
@@ -2358,7 +2372,7 @@ LrWpanMac::OutputTree(Ptr<Packet> p, Time t,McpsDataRequestParams params)
 {
   *m_stream->GetStream () << t.GetSeconds () <<" Node Generate Packet number: " << p->GetUid() 
                             <<" Sending From: " << m_shortAddress << " To: "<< params.m_dstAddr 
-                            <<" Node Queue Size: " << m_txQueue.size() << std::endl;
+                            <<" Node Queue Size: " << m_queueSize << std::endl;
 } 
 uint32_t 
 LrWpanMac::GetInternalLoad() const
