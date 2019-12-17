@@ -937,8 +937,6 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
               m_ackWaitTimeout = Simulator::Schedule (waitTime, &LrWpanMac::AckWaitTimeout, this);
               m_setMacState.Cancel ();
               m_setMacState = Simulator::ScheduleNow (&LrWpanMac::SetLrWpanMacState, this, MAC_ACK_PENDING);
-              if(l2rH.GetMsgType () == DataHeader)
-                --m_queueSize;
               return;
             }
           else
@@ -954,8 +952,6 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
                   confirmParams.m_status = IEEE_802_15_4_SUCCESS;
                   m_mcpsDataConfirmCallback (confirmParams);
                 }
-                if(l2rH.GetMsgType () == DataHeader)
-                  --m_queueSize;
               RemoveFirstTxQElement ();
             }
         }
@@ -967,6 +963,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
         /*std::map<uint64_t, Ptr<Packet>>::iterator i = m_l2rQueue.find (m_txPkt->GetUid());
                 if(i != m_l2rQueue.end())
                   m_l2rQueue.erase(i);*/
+      if(l2rH.GetMsgType () == DataHeader)
+        --m_queueSize;
     }
   else if (status == IEEE_802_15_4_PHY_UNSPECIFIED)
     {
@@ -984,8 +982,8 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
               m_mcpsDataConfirmCallback (confirmParams);
             }
           RemoveFirstTxQElement ();
-        if(l2rH.GetMsgType () == DataHeader)
-          --m_queueSize;
+        /*if(l2rH.GetMsgType () == DataHeader)
+          --m_queueSize;*/
         }
       else
         {
