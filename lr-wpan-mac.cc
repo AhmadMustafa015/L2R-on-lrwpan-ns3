@@ -145,7 +145,7 @@ LrWpanMac::LrWpanMac ()
   m_associationStatus = ASSOCIATED;
   m_selfExt = Mac64Address::Allocate ();
   m_macPromiscuousMode = false;
-  m_macMaxFrameRetries = 3;
+  m_macMaxFrameRetries = 1;
   m_retransmission = 0;
   m_numCsmacaRetry = 0;
   m_txPkt = 0;
@@ -163,9 +163,8 @@ LrWpanMac::LrWpanMac ()
   m_pqm = 0;
   m_tcieInterval = 0;
   m_arrivalRate = Seconds(0);
-  m_maxQueueSize = 5;
+  m_maxQueueSize = 100;
   m_delayCountPacket = 0;
-  m_avgDelay = 0;
   m_totalPacketRxByMesh = 0;
   m_totalPacketSentByNode = 0;
   m_totalPacketDroppedByNode = 0;
@@ -491,14 +490,16 @@ LrWpanMac::CheckQueue ()
       m_txPkt->PeekHeader(l2rHeader);
       if(!m_isSink && l2rHeader.GetMsgType() == DataHeader)
       {
-        //Time now = Simulator::Now ();
+        Time now = Simulator::Now ();
         //m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(), now));
         std::map<uint64_t, Time>::const_iterator i = m_delayForEachPacket.find (m_txPkt->GetUid());
         if(i != m_delayForEachPacket.end())
         {
+          if (m_avgDelay.size() > 10)
+            m_avgDelay.pop();
+          
+          m_avgDelay.push(now.GetSeconds () - i->second.GetSeconds ());
           m_delayForEachPacket.erase(i);
-          //m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
-          //++m_delayCountPacket;
         }
       }
       //end
@@ -690,6 +691,8 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                         //Added new filtering layer check queue
           if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_queueSize < (m_maxQueueSize)))) //AM: Modified at 3/12
             {
+              /*if(l2rHeader.GetMsgType() == DataHeader)
+                std::cout << "L2r-Queue Size Accepted: " <<m_l2rQueue.size() << std::endl;*/
              /* if(m_txQueue.size () >= m_maxQueueSize * 0.5)
               {
                 //SendNlmMsg();
@@ -795,6 +798,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                     std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_queueSize 
                             <<" exceeds the limit: " << m_maxQueueSize << std::endl;
                     ++m_totalPacketDroppedByNode;
+                    //std::cout << "L2r-Queue Size Drop: " <<m_l2rQueue.size() << std::endl;
                   }
                 }
               m_macRxDropTrace (originalPkt);
@@ -960,6 +964,9 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
           // We have send an ACK. Clear the packet buffer.
           m_txPkt = 0;
         }
+        /*std::map<uint64_t, Ptr<Packet>>::iterator i = m_l2rQueue.find (m_txPkt->GetUid());
+                if(i != m_l2rQueue.end())
+                  m_l2rQueue.erase(i);*/
     }
   else if (status == IEEE_802_15_4_PHY_UNSPECIFIED)
     {
@@ -2111,7 +2118,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     //std::cout << "New Data Received: " << std::endl;
     //std::cout << "Queue Size is: " << m_txQueue.size () << std::endl;
     Time now = Simulator::Now ();
-    if (m_arrivalRateMovingAvg.size() > 20) //taking arrival rate for 20 reading
+    if (m_arrivalRateMovingAvg.size() >= 10) //taking arrival rate for 10 reading
       m_arrivalRateMovingAvg.pop();
     
     if(m_arrivalRateComplement == 0)
@@ -2138,6 +2145,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
                             <<" Forword it to node: " << paramsSend.m_dstAddr << std::endl;
     //std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
     ++m_internalLoad;
+    //m_l2rQueue.insert(std::make_pair(originalPkt->GetUid(),originalPkt));
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
   break;
@@ -2311,13 +2319,20 @@ LrWpanMac::GetAvgDelay(void)
 {
   float sendDelay = 0;
   Time now = Simulator::Now ();
-  for (std::map<uint64_t, Time>::iterator i = m_delayForEachPacket.begin (); i != m_delayForEachPacket.end (); ++i)
-    m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
-  //m_avgDelay = m_avgDelay/ m_delayForEachPacket.size();
-  if (m_delayForEachPacket.size() != 0)
-    sendDelay = m_avgDelay / m_delayForEachPacket.size();
+  //for (std::map<uint64_t, Time>::iterator i = m_delayForEachPacket.begin (); i != m_delayForEachPacket.end (); ++i)
+    //m_avgDelay = m_avgDelay + (now.GetSeconds () - i->second.GetSeconds ());
+  std::queue<float> temp_myqueue = m_avgDelay;
+  while (!temp_myqueue.empty())
+  {
+		sendDelay += temp_myqueue.front();
+		temp_myqueue.pop();
+	}
+  if (m_avgDelay.size() != 0)
+  {
+    sendDelay /= m_avgDelay.size();
+  }
+
   uint32_t* pInt = reinterpret_cast<uint32_t*>(&sendDelay); //ToDo Should I deallocate this
-  m_avgDelay = 0;
   return *pInt;
 }
 uint16_t 

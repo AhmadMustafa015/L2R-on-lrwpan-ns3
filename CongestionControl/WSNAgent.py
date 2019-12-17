@@ -33,7 +33,7 @@ env._max_episode_steps = max_env_steps
 
 epsilon = 1.0               # exploration rate
 epsilon_min = 0.01
-epsilon_decay = 0.999       # experiment
+epsilon_decay = 0.96       # experiment
 
 time_history = []
 rew_history = []
@@ -57,7 +57,7 @@ for e in range(total_episodes):
         # Step
         print("---action: ", action)
         next_state, reward, done, info = env.step(action)
-        print("---obs, reward, done, info: ", next_state, reward, done, info)
+        print("---obs {}, reward, done, info, epsilon: ", next_state, reward, done, info, epsilon)
 
         if done:
             print("episode: {}/{}, time: {}, rew: {}, eps: {:.2}"
@@ -70,7 +70,7 @@ for e in range(total_episodes):
         target = reward # ??
         if not done:
             target = (reward + 0.95 * np.amax(model.predict(next_state)[0])) # experiment
-            print(target)
+            #print(target)
 
         target_f = model.predict(state)
         #print(target_f)

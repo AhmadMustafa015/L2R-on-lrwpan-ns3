@@ -107,6 +107,7 @@ l2rapplication::SendPacket () //ToDo
   params.m_txOptions = TX_OPTION_ACK;
   device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
   device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
+  //device->GetMac ()->m_l2rQueue.insert(std::make_pair(packet->GetUid(),packet));
   Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
                              params, packet);  
   m_lastStartTime = Simulator::Now ();
@@ -192,7 +193,7 @@ l2rapplication::SetPacketSize(uint32_t pktSize)
 void
 l2rapplication::SendBurst()
 {
-  for(uint8_t i = 0; i < 45; i++)
+  for(uint8_t i = 0; i < 10; i++)
   {
     Ptr<LrWpanNetDevice> device = m_netDevice->GetObject<LrWpanNetDevice> ();  
     Ptr<Packet> packet = Create<Packet> (m_pktSize);
@@ -216,6 +217,7 @@ l2rapplication::SendBurst()
   Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
   device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
   device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
+  //device->GetMac ()->m_l2rQueue.insert(std::make_pair(packet->GetUid(),packet));
   Simulator::Schedule (MicroSeconds(var->GetValue (1, 1000)),&LrWpanMac::McpsDataRequest,device->GetMac (),
                              params, packet);  
   }                             

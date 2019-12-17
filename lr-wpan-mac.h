@@ -1121,6 +1121,7 @@ public:
   {
     ++m_queueSize;
   }
+  //std::queue<uint64_t> m_l2rQueue;
 protected:
   // Inherited from Object.
   virtual void DoInitialize (void);
@@ -1150,7 +1151,7 @@ private:
   //std::multimap<Mac16Address, MeshRootData> m_meshRootData;
   uint32_t m_nodeId;
   std::map<uint64_t, Time> m_delayForEachPacket;
-  float m_avgDelay;
+  std::queue<float> m_avgDelay;
   Time m_arrivalRate;
   std::queue<Time> m_arrivalRateMovingAvg;
   uint8_t m_arrivalRateComplement;
@@ -1400,7 +1401,6 @@ private:
    * The transmit queue used by the MAC.
    */
   std::deque<TxQueueElement*> m_txQueue;
-
   /**
    * The number of already used retransmission for the currently transmitted
    * packet.
