@@ -145,7 +145,7 @@ LrWpanMac::LrWpanMac ()
   m_associationStatus = ASSOCIATED;
   m_selfExt = Mac64Address::Allocate ();
   m_macPromiscuousMode = false;
-  m_macMaxFrameRetries = 1;
+  m_macMaxFrameRetries = 4;
   m_retransmission = 0;
   m_numCsmacaRetry = 0;
   m_txPkt = 0;
@@ -163,7 +163,7 @@ LrWpanMac::LrWpanMac ()
   m_pqm = 0;
   m_tcieInterval = 0;
   m_arrivalRate = Seconds(0);
-  m_maxQueueSize = 100;
+  m_maxQueueSize = 5;
   m_delayCountPacket = 0;
   m_totalPacketRxByMesh = 0;
   m_totalPacketSentByNode = 0;
@@ -311,7 +311,7 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
     }
 
     //AM: modified on 12/12
-    if(l2rH.GetMsgType() == DataHeader && m_queueSize >= m_maxQueueSize)
+    if(l2rH.GetMsgType() == DataHeader && m_txQueue.size() >= m_maxQueueSize)
     {
       NS_LOG_LOGIC(this << " can't send packet queue is full: ");
       ++m_totalPacketDroppedByNode;
@@ -469,8 +469,8 @@ LrWpanMac::McpsDataRequest (McpsDataRequestParams params, Ptr<Packet> p)
   TxQueueElement *txQElement = new TxQueueElement;
   txQElement->txQMsduHandle = params.m_msduHandle;
   txQElement->txQPkt = p;
-  if(l2rH.GetMsgType() == DataHeader)
-    ++m_queueSize;
+  /*if(l2rH.GetMsgType() == DataHeader)
+    ++m_queueSize;*/
   m_txQueue.push_back (txQElement);
   CheckQueue ();
 }
@@ -689,7 +689,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
               acceptFrame = receivedMacHdr.GetSrcPanId () == m_macPanId; // \todo need to check if PAN coord
             }
                         //Added new filtering layer check queue
-          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader) ||(m_queueSize < (m_maxQueueSize)))) //AM: Modified at 3/12
+          if (acceptFrame && (m_isSink || (l2rHeader.GetMsgType() != DataHeader)||(m_txQueue.size() < (m_maxQueueSize)))) //AM: Modified at 3/12
             {
               /*if(l2rHeader.GetMsgType() == DataHeader)
                 std::cout << "L2r-Queue Size Accepted: " <<m_l2rQueue.size() << std::endl;*/
@@ -795,7 +795,7 @@ LrWpanMac::PdDataIndication (uint32_t psduLength, Ptr<Packet> p, uint8_t lqi)
                 { 
                   if((l2rHeader.GetMsgType() == DataHeader))
                   { 
-                    std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_queueSize 
+                    std::cout <<(Simulator::Now ()).GetSeconds () <<"A packet dropped By Mac: " << params.m_dstAddr <<" From:" << params.m_srcAddr<< " Queue Size = " << m_txQueue.size() 
                             <<" exceeds the limit: " << m_maxQueueSize << std::endl;
                     ++m_totalPacketDroppedByNode;
                     //std::cout << "L2r-Queue Size Drop: " <<m_l2rQueue.size() << std::endl;
@@ -920,8 +920,6 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
 
   LrWpanMacHeader macHdr;
   m_txPkt->PeekHeader (macHdr);
-  L2R_Header l2rH;
-  m_txPkt->PeekHeader (l2rH);
   if (status == IEEE_802_15_4_PHY_SUCCESS)
     {
       if (!macHdr.IsAcknowledgment ())
@@ -963,8 +961,6 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
         /*std::map<uint64_t, Ptr<Packet>>::iterator i = m_l2rQueue.find (m_txPkt->GetUid());
                 if(i != m_l2rQueue.end())
                   m_l2rQueue.erase(i);*/
-      if(l2rH.GetMsgType () == DataHeader)
-        --m_queueSize;
     }
   else if (status == IEEE_802_15_4_PHY_UNSPECIFIED)
     {
@@ -982,8 +978,7 @@ LrWpanMac::PdDataConfirm (LrWpanPhyEnumeration status)
               m_mcpsDataConfirmCallback (confirmParams);
             }
           RemoveFirstTxQElement ();
-        /*if(l2rH.GetMsgType () == DataHeader)
-          --m_queueSize;*/
+        
         }
       else
         {
@@ -1028,15 +1023,17 @@ void
 LrWpanMac::PlmeSetTRXStateConfirm (LrWpanPhyEnumeration status)
 {
   NS_LOG_FUNCTION (this << status);
-
   if (m_lrWpanMacState == MAC_SENDING && (status == IEEE_802_15_4_PHY_TX_ON || status == IEEE_802_15_4_PHY_SUCCESS))
     {
       NS_ASSERT (m_txPkt);
-
+      L2R_Header l2rH;
+      m_txPkt->PeekHeader (l2rH);
       // Start sending if we are in state SENDING and the PHY transmitter was enabled.
       m_promiscSnifferTrace (m_txPkt);
       m_snifferTrace (m_txPkt);
       m_macTxTrace (m_txPkt);
+      if(l2rH.GetMsgType () == DataHeader && m_queueSize > 0)
+        --m_queueSize;
       m_phy->PdDataRequest (m_txPkt->GetSize (), m_txPkt);
     }
   else if (m_lrWpanMacState == MAC_CSMA && (status == IEEE_802_15_4_PHY_RX_ON || status == IEEE_802_15_4_PHY_SUCCESS))
@@ -1197,7 +1194,7 @@ L2R_Header::L2R_Header ()
   m_PQM = 0;
   m_meshRootAddress = Mac16Address("00:00");
   m_TCIEInterval = 0xff;
-  m_msgType = DataHeader;
+  m_msgType = NotL2R;
   m_LQT = 0;
   m_queueSize = 0;
   m_arrivalRate = 0;
@@ -2103,7 +2100,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       MeshRootData newEntry = {ent1, //number of element in the queue / queue size
                                *ent2,//avg of the msg received / time ToDo make it normalized
                                *ent3,}; //The time that the packet stay in the queue 
-      
+      m_totalPacketSendUid.insert(std::make_pair(originalPkt->GetUid(), Simulator::Now ().GetSeconds())); 
       m_meshRootData.insert (std::make_pair(dataHeader.GetDepth(), newEntry));
       ++m_totalPacketRxByMesh;
       m_meshRxMsgCallback(newEntry,srcAddress);
@@ -2144,6 +2141,7 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
     //std::cout << "Sending Data Packet From: " << m_shortAddress << "To: " <<paramsSend.m_dstAddr << std::endl;
     ++m_internalLoad;
     //m_l2rQueue.insert(std::make_pair(originalPkt->GetUid(),originalPkt));
+    ++m_queueSize;
     Simulator::ScheduleNow(&LrWpanMac::McpsDataRequest,this, paramsSend, originalPkt);
   
   break;
@@ -2160,7 +2158,9 @@ void LrWpanMac::RecieveL2RPacket(McpsDataIndicationParams rxParams, Ptr<Packet> 
       tableEntry.SetDelayPar(*entavgDelay3);
       tableEntry.SetQueuePar(normalizeQueue);
       m_routingTable.Update(tableEntry);
-    }
+      break;
+    }  
+  case NotL2R:
   break;
   }
 }
@@ -2295,7 +2295,7 @@ void LrWpanMac::PrintRoutingTable (Ptr<Node> node,Ptr<OutputStreamWrapper> strea
 uint16_t
 LrWpanMac::GetQueueSize(void) const
 {
-  return m_queueSize;
+  return m_txQueue.size();
 }
 uint32_t 
 LrWpanMac::GetArrivalRate(void) const
@@ -2396,5 +2396,27 @@ uint32_t
 LrWpanMac::GetInternalLoad() const
 {
   return m_internalLoad;
+}
+void 
+LrWpanMac::IncQueue ()
+{
+  ++m_queueSize;
+}
+void
+LrWpanMac::PrintEndtoEndDelay()
+{
+  for (std::map<uint64_t, double>::iterator i = m_totalPacketSendUid.begin (); i != m_totalPacketSendUid.end (); i++) //ToDo
+  {
+
+    std::ofstream out4 ("EndtoEndDelay_Sink.csv", std::ios::app);
+    out4 << i->first << "," << i->second
+         << std::endl; 
+    out4.close ();
+  }
+}
+uint16_t 
+LrWpanMac::GetAQueueSize(void) const
+{
+  return m_queueSize;
 }
 } // namespace ns3

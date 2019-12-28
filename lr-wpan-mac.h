@@ -247,7 +247,8 @@ enum L2R_MsgType
   TC_IE = 0,
   L2R_D_IE = 1,
   DataHeader = 2,
-  NLM_IE = 3
+  NLM_IE = 3,
+  NotL2R = 4
 };
 class L2R_Header : public Header 
 {
@@ -1104,6 +1105,7 @@ public:
   uint32_t GetTotalPacketSentByNode(void) const;
   uint32_t GetTotalPacketRxByMeshRoot(void) const;
   uint16_t GetQueueSize(void) const;
+  uint16_t GetAQueueSize(void) const;
   uint32_t GetArrivalRate(void) const;
   uint32_t GetAvgDelay (void);
   uint16_t GetMaxQueueSize(void) const;
@@ -1117,10 +1119,8 @@ public:
   {
     m_lqt = lqt;
   }
-  void IncQueue()
-  {
-    ++m_queueSize;
-  }
+  void IncQueue();
+  void PrintEndtoEndDelay();
   //std::queue<uint64_t> m_l2rQueue;
 protected:
   // Inherited from Object.
@@ -1157,7 +1157,8 @@ private:
   uint8_t m_arrivalRateComplement;
   void SendNlmMsg();
   uint32_t m_internalLoad;
-  uint32_t m_queueSize;
+  uint16_t m_queueSize;
+  std::map<uint64_t,double> m_totalPacketSendUid;
   //std::multimap<uint16_t, MeshRootData> m_meshRootData;
   /*void SetLQT(uint16_t lqt)
   {

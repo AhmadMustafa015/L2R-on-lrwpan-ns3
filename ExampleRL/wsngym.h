@@ -49,6 +49,9 @@ private:
     float m_queueWeight;
     float m_arrivalRateWeight;
     float m_delayWeight;
+    uint32_t m_totalPacketDropped;
+    uint32_t m_prevTPD;
+    uint16_t m_maxQueue;
 
 };
 

@@ -41,7 +41,7 @@ l2rapplication::l2rapplication()
   m_lastStartTime (Seconds (0)),
   m_totBytes (0)
 {
-  m_cbrRate = 4000;
+  m_cbrRate = 1000;
   m_pktSize = 20;
   m_maxBytes = 0; 
   m_totalPacketsSend = 0;
@@ -104,11 +104,15 @@ l2rapplication::SendPacket () //ToDo
   params.m_dstAddrMode = SHORT_ADDR;
   params.m_dstAddr = device->GetMac ()->OutputRoute();
   params.m_msduHandle = 0;
-  params.m_txOptions = TX_OPTION_NONE;
+  params.m_txOptions = TX_OPTION_ACK;
   device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
   device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
+  //device->GetMac ()->m_l2rQueue.insert(std::make_pair(packet->GetUid(),packet));
+  device->GetMac ()->IncQueue();
+  //m_delayForEachPacket.insert(std::make_pair (m_txPkt->GetUid(),Simulator::Now ()));
+  m_totalPacketSendUid.insert(std::make_pair(packet->GetUid(), Simulator::Now ().GetSeconds()));
   Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest,device->GetMac (),
-                             params, packet);  
+                             params, packet);
   m_lastStartTime = Simulator::Now ();
   m_residualBits = 0;
   ScheduleNextTx ();
@@ -187,6 +191,50 @@ void
 l2rapplication::SetPacketSize(uint32_t pktSize)
 {
   m_pktSize = pktSize;
+}
+void
+l2rapplication::SendBurst()
+{
+  for(uint8_t i = 0; i < 10; i++)
+  {
+    Ptr<LrWpanNetDevice> device = m_netDevice->GetObject<LrWpanNetDevice> ();  
+    Ptr<Packet> packet = Create<Packet> (m_pktSize);
+    L2R_Header L2R_DataHeader;
+    L2R_DataHeader.SetSrcMacAddress(device->GetMac ()->GetShortAddress());
+    L2R_DataHeader.SetMsgType(DataHeader);
+    L2R_DataHeader.SetDepth(device->GetMac ()->GetDepth());
+  L2R_DataHeader.SetPQM(device->GetMac ()->GetPqm());
+  L2R_DataHeader.SetQueueSize(device->GetMac ()->GetQueueSize());
+  L2R_DataHeader.SetDelay(device->GetMac ()->GetAvgDelay());
+  L2R_DataHeader.SetArrivalRate(device->GetMac ()->GetArrivalRate());
+  ++device->GetMac ()-> m_totalPacketSentByNode;
+  packet->AddHeader (L2R_DataHeader); //serialize is called here
+  McpsDataRequestParams params;
+  params.m_dstPanId = device->GetMac ()->GetPanId();
+  params.m_srcAddrMode = SHORT_ADDR;
+  params.m_dstAddrMode = SHORT_ADDR;
+  params.m_dstAddr = device->GetMac ()->OutputRoute();
+  params.m_msduHandle = 0;
+  params.m_txOptions = TX_OPTION_ACK;
+  Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
+  device->GetMac ()->UpdateDelay(packet->GetUid(), Simulator::Now ());
+  device->GetMac ()->OutputTree(packet,Simulator::Now (),params);
+  //device->GetMac ()->m_l2rQueue.insert(std::make_pair(packet->GetUid(),packet));
+  Simulator::Schedule (MicroSeconds(var->GetValue (1, 1000)),&LrWpanMac::McpsDataRequest,device->GetMac (),
+                             params, packet);  
+  }                             
+}
+void
+l2rapplication::PrintEndtoEndDelay()
+{
+  for (std::map<uint64_t, double>::iterator i = m_totalPacketSendUid.begin (); i != m_totalPacketSendUid.end (); i++) //ToDo
+  {
+
+    std::ofstream out4 ("EndtoEndDelay_Nodes.csv", std::ios::app);
+    out4 << i->first << "," << i->second
+         << std::endl;
+    out4.close ();
+  }
 }
 
 }

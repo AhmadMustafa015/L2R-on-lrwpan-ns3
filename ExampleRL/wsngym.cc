@@ -116,9 +116,11 @@ WSNGym::GetObservation()
             avgDelay += *temp33;
             count++;
         }
+        m_totalPacketDropped =  device->GetMac()->GetPacketDroppedByQueue();
     }
     m_queueLength = avgQueue / float(count);
-    m_queueLength = m_queueLength / float(device->GetMac()->GetMaxQueueSize());
+    m_queueLength = m_queueLength; // float(device->GetMac()->GetMaxQueueSize());
+    m_maxQueue = device->GetMac()->GetMaxQueueSize();
     m_pktArrivalRate = float(count) / avgArrivalRate ;
     m_delay = avgDelay / float(count);
 
@@ -173,10 +175,11 @@ WSNGym::ExecuteActions(Ptr<OpenGymDataContainer> action)
         Ptr<Node> node = NodeList::GetNode(i);
         Ptr<LrWpanNetDevice> device = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
         Ptr<LrWpanCsmaCa> csma = device->GetCsmaCa();
-        //csma->SetMacMaxBE(15);
-        csma->SetMacMinBE( 6);
-        csma->SetMacMaxCSMABackoffs(lqt + 2);
-        //device->GetMac()->SetLQT(m_lqt);
+        csma->SetMacMaxBE(lqt+4);
+        csma->SetMacMinBE(lqt+2);
+        csma->SetMacMaxCSMABackoffs(lqt+1);
+        //device->GetMac()->SetMacMaxFrameRetries(lqt);
+        device->GetMac()->SetLQT(lqt+1);
     }
     /*for (NetDeviceContainer::Iterator i= m_deviceContainer.Begin(); i != m_deviceContainer.End (); i++)
     {
@@ -193,14 +196,14 @@ WSNGym::GetReward()
 {
     float totReward = 0;
     NS_LOG_INFO("MyGetReward: " << m_reward);
-    if(m_queueLength > 0.9)
-        totReward += -80.0;
+    /*if(m_queueLength - m_maxQueue  > 0)
+        totReward -= 1.0 * (m_queueLength - m_maxQueue);
     else if(m_queueLength > 0.5)
         totReward += -40.0;
     else if(m_queueLength > 0.2)
-        totReward += 10.0;
+        totReward += 40.0;
     else
-        totReward += 30.0;
+        totReward += 30.0;*/
 
     if(m_pktArrivalRate > 4)
         totReward += -80.0;
@@ -211,15 +214,19 @@ WSNGym::GetReward()
     else
         totReward += 30.0;
     
-    if(m_delay > 10)
+    if(m_delay > .02)
         totReward += -80.0;
-    else if(m_delay > 5)
+    else if(m_delay > .01)
         totReward += -40.0;
-    else if(m_delay > 3)
+    else if(m_delay < .003)
         totReward += 10.0;
     else
         totReward += 30.0;
-    
+    if(m_totalPacketDropped < m_prevTPD)
+        totReward += 1 * (m_prevTPD - m_totalPacketDropped);
+    else
+        totReward -= 1 * (m_totalPacketDropped-m_prevTPD);    
+    m_prevTPD = m_totalPacketDropped;
     m_reward = totReward;
     return m_reward;
 }

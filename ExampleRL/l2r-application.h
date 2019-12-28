@@ -4,9 +4,12 @@
 #include "ns3/address.h"
 #include "ns3/application.h"
 #include "ns3/event-id.h"
+#include <iostream>
 #include "ns3/ptr.h"
 #include "ns3/data-rate.h"
+#include <iomanip>
 #include "ns3/traced-callback.h"
+#include <map>
 namespace ns3 {
 class NetDevice;
 class l2rapplication : public Application 
@@ -22,7 +25,9 @@ public:
   void Setup(Ptr<NetDevice> dev,Ptr<RandomVariableStream> on,Ptr<RandomVariableStream> off);
   void SetMaxBytes (uint64_t maxBytes); //ToDo
   void SetPacketSize(uint32_t pktSize);
-
+  void SendBurst();
+  std::map<uint64_t,double> m_totalPacketSendUid;
+  void PrintEndtoEndDelay();
 private:
   /**
    * \brief Cancel all pending events.
